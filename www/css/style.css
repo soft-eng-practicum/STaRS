@@ -1,0 +1,9 @@
+ion-tabs.tabs-color-active-ggc .tab-item {
+	border-color: #00704a !important;
+  color: #a5acb0; }
+  ion-tabs.tabs-color-active-ggc .tab-item.tab-item-active, ion-tabs.tabs-color-active-ggc .tab-item.active, ion-tabs.tabs-color-active-ggc .tab-item.activated {
+    color: #00704a; }
+.button.button-positive {
+  border-color: transparent;
+  background-color: #00704a;
+  color: #fff; }
