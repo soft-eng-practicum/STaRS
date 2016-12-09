@@ -34,18 +34,6 @@
     <script src="js/routes.js"></script>
   </head>
   <body ng-app="app">
-    <ion-pane ng-controller="posterListCtrl">
-    <ion-header-bar class="bar-stable">
-        <h1 class="title">Ionic Blank Starter</h1>
-        <button class="right button button-icon icon ion-plus" ng-click="create()"></button>
-    </ion-header-bar>
-    <ion-content>
-        <ion-list>
-            <ion-item ng-repeat="todo in todos">
-                {{todo.title}}
-            </ion-item>
-        </ion-list>
-    </ion-content>
-</ion-pane>
+    <ion-nav-view></ion-nav-view>
   </body>
 </html>

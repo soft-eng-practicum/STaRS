@@ -1,8 +1,3 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
 var app = angular.module('app', ['ionic', 'app.routes'])
 var localDB = new PouchDB('posters');
 var remoteDB = new PouchDB('http://127.0.0.1:5984/posters');
@@ -35,7 +30,6 @@ app.controller('homeCtrl', function($scope, $ionicPopup, $service) {
   $scope.authenticated = false;
 
   $scope.submitForm = function() {
-    console.log($scope.user.username);
     if(Service.login($scope.user.username, $scope.user.password) === true) {
       $scope.authenticated = true;
     } else {
@@ -58,9 +52,9 @@ app.controller('posterListCtrl', function($scope, $ionicPopup, $pouchDB) {
     .then(function(res) {
       console.log(res);
       if(res !== '') {
-        if($scope.hasOwnProperty('posters') !== true) {
-          $scope.posters = [];
-        }
+        //if($scope.hasOwnProperty('posters') !== true) {
+          //$scope.posters = [];
+        //}
         localDB.post({title: res});
       } else {
         console.log('Action not completed');
