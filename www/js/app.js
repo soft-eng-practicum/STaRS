@@ -1,3 +1,8 @@
+// Ionic Starter App
+
+// angular.module is a global place for creating, registering and retrieving Angular modules
+// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
+// the 2nd parameter is an array of 'requires'
 var app = angular.module('app', ['ionic', 'app.routes'])
 var localDB = new PouchDB('posters');
 var remoteDB = new PouchDB('http://127.0.0.1:5984/posters');
@@ -17,7 +22,22 @@ app.run(function($ionicPlatform) {
     if(window.StatusBar) {
       StatusBar.styleDefault();
     }
-    localDB.sync(remoteDB, {live: true});
+    var sync = PouchDB.sync(localDB, remoteDB, {
+      live: true,
+      retry: true
+    }).on('change', function(info) {
+      console.log(info);
+    }).on('paused', function() {
+      console.log('May be offline');
+    }).on('active', function() {
+      console.log('ACTIVE');
+    }).on('denied', function(err) {
+      console.log(err);
+    }).on('complete', function(info) {
+      console.log(info);
+    }).on('error', function(err) {
+      console.log(err);
+    });
   });
 });
 
@@ -30,6 +50,7 @@ app.controller('homeCtrl', function($scope, $ionicPopup, $service) {
   $scope.authenticated = false;
 
   $scope.submitForm = function() {
+    console.log($scope.user.username);
     if(Service.login($scope.user.username, $scope.user.password) === true) {
       $scope.authenticated = true;
     } else {
@@ -44,6 +65,12 @@ app.controller('homeCtrl', function($scope, $ionicPopup, $service) {
 app.controller('posterListCtrl', function($scope, $ionicPopup, $pouchDB) {
   $scope.posters = [];
 
+  localDB.allDocs({
+    include_docs:true
+  }).then(function(docs) {
+    console.log(docs);
+  })
+
   $scope.create = function() {
     $ionicPopup.prompt ({
       title: 'Test',
@@ -52,9 +79,9 @@ app.controller('posterListCtrl', function($scope, $ionicPopup, $pouchDB) {
     .then(function(res) {
       console.log(res);
       if(res !== '') {
-        //if($scope.hasOwnProperty('posters') !== true) {
-          //$scope.posters = [];
-        //}
+        if($scope.hasOwnProperty('posters') !== true) {
+          $scope.posters = [];
+        }
         localDB.post({title: res});
       } else {
         console.log('Action not completed');
@@ -89,6 +116,7 @@ app.factory('$pouchDB', function($rootScope) {
   localDB.changes({
     continuous: true,
     onChange: function(change) {
+      console.log(change);
       if(!change.deleted) {
         $rootScope.$apply(function() {
           localDB.get(change.id, function(err, doc) {
