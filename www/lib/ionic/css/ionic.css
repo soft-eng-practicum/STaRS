@@ -3557,7 +3557,7 @@ ion-infinite-scroll {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #fff;
+  background-color: #a5acb0; /*Change background color of views*/
   overflow: hidden; }
 
 .view-container {
@@ -8293,7 +8293,7 @@ input:checked + .checkbox-icon:after {
   left: -9999px; }
   .item-radio input:checked + .radio-content .item-content {
     /* style the item content when its checked */
-    background: #f7f7f7; }
+    background: #00704a; }
   .item-radio input:checked + .radio-content .radio-icon {
     /* show the checkmark icon when its checked */
     visibility: visible; }

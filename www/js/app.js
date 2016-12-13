@@ -109,12 +109,23 @@ app.controller('posterListCtrl', function($scope, $ionicPopup, $pouchDB) {
   });*/
 });
 
-app.controller('posterCtrl', function($scope, $q, $stateParams, poster,$pouchDB) {
+app.controller('posterCtrl', function($scope, $q, $stateParams, poster, $pouchDB, $ionicPopup) {
   /*$scope.poster = $pouchDB.get($stateParams.id).then(function(res) {
     console.log(res);
   })*/
   $scope.poster = poster;
-  console.log($scope.poster);
+  //$scope.selectedQuestion = {};
+
+  /*$scope.questionView = function(question) {
+    $scope.selectedQuestion = question;
+    $ionicPopup.show({
+      templateUrl: '<ion-list><ion-radio ng-model="choice" ng-value="1">1</ion-radio><ion-radio ng-model="choice" ng-value="2">2</ion-radio><ion-radio ng-model="choice" ng-value="3">3</ion-radio><ion-radio ng-model="choice" ng-value="4">4</ion-radio><ion-radio ng-model="choice" ng-value="5">5</ion-radio></ion-list>',
+      title: '<div class="row"><div class="col col-center"><p>Question: #'+ $scope.selectedQuestion.id + ':</p></div></div>',
+      subTitle: '<div class="row"><div class="col col-center"><p>Question: #'+ $scope.selectedQuestion.information + ':</p></div></div>',
+      scope: $scope
+    });
+  }*/
+  
 });
 
 app.factory('$service', function($http, $pouchDB) {

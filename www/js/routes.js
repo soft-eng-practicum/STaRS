@@ -42,5 +42,17 @@ angular.module('app.routes', ['ui.router'])
 			]
 		}
 	})
+	$stateProvider.state('tabsController.poster.question', {
+		url:'/questions/questionId',
+		controller: 'questionCtrl',
+		resolve: {
+			question: [
+				'$stateParams', '$pouchDB',
+				function($stateParams, $pouchDB) {
+					return $pouchDB.getQuestion($stateParams.questionId);
+				}
+			]
+		}
+	});
 	$urlRouterProvider.otherwise('/page1/home')
 });
