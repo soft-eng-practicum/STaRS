@@ -6,7 +6,7 @@
 var app = angular.module('app', ['ionic', 'app.routes'])
 var localDB = new PouchDB('posters');
 var remoteDB = new PouchDB('http://127.0.0.1:5984/posters');
-
+PouchDB.debug.disable();
 app.run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
@@ -27,16 +27,20 @@ app.run(function($ionicPlatform) {
       retry: true
     }).on('change', function(info) {
       console.log(info);
+      console.log('yo, something changed');
     }).on('paused', function() {
-      console.log('May be offline');
+      console.log('No activity with the database -- paused');
     }).on('active', function() {
-      console.log('ACTIVE');
+      console.log('ACTIVE -- resumed replication');
     }).on('denied', function(err) {
       console.log(err);
     }).on('complete', function(info) {
       console.log(info);
     }).on('error', function(err) {
-      console.log(err);
+      console.log('Disconnected');
+    });
+    sync.on('complete', function(info) {
+      console.log('replication was canceled');
     });
   });
 });
@@ -64,14 +68,19 @@ app.controller('homeCtrl', function($scope, $ionicPopup, $service) {
 
 app.controller('posterListCtrl', function($scope, $ionicPopup, $pouchDB) {
   $scope.posters = [];
+  $scope.loading = true;
 
   localDB.allDocs({
     include_docs:true
   }).then(function(docs) {
-    console.log(docs);
-  })
+    angular.forEach(docs.rows, function(row) {
+      $scope.posters.push(row.doc);
+    });
+    $scope.$apply();
+  });
 
-  $scope.create = function() {
+
+  /*$scope.create = function() {
     $ionicPopup.prompt ({
       title: 'Test',
       inputType: 'text'
@@ -97,7 +106,15 @@ app.controller('posterListCtrl', function($scope, $ionicPopup, $pouchDB) {
         $scope.posters.splice(i, 1);
       }
     }
-  });
+  });*/
+});
+
+app.controller('posterCtrl', function($scope, $q, $stateParams, poster,$pouchDB) {
+  /*$scope.poster = $pouchDB.get($stateParams.id).then(function(res) {
+    console.log(res);
+  })*/
+  $scope.poster = poster;
+  console.log($scope.poster);
 });
 
 app.factory('$service', function($http, $pouchDB) {
@@ -112,8 +129,8 @@ app.factory('$service', function($http, $pouchDB) {
   }
 });
 
-app.factory('$pouchDB', function($rootScope) {
-  localDB.changes({
+app.factory('$pouchDB', function($rootScope, $q) {
+  /*localDB.changes({
     continuous: true,
     onChange: function(change) {
       console.log(change);
@@ -136,4 +153,17 @@ app.factory('$pouchDB', function($rootScope) {
     }
   });
   return true;
+  */
+  return {
+    get: function(id) {
+      return localDB.get(id, {include_docs:true})
+      .then(function(doc) {
+        return doc;
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
+      $rootScope.apply();
+    }
+  }
 });

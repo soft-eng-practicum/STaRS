@@ -1,6 +1,14 @@
 <ion-view title="Posters" id="posterList">
 	<ion-content class="padding">
 		<div class="card card-clean">
+			<div class="list" ng-repeat="poster in posters">
+				<!-- NEED TO ADD LOADER WHILE DATA IS BEING PULLED FROM COUCHDB -->
+				<div class="item">
+					<a ui-sref="tabsController.poster({id: poster._id})" style="text-decoration: none;">
+						<p>{{poster}}</p>
+					</a>
+				</div>
+			</div>
 		</div>
 	</ion-content>
 </ion-view>
