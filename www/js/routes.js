@@ -10,11 +10,11 @@ angular.module('app.routes', ['ui.router'])
 	$stateProvider.state('tabsController.home', {
 		url: '/home',
 		views: {
-      		'tab1': {
-        		templateUrl: 'templates/home.html',
-                controller: 'homeCtrl'
-      		}
-    	}
+			'tab1': {
+				templateUrl: 'templates/home.html',
+				controller: 'homeCtrl'
+			}
+		}
 	})
 	$stateProvider.state('tabsController.posterList', {
 		url: '/posterList',
@@ -35,10 +35,18 @@ angular.module('app.routes', ['ui.router'])
 		},
 		resolve: {
 			poster: [
-				'$stateParams', '$pouchDB',
-				function($stateParams, $pouchDB) {
-					return $pouchDB.get($stateParams.id);
-				}
+			'$stateParams', '$http', '$q',
+			function($stateParams, $http, $q) {
+				return $http.get('./posters.json').then(function(res) {
+					var deferred = $q.defer();
+					res.data.posters.forEach(function(poster) {
+						if(poster.id == $stateParams.id) {
+							deferred.resolve(poster);
+						}
+					})
+					return deferred.promise;
+				})
+			}
 			]
 		}
 	})
@@ -47,10 +55,15 @@ angular.module('app.routes', ['ui.router'])
 		controller: 'questionCtrl',
 		resolve: {
 			question: [
-				'$stateParams', '$pouchDB',
-				function($stateParams, $pouchDB) {
-					return $pouchDB.getQuestion($stateParams.questionId);
-				}
+			'$stateParams', '$pouchDB', '$q',
+			function($stateParams, $pouchDB, $q) {
+				console.log("test");
+				var defObj = $q.defer();
+				$pouchDB.getQuestion($stateParams.questionId).then(function(res) {
+					console.log(res);
+					return defObj.resolve(res);
+				})
+			}
 			]
 		}
 	});

@@ -16,3 +16,21 @@ ion-tabs.tabs-color-active-ggc .tab-item.tab-item-active, ion-tabs.tabs-color-ac
 * {
 	font-family: 'Ubuntu Condensed', sans-serif !important;
 }
+.row-bar {
+	border-bottom: 0px !important;
+	border-top: 0px !important;
+}
+.button-bar > .button{
+  border: 1px solid #cfcfcf;
+}
+
+.button-bar > .button:last-child {
+  border-radius: 0px 20px 20px 0px !important;
+}
+.button-bar > .button:first-child {
+    border-radius: 20px 0px 0px 20px !important;
+}
+.item-radio {
+	border-top:0px !important;
+	border-bottom:0px !important;
+}

@@ -4,9 +4,8 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 var app = angular.module('app', ['ionic', 'app.routes'])
-var localDB = new PouchDB('posters');
-var remoteDB = new PouchDB('http://127.0.0.1:5984/posters');
-PouchDB.debug.disable();
+var localDB = new PouchDB('judges');
+var remoteDB = new PouchDB('http://127.0.0.1:5984/judges');
 app.run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
@@ -49,14 +48,12 @@ app.controller('mainTabsCtrl', function($scope) {
 
 });
 
-app.controller('homeCtrl', function($scope, $ionicPopup, $service) {
+app.controller('homeCtrl', function($scope, $state, $ionicPopup, $service) {
   $scope.user = {};
-  $scope.authenticated = false;
 
   $scope.submitForm = function() {
-    console.log($scope.user.username);
-    if(Service.login($scope.user.username, $scope.user.password) === true) {
-      $scope.authenticated = true;
+    if($service.login($scope.user.username, $scope.user.password) === true) {
+      $state.go('tabsController.posterList');
     } else {
       $ionicPopup.alert({
         title: 'Error',
@@ -66,20 +63,13 @@ app.controller('homeCtrl', function($scope, $ionicPopup, $service) {
   }
 });
 
-app.controller('posterListCtrl', function($scope, $ionicPopup, $pouchDB) {
+app.controller('posterListCtrl', function($scope, $ionicPopup, $service) {
   $scope.posters = [];
   $scope.loading = true;
 
-  localDB.allDocs({
-    include_docs:true
-  }).then(function(docs) {
-    angular.forEach(docs.rows, function(row) {
-      $scope.posters.push(row.doc);
-    });
-    $scope.$apply();
+  $service.getPosters().success(function(data) {
+    $scope.posters = data.posters;
   });
-
-
   /*$scope.create = function() {
     $ionicPopup.prompt ({
       title: 'Test',
@@ -109,12 +99,25 @@ app.controller('posterListCtrl', function($scope, $ionicPopup, $pouchDB) {
   });*/
 });
 
-app.controller('posterCtrl', function($scope, $q, $stateParams, poster, $pouchDB, $ionicPopup) {
+app.controller('posterCtrl', function($scope, poster, $service, $ionicPopup) {
   /*$scope.poster = $pouchDB.get($stateParams.id).then(function(res) {
     console.log(res);
   })*/
   $scope.poster = poster;
+  $scope.answers = [];
+
+  $service.getSurvey().success(function(data) {
+    $scope.questions = data.questions;
+    console.log($scope.questions);
+  });
   //$scope.selectedQuestion = {};
+
+  $scope.submitQuestions = function(isValid) {
+      angular.forEach($scope.poster.questions, function(question) {
+        $scope.answers.push(question.value);
+      });
+      $pouchDB.submitSurvey(id, $scope.answers);
+  }
 
   /*$scope.questionView = function(question) {
     $scope.selectedQuestion = question;
@@ -128,19 +131,26 @@ app.controller('posterCtrl', function($scope, $q, $stateParams, poster, $pouchDB
   
 });
 
-app.factory('$service', function($http, $pouchDB) {
+app.factory('$service', function($http, $pouchDB, $q) {
   return {
     login: function(username, password) {
       if(angular.equals(username, 'GGCStars') && angular.equals(password, '12345')) {
+        authorized = true;
         return true;
       } else {
         return false;
       }
-    }
+    },
+    getSurvey: function() {
+      return $http.get('./survey.json');
+    },
+    getPosters: function() {
+      return $http.get('./posters.json');
+    },
   }
 });
 
-app.factory('$pouchDB', function($rootScope, $q) {
+app.factory('$pouchDB', function($rootScope, $q, $http) {
   /*localDB.changes({
     continuous: true,
     onChange: function(change) {
@@ -175,6 +185,80 @@ app.factory('$pouchDB', function($rootScope, $q) {
         console.log(err);
       });
       $rootScope.apply();
+    },
+    submitSurvey: function(id, answers) {
+      localDB.get(id).then(function(doc) {
+        console.log(answers);
+        var timesJudged = doc.timesJudged+1;
+        var previousJudges = doc.previousJudged;
+        console.log(timesJudged);
+        console.log(doc.previousJudged);
+        return localDB.put({
+          _id: doc._id,
+          _rev: doc._rev,
+          timesJudged: 0,
+          groupName: "BIO",
+          questions: [
+            {
+              information: "Information and Background",
+              value: 0
+            },
+            {
+              information: "Question, Problem, and Hypothesis",
+              value: 0
+            },
+            {
+              information: "Experimental Approach and Design",
+              value: 0
+            },
+            {
+              information: "Data and Results",
+              value: 0
+            },
+            {
+              information: "Discussions and Conclusion",
+              value: 0
+            },
+            {
+              information: "Research Originality/Novelty",
+              value: 0
+            },
+            {
+              information: "Poster Organization, Style, Visual Appeal",
+              value: 0
+            },
+            {
+              information: "Oral Presentation of Research",
+              value: 0
+            },
+            {
+              information: "Ability to Answer Questions",
+              value: 0
+            },
+            {
+              information: "Overall Presentation",
+              value: 0
+            },
+            {
+              information: "Additional Comments",
+              value: ""
+            }
+          ],
+          judgesName: "",
+          previousJudged: [
+            {
+              judgeName: "test"
+            },
+            {
+              judgeName: "test2"
+            }
+          ]
+        });
+      }).then(function(res) {
+        console.log(res);
+      }).catch(function(err) {
+        console.log(err);
+      });
     }
   }
 });

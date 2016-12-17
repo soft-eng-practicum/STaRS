@@ -1,24 +1,38 @@
 <ion-view title="Poster" id="poster">
 	<ion-content class="padding">
-		<div class="list card" ng-repeat="question in poster.questions">
-			<div class="item item-divider">
-				<p>{{question.information}}: #{{question.id}}</p>
+		<form name="questionForm" id="questionForm" ng-submit="submitQuestions(questionForm.$valid)" novalidate>
+			<div class="list card" ng-repeat="question in questions">
+				<div class="item item-divider">
+					<div ng-show="question.required">
+						#{{question.id}}:{{question.information}}<span class="item-note">*required</span>
+					</div>
+					<div ng-show="!question.required">
+						#{{question.id}}:{{question.information}}
+					</div>
+				</div>
+				<div ng-show="{{$index}}<=9">
+						<ion-list>
+							<div class="padding row">
+								<ion-radio name="question{{question.id}}" id="question.value" ng-model="question.value" ng-value="1" required>1</ion-radio>
+								<ion-radio name="question{{question.id}}" id="question.value" ng-model="question.value" ng-value="2" required>2</ion-radio>
+								<ion-radio name="question{{question.id}}" id="question.value" ng-model="question.value" ng-value="3" required>3</ion-radio>
+								<ion-radio name="question{{question.id}}" id="question.value" ng-model="question.value" ng-value="4" required>4</ion-radio>
+								<ion-radio name="question{{question.id}}" id="question.value" ng-model="question.value" ng-value="5" required>5</ion-radio>
+							</div>
+						</ion-list>
+				</div>
+				<div ng-show="{{$index}}===10">
+					<label class="item item-input item-floating-label">
+						<span class="input-label">Comments</span>
+					   <input type="text" placeholder="Insert any additional comments here...">
+				   </label>
+				</div>
 			</div>
-			<div ng-hide="{{$index}}===8">
-				<ion-list>
-					<ion-radio ng-model="question.value" ng-value="1">1</ion-radio>
-					<ion-radio ng-model="question.value" ng-value="2">2</ion-radio>
-					<ion-radio ng-model="question.value" ng-value="3">3</ion-radio>
-					<ion-radio ng-model="question.value" ng-value="4">4</ion-radio>
-					<ion-radio ng-model="question.value" ng-value="5">5</ion-radio>
-				</ion-list>
+			<div class="row">
+				<div class="col col-center">
+					<button type="submit" class="button button-block button-positive">Submit</button>
+				</div>
 			</div>
-			<div ng-show="{{$index}}===8">
-			   <label class="item item-input item-floating-label">
-				   <span class="input-label"t>Comments</span>
-				   <input type="text" placeholder="Insert comment in here...">
-			   </label>
-			</div>
-		</div>
+		</form>
 	</ion-content>
 </ion-view>
