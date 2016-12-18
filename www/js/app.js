@@ -3,9 +3,11 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-var app = angular.module('app', ['ionic', 'app.routes'])
+var app = angular.module('app', ['ionic', 'app.routes', 'ngStorage', 'angular-md5', 'pouchdb'])
 var localDB = new PouchDB('judges');
 var remoteDB = new PouchDB('http://127.0.0.1:5984/judges');
+
+app.config
 app.run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
@@ -23,7 +25,8 @@ app.run(function($ionicPlatform) {
     }
     var sync = PouchDB.sync(localDB, remoteDB, {
       live: true,
-      retry: true
+      retry: true,
+      continuous: true
     }).on('change', function(info) {
       console.log(info);
       console.log('yo, something changed');
@@ -38,9 +41,6 @@ app.run(function($ionicPlatform) {
     }).on('error', function(err) {
       console.log('Disconnected');
     });
-    sync.on('complete', function(info) {
-      console.log('replication was canceled');
-    });
   });
 });
 
@@ -50,65 +50,67 @@ app.controller('mainTabsCtrl', function($scope) {
 
 app.controller('homeCtrl', function($scope, $state, $ionicPopup, $service) {
   $scope.user = {};
+  $scope.auth = $service.getAuthorized();
+  if($scope.auth === undefined) {
+    $scope.isAuth = false;
+  } else {
+    $scope.isAuth = true;
+  }
 
   $scope.submitForm = function() {
-    if($service.login($scope.user.username, $scope.user.password) === true) {
+    $service.login($scope.user.username, $scope.user.password).then(function(res) {
+        $scope.isAuthenticated = true;
+        if(res.value == false) {
+          window.localStorage.setItem($scope.user.username, JSON.stringify(res.promise.$$state.value));
+        } else {
+          $service.setAuthorized(window.localStorage.getItem($scope.user.username));
+        }
+                $scope.isAuth = true;
+
+        $scope.$apply();
+    });
+    /*if($service.login($scope.user.username, $scope.user.password) === true) {
       $state.go('tabsController.posterList');
     } else {
       $ionicPopup.alert({
         title: 'Error',
         template: '<p style=\'text-align:center\'>Invalid username or password</p>'
       });
-    }
+    }*/
   }
 });
 
 app.controller('posterListCtrl', function($scope, $ionicPopup, $service) {
+  $scope.auth = $service.getAuthorized();
+  if($scope.auth === undefined) {
+    $scope.isAuth = false;
+  } else {
+    $scope.isAuth = true;
+  }
+  console.log($scope.isAuth);
+
   $scope.posters = [];
   $scope.loading = true;
 
   $service.getPosters().success(function(data) {
     $scope.posters = data.posters;
   });
-  /*$scope.create = function() {
-    $ionicPopup.prompt ({
-      title: 'Test',
-      inputType: 'text'
-    })
-    .then(function(res) {
-      console.log(res);
-      if(res !== '') {
-        if($scope.hasOwnProperty('posters') !== true) {
-          $scope.posters = [];
-        }
-        localDB.post({title: res});
-      } else {
-        console.log('Action not completed');
-      }
-    });
-  }
-  $scope.$on('add', function(event, poster) {
-    $scope.posters.push(poster);
-  });
-  $scope.$on('delete', function(event, id) {
-    for(var i = 0; i < $cope.posters.length; i++) {
-      if($scope.posters[i]._id === id) {
-        $scope.posters.splice(i, 1);
-      }
-    }
-  });*/
 });
 
 app.controller('posterCtrl', function($scope, poster, $service, $ionicPopup) {
-  /*$scope.poster = $pouchDB.get($stateParams.id).then(function(res) {
-    console.log(res);
-  })*/
+  $scope.auth = $service.getAuthorized();
+  if($scope.auth === undefined) {
+    $scope.isAuth = false;
+  } else {
+    $scope.isAuth = true;
+  }
+  console.log($scope.isAuth);
+  
   $scope.poster = poster;
   $scope.answers = [];
 
   $service.getSurvey().success(function(data) {
     $scope.questions = data.questions;
-    console.log($scope.questions);
   });
   //$scope.selectedQuestion = {};
 
@@ -131,15 +133,49 @@ app.controller('posterCtrl', function($scope, poster, $service, $ionicPopup) {
   
 });
 
-app.factory('$service', function($http, $pouchDB, $q) {
+app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope) {
+  var authorized;
   return {
     login: function(username, password) {
-      if(angular.equals(username, 'GGCStars') && angular.equals(password, '12345')) {
-        authorized = true;
-        return true;
-      } else {
-        return false;
-      }
+      var deferred = $q.defer();
+      var hasHash = false;
+      return localDB.allDocs({
+        include_docs: true,
+        attachments: true
+      }).then(function(res) {
+        res.rows.forEach(function(row) {
+          if(row.doc.username === username && row.doc.password === password) {
+            if(row.doc.hash != '') {
+              deferred.resolve(row.doc.hash);
+              hasHash = true;
+            } else {
+              var hash = md5.createHash(row.doc.username || '');
+              deferred.resolve(hash);
+              var doc = row.doc;
+              localDB.put({
+                _id: doc._id,
+                _rev: doc._rev,
+                hash: hash,
+                username: doc.username,
+                password: doc.password,
+                surveys: doc.surveys
+              }).then(function(res) {
+              }).catch(function(err) {
+                console.log(err);
+                console.log('error in credientials');
+              });
+            }
+          }
+        });
+        return {
+          promise: deferred.promise,
+          value: hasHash
+        }
+      }).catch(function(err) {
+        console.log(err);
+        console.log('username or password may be invalid');
+      })
+      $rootScope.apply();
     },
     getSurvey: function() {
       return $http.get('./survey.json');
@@ -147,6 +183,12 @@ app.factory('$service', function($http, $pouchDB, $q) {
     getPosters: function() {
       return $http.get('./posters.json');
     },
+    getAuthorized: function() {
+      return authorized;
+    },
+    setAuthorized: function(hash) {
+      authorized = hash;
+    }
   }
 });
 
