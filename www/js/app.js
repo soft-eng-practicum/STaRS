@@ -147,7 +147,8 @@ app.controller('homeCtrl', function($scope, $state, $ionicPopup, $service, pouch
 
   $scope.submitForm = function() {
     $service.login($scope.user.username, $scope.user.password).then(function(res) {
-      if(res === undefined) {
+      console.log(res);
+      if(res.promise.$$state.value === false) {
         $scope.isAuth = false;
         $ionicPopup.alert({
           title: 'Error',
@@ -251,11 +252,6 @@ app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchServ
             if(row.doc.hash != '') {
               deferred.resolve(row.doc.hash);
               hasHash = true;
-              return {
-                promise: deferred.promise,
-                value: hasHash
-              }
-                      $rootScope.$apply();
             } else {
               var hash = md5.createHash(row.doc.username || '');
               deferred.resolve(hash);
@@ -270,20 +266,18 @@ app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchServ
               }).catch(function(err) {
                 console.log(err);
               });
-              return {
-                promise: deferred.promise,
-                value: hasHash
-              }
-                      $rootScope.$apply();
             }
           } else {
-            return deferred.resolve(false);
-            $rootScope.$apply();
+            deferred.resolve(false);
           }
         });
+        return {
+          promise: deferred.promise,
+          value: hasHash
+        }
+        $rootScope.$apply();
       }).catch(function(err) {
         console.log(err);
-        $rootScope.$apply();
       })
     },
     getSurvey: function() {
