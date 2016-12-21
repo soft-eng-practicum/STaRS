@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-var app = angular.module('app', ['ionic', 'app.routes', 'ngStorage', 'angular-md5']);
+var app = angular.module('app', ['ionic', 'app.routes', 'ngStorage', 'angular-md5', 'pouchdb']);
 
 app.run(function($ionicPlatform, pouchService) {
   $ionicPlatform.ready(function() {
@@ -45,21 +45,52 @@ app.run(function($ionicPlatform, pouchService) {
   });
 });
 
-app.controller('mainTabsCtrl', function($scope) {
+app.service('pouchService', function($rootScope, pouchDB, $log) {
+  this.retryReplication = function() {
+    var self = this;
+    var replicate;
+    var status;
+    var opts = {
+      live: true,
+      retry: true
+    };
 
-});
+    function updateStatus(response) {
+      $log.info(response.$event, response);
+      status = JSON.stringify(response);
+    }
 
-app.service('pouchService', function() {
-  this.PouchService = function($rootScope) {
+    self.localDB = pouchDB('judges');
+    self.remoteDB = pouchDB('http://127.0.0.1:5984/judges');
+    self.localDB.replicate.to('http://127.0.0.1:5984/judges', opts).$promise
+      .then(null, null, updateStatus)
+      .then(updateStatus)
+      .catch(updateStatus)
+      .finally(function() {
+        console.log('done');
+    });
+  }
+  /*this.PouchService = function($rootScope) {
     var self = this;
     self.localDB = new PouchDB('judges');
-    self.localDB.changes({live: true, since: 'now'}).on('change', function() {
-      if(self.onChangeListener) {
-        self.onChangeListener();
-      }
-    });
-
     self.remoteDB = new PouchDB('http://127.0.0.1:5984/judges');
+
+    var timeout = 5000;
+    var backoff = 1.1;
+    function retryReplication() {
+      self.localDB.sync(self.remoteDB, {live: true, retry: true}).on('change', function() {
+      console.log('change');
+      timeout = 5000;
+    }).on('error', function(err) {
+      console.log(err);
+          setTimeout(function () {
+      timeout *= backoff;
+      console.log(timeout)
+      retryReplication;
+    }, timeout);
+    }); 
+  }
+
     self.disconnected = false;
     var inProgress = false;
     var STARTING_RETRY_TIMEOUT = 1000;
@@ -73,25 +104,22 @@ app.service('pouchService', function() {
     }
 
     function handleError(err) {
-      console.log('error during replication');
-      if(err) {
-        console.log(err);
-      }
       self.disconnected = true;
       if(inProgress) {
         retryTimeout = Math.floor(retryTimeout * BACKOFF);
       }
       inProgress = false;
       setTimeout(replicate, retryTimeout);
-      $rootScope.$apply();
     }
     function handleSuccess() {
+      console.log('handleSuccess()');
       retryTimeout = STARTING_RETRY_TIMEOUT;
       self.disconnected = false;
       $rootScope.$apply();
     }
 
     function handleComplete() {
+      console.log('handleComplete()');
       handleSuccess();
       self.syncComplete = true;
       $rootScope.$apply();
@@ -120,70 +148,105 @@ app.service('pouchService', function() {
   this.PouchService.onError = function (onErrorListener) {
     console.log('onError');
     this.onErrorListener = onErrorListener;
-  };
+  };*/
+});
+
+app.controller('mainTabsCtrl', function($scope, $service, $timeout, $rootScope) {
+  console.log(moment.now());
+  $scope.user = {};
+  $rootScope.isAuth = false;
+  $scope.auth = $service.getAuthorized();
+
+  if(Object.keys($scope.auth).length > 0) {
+    $rootScope.isAuth = true;
+  }
+
 });
 
 
-app.controller('homeCtrl', function($scope, $state, $ionicPopup, $service, pouchService) {
-  $scope.pouchService = pouchService.PouchService();
-  var localPouch = pouchService.localDB;
-  var remoteDB = pouchService.remoteDB;
-
-  localPouch.allDocs({
-    include_docs:true,
-    attachments:true
-  }).then(function(res) {
-    res.rows.forEach(function(row) {
-      console.log(row);
-    });
-  });
+app.controller('logoutCtrl', function($scope, $state, $service, $rootScope) {
   $scope.user = {};
   $scope.auth = $service.getAuthorized();
-  if($scope.auth === undefined) {
-    $scope.isAuth = false;
+
+  if(Object.keys($scope.auth).length === 0) {
+    return;
+    $rootScope.isAuth = false;
   } else {
-    $scope.isAuth = true;
+    $rootScope.isAuth = true;
   }
 
+  $scope.logout = function() {
+    var id = $scope.auth.id;
+    $service.logout(id).then(function() {
+      window.localStorage.removeItem(id);
+      $rootScope.isAuth = false;
+      $timeout(function() {
+        $state.go('tabsController.login');
+      }, 0);
+    });
+  }
+});
+
+app.controller('loginCtrl', function($scope, $ionicPopup, $service, $state, pouchService, $timeout, $rootScope) {
   $scope.submitForm = function() {
     $service.login($scope.user.username, $scope.user.password).then(function(res) {
       console.log(res);
-      if(res.promise.$$state.value === false) {
-        $scope.isAuth = false;
+      if(res.id === undefined) {
+        $rootScope.isAuth = false;
         $ionicPopup.alert({
           title: 'Error',
           template: '<p style=\'text-align:center\'>Invalid username or password</p>'
         });
+        return;
       } else if(res.value === false) {
-        $scope.isAuth = true;
-        window.localStorage.setItem($scope.user.username, JSON.stringify(res.promise.$$state.value));
+        var id = res.id;
+        $rootScope.isAuth = true;
+        // set the user's auto generated id as the key within localstorage to maintain the login state
+        window.localStorage.setItem(res.id, JSON.stringify(res.promise.$$state.value));
       } else if(res.value === true) {
-        $scope.isAuth = true;
-        $service.setAuthorized(window.localStorage.getItem($scope.user.username));
+        var id = res.id;
+        $rootScope.isAuth = true;
+        $service.setAuthorized(res.id, window.localStorage.getItem(res.id));
       }
-      $scope.$apply();
+      $timeout(function() {
+        $state.go('tabsController.home');
+      }, 0);
     });
-    /*if($service.login($scope.user.username, $scope.user.password) === true) {
-      $state.go('tabsController.posterList');
-    } else {
-      $ionicPopup.alert({
-        title: 'Error',
-        template: '<p style=\'text-align:center\'>Invalid username or password</p>'
-      });
-    }*/
   }
+
+})
+app.controller('homeCtrl', function($scope, $state, $ionicPopup, $service, pouchService, $rootScope) {
+  //$scope.pouchService = pouchService.PouchService();
+  $scope.pouchService = pouchService.retryReplication();
+  var localPouch = pouchService.localDB;
+  var remoteDB = pouchService.remoteDB;
+
+  $scope.user = {};
+  $scope.auth = $service.getAuthorized();
+
+  if(Object.keys($scope.auth).length === 0) {
+    $rootScope.isAuth = false;
+    $timeout(function() {
+      $state.go('tabsController.login');
+    }, 0);
+  } else {
+    $rootScope.isAuth = true;
+  }
+
 });
 
-app.controller('posterListCtrl', function($scope, $ionicPopup, $service, pouchService) {
-    $scope.pouchService = pouchService.PouchService();
+app.controller('posterListCtrl', function($scope, $ionicPopup, $service, pouchService, $rootScope) {
+  //$scope.pouchService = pouchService.PouchService();
+  $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
 
   $scope.auth = $service.getAuthorized();
-  if($scope.auth === undefined) {
-    $scope.isAuth = false;
+
+  if(Object.keys($scope.auth).length === 0) {
+    $rootScope.isAuth = false;
   } else {
-    $scope.isAuth = true;
+    $rootScope.isAuth = true;
   }
 
   $scope.posters = [];
@@ -194,18 +257,17 @@ app.controller('posterListCtrl', function($scope, $ionicPopup, $service, pouchSe
   });
 });
 
-app.controller('posterCtrl', function($scope, poster, $service, $ionicPopup, pouchService) {
-  $scope.pouchService = pouchService.PouchService();
+app.controller('posterCtrl', function($scope, poster, $service, $ionicPopup, pouchService, $pouchDB, $rootScope) {
+  //$scope.pouchService = pouchService.PouchService();
+  $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
 
-  $scope.auth = $service.getAuthorized();
-  if($scope.auth === undefined) {
-    $scope.isAuth = false;
+  if(Object.keys($scope.auth).length === 0) {
+    $rootScope.isAuth = false;
   } else {
-    $scope.isAuth = true;
+    $rootScope.isAuth = true;
   }
-  console.log($scope.isAuth);
 
   $scope.poster = poster;
   $scope.answers = [];
@@ -219,6 +281,7 @@ app.controller('posterCtrl', function($scope, poster, $service, $ionicPopup, pou
       angular.forEach($scope.poster.questions, function(question) {
         $scope.answers.push(question.value);
       });
+      var id = window.localStorage.getItem()
       $pouchDB.submitSurvey(id, $scope.answers);
   }
 
@@ -235,24 +298,28 @@ app.controller('posterCtrl', function($scope, poster, $service, $ionicPopup, pou
 });
 
 app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchService) {
-  var pouch = pouchService.PouchService();
+  //var pouch = pouchService.PouchService();
+  var pouch = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
-  var authorized;
+  var authorized = {};
   return {
     login: function(username, password) {
       var deferred = $q.defer();
       var hasHash = false;
+      var id;
       return localPouch.allDocs({
         include_docs: true,
         attachments: true
       }).then(function(res) {
         res.rows.forEach(function(row) {
           if(angular.equals(row.doc.username,username) && angular.equals(row.doc.password,password)) {
+            id = row.doc._id;
             if(row.doc.hash != '') {
               deferred.resolve(row.doc.hash);
               hasHash = true;
             } else {
+
               var hash = md5.createHash(row.doc.username || '');
               deferred.resolve(hash);
               var doc = row.doc;
@@ -267,13 +334,12 @@ app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchServ
                 console.log(err);
               });
             }
-          } else {
-            deferred.resolve(false);
           }
         });
         return {
           promise: deferred.promise,
-          value: hasHash
+          value: hasHash,
+          id: id
         }
         $rootScope.$apply();
       }).catch(function(err) {
@@ -289,13 +355,20 @@ app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchServ
     getAuthorized: function() {
       return authorized;
     },
-    setAuthorized: function(hash) {
-      authorized = hash;
+    setAuthorized: function(id, hash) {
+      authorized = {id, hash};
+    },
+    logout: function() {
+      authorized = {};
+      return authorized;
     }
   }
 });
 
-app.factory('$pouchDB', function($rootScope, $q, $http) {
+app.factory('$pouchDB', function($rootScope, $q, $http, pouchService) {
+  var pouch = pouchService.retryReplication();
+  var localPouch = pouchService.localDB;
+  var remoteDB = pouchService.remoteDB;
   /*localDB.changes({
     continuous: true,
     onChange: function(change) {
@@ -331,76 +404,25 @@ app.factory('$pouchDB', function($rootScope, $q, $http) {
       });
       $rootScope.apply();
     },
-    submitSurvey: function(id, answers) {
+    submitSurvey: function(id, group, answers) {
       localPouch.get(id).then(function(doc) {
         console.log(answers);
-        var timesJudged = doc.timesJudged+1;
-        var previousJudges = doc.previousJudged;
-        console.log(timesJudged);
-        console.log(doc.previousJudged);
+
         return localPouch.put({
           _id: doc._id,
           _rev: doc._rev,
-          timesJudged: 0,
-          groupName: "BIO",
-          questions: [
+          hash: doc.hash,
+          username: doc.username,
+          password: doc.password,
+          surveys: [
             {
-              information: "Information and Background",
-              value: 0
-            },
-            {
-              information: "Question, Problem, and Hypothesis",
-              value: 0
-            },
-            {
-              information: "Experimental Approach and Design",
-              value: 0
-            },
-            {
-              information: "Data and Results",
-              value: 0
-            },
-            {
-              information: "Discussions and Conclusion",
-              value: 0
-            },
-            {
-              information: "Research Originality/Novelty",
-              value: 0
-            },
-            {
-              information: "Poster Organization, Style, Visual Appeal",
-              value: 0
-            },
-            {
-              information: "Oral Presentation of Research",
-              value: 0
-            },
-            {
-              information: "Ability to Answer Questions",
-              value: 0
-            },
-            {
-              information: "Overall Presentation",
-              value: 0
-            },
-            {
-              information: "Additional Comments",
-              value: ""
-            }
-          ],
-          judgesName: "",
-          previousJudged: [
-            {
-              judgeName: "test"
-            },
-            {
-              judgeName: "test2"
+              group: group,
+              answers: answers
             }
           ]
         });
       }).then(function(res) {
-        console.log(res);
+        return res;
       }).catch(function(err) {
         console.log(err);
       });

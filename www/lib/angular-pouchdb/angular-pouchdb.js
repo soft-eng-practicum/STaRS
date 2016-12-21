@@ -1,3 +1,8 @@
+if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
+  module.exports = 'pouchdb';
+}
+
+(function(window, angular, undefined) {
 'use strict';
 
 angular.module('pouchdb', [])
@@ -22,7 +27,7 @@ angular.module('pouchdb', [])
     sync: 'eventEmitter',
     replicate: 'replicate'
   })
-  .service('pouchDBDecorators', function($q) {
+  .service('pouchDBDecorators', ["$q", function($q) {
     var self = this;
 
     this.qify = function(fn) {
@@ -77,11 +82,11 @@ angular.module('pouchdb', [])
         }
       });
     };
-  })
-  .provider('pouchDB', function(POUCHDB_METHODS) {
+  }])
+  .provider('pouchDB', ["POUCHDB_METHODS", function(POUCHDB_METHODS) {
     var self = this;
     self.methods = POUCHDB_METHODS;
-    self.$get = function($window, pouchDBDecorators) {
+    self.$get = ["$window", "pouchDBDecorators", function($window, pouchDBDecorators) {
       function wrapMethods(db, methods, parent) {
         for (var method in methods) {
           var wrapFunction = methods[method];
@@ -114,5 +119,6 @@ angular.module('pouchdb', [])
         var db = new $window.PouchDB(name, options);
         return wrapMethods(db, self.methods);
       };
-    };
-  });
+    }];
+  }]);
+})(window, window.angular);

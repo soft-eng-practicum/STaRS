@@ -1,32 +1,11 @@
 <ion-view title="Home" id="home">
-	<ion-content class="padding">
-        <div ng-show="!isAuth">
-            <form name="login" ng-submit="submitForm()" novalidate>
-                <div class="card card-clean">
-                    <div class="list">
-                        <label class="item item-input item-floating-label">
-                            <span class="input-label">Username</span>
-                            <input type="text" ng-model="user.username" placeholder="Username" required>
-                        </label>
-                        <label class="item item-input item-floating-label">
-                            <span class="input-label">Password</span>
-                            <input type="text" ng-show="showPasswordIsChecked" ng-model="user.password" ng-pattern="/[\w\d]{3,15}/i" placeholder="Password" required>
-                            <input type="password" ng-show="!showPasswordIsChecked" ng-model="user.password" placeholder="Password">
-                        </label>
-                        <ion-checkbox ng-model="showPasswordIsChecked">Show password</ion-checkbox>
-                        <div class="row">
-                            <div class="col text-center">
-                                <button type="submit" class="button button-block button-positive" ng-disabled="login.$invalid" ng-click="submit(username)">Submit</button>
-                            </div>
-                        </div>
-                    </div>
+    <ion-content class="padding">
+        <div class="card card-clean">
+            <div class="list" ng-repeat="survey in surveys">
+                <div class="item">
+                    <p>{{survey}}</p>
                 </div>
-            </form>
-        </div>
-        <div ng-show="isAuth">
-            <div class="card card-clean">
-                <h3>Logged in</h3>
             </div>
         </div>
-	</ion-content>
+    </ion-content>
 </ion-view>

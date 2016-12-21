@@ -2,15 +2,24 @@ angular.module('app.routes', ['ui.router'])
 
 .config(function($stateProvider, $urlRouterProvider) {
 	$stateProvider.state('tabsController', {
-		url: '/page1',
+		url: '/tabs',
 		templateUrl: 'templates/tabsController.html',
 		controller: 'mainTabsCtrl',
 		abstract: true
 	})
+	$stateProvider.state('tabsController.login', {
+		url: '/login',
+		views: {
+			'tab2': {
+				templateUrl: 'templates/login.html',
+				controller: 'loginCtrl'
+			}
+		}
+	})
 	$stateProvider.state('tabsController.home', {
 		url: '/home',
 		views: {
-			'tab1': {
+			'tab3': {
 				templateUrl: 'templates/home.html',
 				controller: 'homeCtrl'
 			}
@@ -19,7 +28,7 @@ angular.module('app.routes', ['ui.router'])
 	$stateProvider.state('tabsController.posterList', {
 		url: '/posterList',
 		views: {
-			'tab2': {
+			'tab4': {
 				templateUrl: 'templates/posterList.html',
 				controller: 'posterListCtrl'
 			}
@@ -28,7 +37,7 @@ angular.module('app.routes', ['ui.router'])
 	$stateProvider.state('tabsController.poster', {
 		url: '/posters/{id}',
 		views: {
-			'tab2': {
+			'tab4': {
 				templateUrl:'templates/poster.html',
 				controller: 'posterCtrl'
 			}
@@ -50,6 +59,11 @@ angular.module('app.routes', ['ui.router'])
 			]
 		}
 	})
+	$stateProvider.state('tabsController.logout', {
+		url: '/logout',
+		templateUrl: null,
+		controller: 'logoutCtrl'
+	})
 	$stateProvider.state('tabsController.poster.question', {
 		url:'/questions/questionId',
 		controller: 'questionCtrl',
@@ -67,5 +81,5 @@ angular.module('app.routes', ['ui.router'])
 			]
 		}
 	});
-	$urlRouterProvider.otherwise('/page1/home')
+	$urlRouterProvider.otherwise('/tabs/login');
 });
