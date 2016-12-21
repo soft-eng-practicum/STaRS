@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-var app = angular.module('app', ['ionic', 'app.routes', 'ngStorage', 'angular-md5', 'pouchdb']);
+var app = angular.module('app', ['ionic', 'app.routes', 'ngCookies', 'angular-md5', 'pouchdb']);
 
 app.run(function($ionicPlatform, pouchService) {
   $ionicPlatform.ready(function() {
@@ -62,7 +62,7 @@ app.service('pouchService', function($rootScope, pouchDB, $log) {
 
     self.localDB = pouchDB('judges');
     self.remoteDB = pouchDB('http://127.0.0.1:5984/judges');
-    self.localDB.replicate.to('http://127.0.0.1:5984/judges', opts).$promise
+    self.localDB.sync('http://127.0.0.1:5984/judges', opts).$promise
       .then(null, null, updateStatus)
       .then(updateStatus)
       .catch(updateStatus)
@@ -151,30 +151,39 @@ app.service('pouchService', function($rootScope, pouchDB, $log) {
   };*/
 });
 
-app.controller('mainTabsCtrl', function($scope, $service, $timeout, $rootScope) {
-  console.log(moment.now());
-  $scope.user = {};
-  $rootScope.isAuth = false;
-  $scope.auth = $service.getAuthorized();
+app.controller('mainTabsCtrl', function($scope, $cookieStore, $state, $service, $timeout, $rootScope) {
 
-  if(Object.keys($scope.auth).length > 0) {
+  $scope.user = $service.getAuthorized();
+
+  $scope.auth = $cookieStore.get($scope.user.id);
+  console.log($scope.auth);
+  if($scope.auth != undefined) {
     $rootScope.isAuth = true;
+  } else {
+    $rootScope.isAuth = false;
+    $timeout(function() {
+      $state.go('tabsController.login');
+    }, 0);
+  }
+  $rootScope.isAuthenticated = function() {
+    return $cookieStore.get($scope.user.id);
   }
 
 });
 
 
 app.controller('logoutCtrl', function($scope, $state, $service, $rootScope) {
-  $scope.user = {};
-  $scope.auth = $service.getAuthorized();
+  $scope.user = $service.getAuthorized();
 
-  if(Object.keys($scope.auth).length === 0) {
-    return;
-    $rootScope.isAuth = false;
-  } else {
+  $scope.auth = $cookieStore.get($scope.user.id);
+  if($scope.auth != undefined) {
     $rootScope.isAuth = true;
+  } else {
+    $rootScope.isAuth = false;
+    $timeout(function() {
+      $state.go('tabsController.login');
+    }, 0);
   }
-
   $scope.logout = function() {
     var id = $scope.auth.id;
     $service.logout(id).then(function() {
@@ -187,10 +196,10 @@ app.controller('logoutCtrl', function($scope, $state, $service, $rootScope) {
   }
 });
 
-app.controller('loginCtrl', function($scope, $ionicPopup, $service, $state, pouchService, $timeout, $rootScope) {
+app.controller('loginCtrl', function($scope, $timeout, $ionicPopup, $service, $state, pouchService, $cookieStore, $timeout, $rootScope) {
+  $scope.user = $service.getAuthorized();
   $scope.submitForm = function() {
     $service.login($scope.user.username, $scope.user.password).then(function(res) {
-      console.log(res);
       if(res.id === undefined) {
         $rootScope.isAuth = false;
         $ionicPopup.alert({
@@ -203,10 +212,13 @@ app.controller('loginCtrl', function($scope, $ionicPopup, $service, $state, pouc
         $rootScope.isAuth = true;
         // set the user's auto generated id as the key within localstorage to maintain the login state
         window.localStorage.setItem(res.id, JSON.stringify(res.promise.$$state.value));
+        $service.setAuthorized(res.id, res.promise.$$state.value);
+        $cookieStore.put(res.id, res.promise.$$state.value);
       } else if(res.value === true) {
         var id = res.id;
         $rootScope.isAuth = true;
-        $service.setAuthorized(res.id, window.localStorage.getItem(res.id));
+        $service.setAuthorized(res.id, res.promise.$$state.value);
+        $cookieStore.put(res.id, res.promise.$$state.value);
       }
       $timeout(function() {
         $state.go('tabsController.home');
@@ -215,23 +227,26 @@ app.controller('loginCtrl', function($scope, $ionicPopup, $service, $state, pouc
   }
 
 })
-app.controller('homeCtrl', function($scope, $state, $ionicPopup, $service, pouchService, $rootScope) {
+app.controller('homeCtrl', function($scope, $cookieStore, $state, $ionicPopup, $service, pouchService, $rootScope, $timeout) {
   //$scope.pouchService = pouchService.PouchService();
   $scope.pouchService = pouchService.retryReplication();
+  $scope.surveys = [];
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
 
-  $scope.user = {};
-  $scope.auth = $service.getAuthorized();
+  $scope.user = $service.getAuthorized();
 
-  if(Object.keys($scope.auth).length === 0) {
+  $scope.auth = $cookieStore.get($scope.user.id);
+  if($scope.auth != undefined) {
+    $rootScope.isAuth = true;
+  } else {
     $rootScope.isAuth = false;
     $timeout(function() {
       $state.go('tabsController.login');
     }, 0);
-  } else {
-    $rootScope.isAuth = true;
   }
+
+
 
 });
 
@@ -297,6 +312,24 @@ app.controller('posterCtrl', function($scope, poster, $service, $ionicPopup, pou
   
 });
 
+app.factory('$global', function($cookies) {
+  var user = '';
+  return {
+    setCookie: function(username) {
+      user = username;
+      $cookies.put('user', username);
+    },
+    getCookie: function() {
+      user = $cookies.get('user');
+      return user;
+    },
+    clearCookie: function() {
+      user = '';
+      $cookie.remove('user');
+    }
+  }
+});
+
 app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchService) {
   //var pouch = pouchService.PouchService();
   var pouch = pouchService.retryReplication();
@@ -353,10 +386,12 @@ app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchServ
       return $http.get('./posters.json');
     },
     getAuthorized: function() {
+      console.log(authorized);
       return authorized;
     },
     setAuthorized: function(id, hash) {
       authorized = {id, hash};
+      console.log(authorized);
     },
     logout: function() {
       authorized = {};
