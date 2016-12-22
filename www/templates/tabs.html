@@ -1,0 +1,18 @@
+<ion-view ng-controller="mainTabsCtrl">
+	<ion-tabs class="tabs-icon-top tabs-striped tabs-color-active-ggc" id="tabsController-tabs1">
+		<!--<ion-tab title="Login" icon="ion-ios-list" href="#/tabs/login" id="tabsController-tabs2" ng-if="!$root.isAuth">
+			<ion-nav-view name=""></ion-nav-view>
+		</ion-tab-->
+		<ion-tab title="Home" icon="ion-ios-home" href="#/tab/home" id="tabsController-tabs3">
+			<ion-nav-view name="home-tab"></ion-nav-view>
+		</ion-tab>
+		<ion-tab title="Poster List" icon="ion-ios-list" href="#/tab/posterList" id="tabsController-tabs4">
+			<ion-nav-view name="posterList-tab"></ion-nav-view>
+		</ion-tab>
+		<ion-tab title="Logout" icon="ion-ios-list" href="#/login" ng-click="logout()" id="tabsController-tabs4">
+		</ion-tab>
+		<!--<ion-tab title="Logout" icon="ion-ios-list" href="#/tab/logout" id="tabsController-tabs5" ng-if="$root.isAuth" ng-click="logout()">
+			<ion-nav-view></ion-nav-view>
+		</ion-tab>-->
+	</ion-tabs>
+</ion-view>

@@ -1,45 +1,36 @@
 angular.module('app.routes', ['ui.router'])
 
 .config(function($stateProvider, $urlRouterProvider) {
-	$stateProvider.state('tabsController', {
-		url: '/tabs',
-		templateUrl: 'templates/tabsController.html',
-		controller: 'mainTabsCtrl',
-		abstract: true
-	})
-	$stateProvider.state('tabsController.login', {
+	$stateProvider.state('login', {
 		url: '/login',
-		views: {
-			'tab2': {
-				templateUrl: 'templates/login.html',
-				controller: 'loginCtrl'
-			}
-		}
+		templateUrl: 'templates/login.html'
 	})
-	$stateProvider.state('tabsController.home', {
+	$stateProvider.state('tabs', {
+		url: '/tab',
+		abstract: true,
+		templateUrl: 'templates/tabs.html'
+	})
+	$stateProvider.state('tabs.home', {
 		url: '/home',
 		views: {
-			'tab3': {
-				templateUrl: 'templates/home.html',
-				controller: 'homeCtrl'
+			'home-tab': {
+				templateUrl: 'templates/home.html'
 			}
 		}
 	})
-	$stateProvider.state('tabsController.posterList', {
+	$stateProvider.state('tabs.posterList', {
 		url: '/posterList',
 		views: {
-			'tab4': {
-				templateUrl: 'templates/posterList.html',
-				controller: 'posterListCtrl'
+			'posterList-tab': {
+				templateUrl: 'templates/posterList.html'
 			}
 		}
 	})
-	$stateProvider.state('tabsController.poster', {
+	$stateProvider.state('tabs.poster', {
 		url: '/posters/{id}',
 		views: {
-			'tab4': {
-				templateUrl:'templates/poster.html',
-				controller: 'posterCtrl'
+			'posterList.tab': {
+				templateUrl:'templates/poster.html'
 			}
 		},
 		resolve: {
@@ -58,28 +49,6 @@ angular.module('app.routes', ['ui.router'])
 			}
 			]
 		}
-	})
-	$stateProvider.state('tabsController.logout', {
-		url: '/logout',
-		templateUrl: null,
-		controller: 'logoutCtrl'
-	})
-	$stateProvider.state('tabsController.poster.question', {
-		url:'/questions/questionId',
-		controller: 'questionCtrl',
-		resolve: {
-			question: [
-			'$stateParams', '$pouchDB', '$q',
-			function($stateParams, $pouchDB, $q) {
-				console.log("test");
-				var defObj = $q.defer();
-				$pouchDB.getQuestion($stateParams.questionId).then(function(res) {
-					console.log(res);
-					return defObj.resolve(res);
-				})
-			}
-			]
-		}
 	});
-	$urlRouterProvider.otherwise('/tabs/login');
+	$urlRouterProvider.otherwise('/login');
 });
