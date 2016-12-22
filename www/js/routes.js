@@ -29,24 +29,25 @@ angular.module('app.routes', ['ui.router'])
 	$stateProvider.state('tabs.poster', {
 		url: '/posters/{id}',
 		views: {
-			'posterList.tab': {
-				templateUrl:'templates/poster.html'
+			'posterList-tab': {
+				templateUrl:'templates/poster.html',
+				controller: 'posterCtrl'	
 			}
 		},
 		resolve: {
 			poster: [
 			'$stateParams', '$http', '$q',
-			function($stateParams, $http, $q) {
-				return $http.get('./posters.json').then(function(res) {
-					var deferred = $q.defer();
-					res.data.posters.forEach(function(poster) {
-						if(poster.id == $stateParams.id) {
-							deferred.resolve(poster);
-						}
+				function($stateParams, $http, $q) {
+					return $http.get('./posters.json').then(function(res) {
+						var deferred = $q.defer();
+						console.log(res);
+						res.data.posters.forEach(function(poster) {
+							if(poster.id == $stateParams.id) {
+								return poster;
+							}
+						});
 					})
-					return deferred.promise;
-				})
-			}
+				}
 			]
 		}
 	});
