@@ -70,91 +70,12 @@ app.service('pouchService', function($rootScope, pouchDB, $log) {
         console.log('done');
     });
   }
-  /*this.PouchService = function($rootScope) {
-    var self = this;
-    self.localDB = new PouchDB('judges');
-    self.remoteDB = new PouchDB('http://127.0.0.1:5984/judges');
-
-    var timeout = 5000;
-    var backoff = 1.1;
-    function retryReplication() {
-      self.localDB.sync(self.remoteDB, {live: true, retry: true}).on('change', function() {
-      console.log('change');
-      timeout = 5000;
-    }).on('error', function(err) {
-      console.log(err);
-          setTimeout(function () {
-      timeout *= backoff;
-      console.log(timeout)
-      retryReplication;
-    }, timeout);
-    }); 
-  }
-
-    self.disconnected = false;
-    var inProgress = false;
-    var STARTING_RETRY_TIMEOUT = 1000;
-    var BACKOFF = 1.1;
-    var retryTimeout = STARTING_RETRY_TIMEOUT;
-    function regularReplication() {
-      self.localDB.replicate.from(self.remoteDB)
-      .on('change', handleSuccess)
-      .on('complete', handleComplete)
-      .on('error', handleError)
-    }
-
-    function handleError(err) {
-      self.disconnected = true;
-      if(inProgress) {
-        retryTimeout = Math.floor(retryTimeout * BACKOFF);
-      }
-      inProgress = false;
-      setTimeout(replicate, retryTimeout);
-    }
-    function handleSuccess() {
-      console.log('handleSuccess()');
-      retryTimeout = STARTING_RETRY_TIMEOUT;
-      self.disconnected = false;
-      $rootScope.$apply();
-    }
-
-    function handleComplete() {
-      console.log('handleComplete()');
-      handleSuccess();
-      self.syncComplete = true;
-      $rootScope.$apply();
-    }
-    function replicate() {
-      if (inProgress) {
-        return;
-      }
-      inProgress = true;
-
-      regularReplication();
-    }
-
-    replicate();
-  }
-  this.PouchService.onChange = function (onChangeListener) {
-    console.log('onChange');
-    this.onChangeListener = onChangeListener;
-  };
-
-  this.PouchService.onComplete = function (onCompleteListener) {
-    console.log('onComplete');
-    this.onCompleteListener = onCompleteListener;
-  };
-
-  this.PouchService.onError = function (onErrorListener) {
-    console.log('onError');
-    this.onErrorListener = onErrorListener;
-  };*/
 });
 
-app.controller('mainTabsCtrl', function($scope, $cookieStore, $state, $service, $timeout, $rootScope, $ionicHistory) {
+app.controller('mainTabsCtrl', function($scope, $cookies, $state, $service, $timeout, $rootScope, $ionicHistory) {
 
   $scope.user = $service.getAuthorized();
-  $scope.auth = $cookieStore.get($scope.user.id);
+  $scope.auth = $cookies.get($scope.user.id);
   console.log($scope.auth);
 
   if($scope.auth != undefined) {
@@ -167,12 +88,11 @@ app.controller('mainTabsCtrl', function($scope, $cookieStore, $state, $service, 
   }
   $scope.logout = function() {
     $scope.user = $service.getAuthorized();
-    $scope.auth = $cookieStore.get($scope.user.id);
-    console.log('logout()');
-    var id = $scope.auth.id;
+    $scope.auth = $cookies.get($scope.user.id);
+    var id = $scope.user.id;
+    window.localStorage.removeItem(id);
+    $cookies.remove(id);
     $service.logout(id).then(function() {
-        window.localStorage.removeItem(id);
-        $cookieStore.remove(id);
         $rootScope.isAuth = false;
         $ionicHistory.clearCache().then(function() {
             $ionicHistory.clearHistory();
@@ -184,9 +104,9 @@ app.controller('mainTabsCtrl', function($scope, $cookieStore, $state, $service, 
 
 });
 
-app.controller('loginCtrl', function($scope, $timeout, $ionicPopup, $service, $state, pouchService, $cookieStore, $timeout, $rootScope) {
+app.controller('loginCtrl', function($scope, $timeout, $ionicPopup, $service, $state, pouchService, $cookies, $timeout, $rootScope) {
   $scope.user = $service.getAuthorized();
-  $scope.auth = $cookieStore.get($scope.user.id);
+  $scope.auth = $cookies.get($scope.user.id);
   console.log($scope.auth);
   if($scope.auth != undefined) {
     $rootScope.isAuth = true;
@@ -210,12 +130,12 @@ app.controller('loginCtrl', function($scope, $timeout, $ionicPopup, $service, $s
         // set the user's auto generated id as the key within localstorage to maintain the login state
         window.localStorage.setItem(res.id, JSON.stringify(res.promise.$$state.value));
         $service.setAuthorized(res.id, res.promise.$$state.value);
-        $cookieStore.put(res.id, res.promise.$$state.value);
+        $cookies.put(res.id, res.promise.$$state.value);
       } else if(res.value === true) {
         var id = res.id;
         $rootScope.isAuth = true;
         $service.setAuthorized(res.id, res.promise.$$state.value);
-        $cookieStore.put(res.id, res.promise.$$state.value);
+        $cookies.put(res.id, res.promise.$$state.value);
       }
       $timeout(function() {
         $state.go('tabs.home');
@@ -224,7 +144,7 @@ app.controller('loginCtrl', function($scope, $timeout, $ionicPopup, $service, $s
   }
 
 })
-app.controller('homeCtrl', function($scope, $cookieStore, $state, $ionicPopup, $service, pouchService, $rootScope, $timeout) {
+app.controller('homeCtrl', function($scope, $cookies, $state, $ionicPopup, $service, pouchService, $rootScope, $timeout) {
   //$scope.pouchService = pouchService.PouchService();
   $scope.pouchService = pouchService.retryReplication();
   $scope.surveys = [];
@@ -232,7 +152,7 @@ app.controller('homeCtrl', function($scope, $cookieStore, $state, $ionicPopup, $
   var remoteDB = pouchService.remoteDB;
 
   $scope.user = $service.getAuthorized();
-  $scope.auth = $cookieStore.get($scope.user.id);
+  $scope.auth = $cookies.get($scope.user.id);
   console.log($scope.auth);
   if($scope.auth != undefined) {
     $rootScope.isAuth = true;
@@ -245,14 +165,14 @@ app.controller('homeCtrl', function($scope, $cookieStore, $state, $ionicPopup, $
 
 });
 
-app.controller('posterListCtrl', function($scope, $ionicPopup, $service, pouchService, $rootScope, $cookieStore) {
+app.controller('posterListCtrl', function($scope, $ionicPopup, $service, pouchService, $rootScope, $cookies) {
   //$scope.pouchService = pouchService.PouchService();
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
 
   $scope.user = $service.getAuthorized();
-  $scope.auth = $cookieStore.get($scope.user.id);
+  $scope.auth = $cookies.get($scope.user.id);
   
   if($scope.auth != undefined) {
     $rootScope.isAuth = true;
@@ -278,7 +198,7 @@ app.controller('posterCtrl', function($scope, poster, $service, $ionicPopup, pou
   var remoteDB = pouchService.remoteDB;
 
   $scope.user = $service.getAuthorized();
-  $scope.auth = $cookieStore.get($scope.user.id);
+  $scope.auth = $cookies.get($scope.user.id);
   
   if($scope.auth != undefined) {
     $rootScope.isAuth = true;
