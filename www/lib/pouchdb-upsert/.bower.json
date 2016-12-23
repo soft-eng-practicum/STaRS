@@ -1,0 +1,36 @@
+{
+  "name": "pouchdb-upsert",
+  "version": "2.0.1",
+  "description": "PouchDB upsert and putIfNotExists functions",
+  "main": "dist/pouchdb.upsert.min.js",
+  "homepage": "https://github.com/nolanlawson/pouchdb-upsert",
+  "authors": [
+    "Nolan Lawson <nolan.lawson@gmail.com>"
+  ],
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "upsert",
+    "pouchdb"
+  ],
+  "license": "Apache",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "vendor"
+  ],
+  "_release": "2.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.0.1",
+    "commit": "5bd8bff791bf8d9316ff3b2896de7dc2d0bd63f9"
+  },
+  "_source": "https://github.com/pouchdb/upsert.git",
+  "_target": "^2.0.1",
+  "_originalSource": "pouchdb-upsert",
+  "_direct": true
+}

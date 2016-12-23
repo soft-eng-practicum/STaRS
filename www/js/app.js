@@ -20,28 +20,6 @@ app.run(function($ionicPlatform, pouchService) {
     if(window.StatusBar) {
       StatusBar.styleDefault();
     }
-    var localPouch = pouchService.localDB;
-    var remotePouch = pouchService.remoteDB;
-    /*
-    var sync = PouchDB.sync(localDB, remoteDB, {
-      live: true,
-      retry: true,
-      continuous: true
-    }).on('change', function(info) {
-      console.log(info);
-      console.log('yo, something changed');
-    }).on('paused', function() {
-      console.log('No activity with the database -- paused');
-    }).on('active', function() {
-      console.log('ACTIVE -- resumed replication');
-    }).on('denied', function(err) {
-      console.log(err);
-    }).on('complete', function(info) {
-      console.log(info);
-    }).on('error', function(err) {
-      console.log('Disconnected');
-    });
-*/
   });
 });
 
@@ -100,14 +78,15 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/login');
 });
 
-app.service('pouchService', function($rootScope, pouchDB, $log) {
+app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorators) {
   this.retryReplication = function() {
     var self = this;
     var replicate;
     var status;
     var opts = {
       live: true,
-      retry: true
+      retry: true,
+      continuous: true
     };
 
     function updateStatus(response) {
@@ -313,9 +292,14 @@ app.controller('posterListCtrl', function($scope, $ionicPopup, $service, pouchSe
   $service.getPosters().success(function(data) {
     $scope.posters = data.posters;
   });
+  localPouch.get($scope.user.id).then(function(doc) {
+    console.log(doc);
+    console.log('test');
+  });
+
 });
 
-app.controller('posterCtrl', function($scope, poster, $cookies, $service, $ionicPopup, pouchService, $rootScope) {
+app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service, $timeout, $ionicPopup, pouchService, $pouchDB, $rootScope) {
   console.log(poster);
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
@@ -334,7 +318,8 @@ app.controller('posterCtrl', function($scope, poster, $cookies, $service, $ionic
   }
 
   $scope.poster = poster;
-  console.log(poster);
+  var groupName = $scope.poster.group;
+  var groupId = $scope.poster.id;
   $scope.answers = [];
 
   $service.getSurvey().success(function(data) {
@@ -342,11 +327,18 @@ app.controller('posterCtrl', function($scope, poster, $cookies, $service, $ionic
   });
 
   $scope.submitQuestions = function(isValid) {
-      angular.forEach($scope.poster.questions, function(question) {
+      angular.forEach($scope.questions, function(question) {
         $scope.answers.push(question.value);
       });
-      var id = window.localStorage.getItem()
-      $pouchDB.submitSurvey(id, $scope.answers);
+      console.log($scope.answers);
+      var resultSurvey = {
+        answers: $scope.answers,
+        groupName: groupName,
+        groupId: groupId
+      };
+      console.log(resultSurvey);
+      $pouchDB.submitSurvey($scope.user.id, resultSurvey);
+      $state.go('tabs.home');
   }
   
 });
@@ -355,26 +347,28 @@ app.factory('$pouchDB', function($rootScope, $q, $http, pouchService) {
   var pouch = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
+  var resultSurvey = [];
   return {
     get: function(id) {
           return $http.get('./posters.json');
     },
-    submitSurvey: function(id, group, answers) {
+    submitSurvey: function(id, returnObject) {
       localPouch.get(id).then(function(doc) {
-        console.log(answers);
-
+        console.log(doc.surveys);
+        console.log(doc);
+        doc.surveys.forEach(function(survey) {
+          if(survey.groupId != '') {
+            resultSurvey.push(survey);
+          }
+        });
+        resultSurvey.push(returnObject);
         return localPouch.put({
           _id: doc._id,
           _rev: doc._rev,
           hash: doc.hash,
           username: doc.username,
           password: doc.password,
-          surveys: [
-            {
-              group: group,
-              answers: answers
-            }
-          ]
+          surveys: resultSurvey
         });
       }).then(function(res) {
         return res;
