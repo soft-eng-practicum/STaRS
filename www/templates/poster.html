@@ -1,5 +1,6 @@
 <ion-view title="Poster">
 	<ion-content class="padding">
+	<div ng-if="!previousSurveyed">
 		<form name="questionForm" id="questionForm" ng-submit="submitQuestions(questionForm.$valid)" novalidate>
 			<div class="list card" ng-repeat="question in questions">
 				<div class="item item-divider">
@@ -24,7 +25,7 @@
 				<div ng-show="{{$index}}===10">
 					<label class="item item-input item-floating-label">
 						<span class="input-label">Comments</span>
-					   <input type="text" placeholder="Insert any additional comments here...">
+					   <input type="text" ng-model="question.value" placeholder="Insert any additional comments here...">
 				   </label>
 				</div>
 			</div>
@@ -34,5 +35,12 @@
 				</div>
 			</div>
 		</form>
+	</div>
+	<div ng-if="previousSurveyed">
+		<div class="card card-clean">
+			<h3>You have already submitted a survey of this group.</h3>
+			<button class="button button-dark">Resubmit Survey</button>
+		</div>
+	</div>
 	</ion-content>
 </ion-view>

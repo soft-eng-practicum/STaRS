@@ -1,10 +1,14 @@
 <ion-view title="Home" id="home" ng-controller="homeCtrl">
     <ion-content class="padding">
         <div class="card card-clean">
+        	<div class="item item-divider">
+        		Your Recent Surveys
+        	</div>
             <div class="list" ng-repeat="survey in surveys">
-                <div class="item">
-                    <p>{{survey}}</p>
-                </div>
+            	<a class="item item-icon-right" ui-sref="tabs.poster({id: survey.groupId})">
+            		{{survey.groupName}}
+            		<i class="icon ion-arrow-right-c"></i>
+            	</a>
             </div>
         </div>
     </ion-content>

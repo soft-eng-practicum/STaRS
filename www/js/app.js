@@ -63,7 +63,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
         function($stateParams, $http, $q) {
           return $http.get('./posters.json').then(function(res) {
             var deferred = $q.defer();
-            console.log(res);
             res.data.posters.forEach(function(poster) {
               if(poster.id == $stateParams.id) {
                 deferred.resolve(poster);
@@ -249,7 +248,7 @@ app.controller('loginCtrl', function($scope, $timeout, $ionicPopup, $service, $s
   }
 
 })
-app.controller('homeCtrl', function($scope, $cookies, $state, $ionicPopup, $service, pouchService, $rootScope, $timeout) {
+app.controller('homeCtrl', function($scope, $cookies, $state, $ionicPopup, $service, $pouchDB, pouchService, $rootScope, $timeout) {
   $scope.pouchService = pouchService.retryReplication();
   $scope.surveys = [];
   var localPouch = pouchService.localDB;
@@ -257,7 +256,7 @@ app.controller('homeCtrl', function($scope, $cookies, $state, $ionicPopup, $serv
 
   $scope.user = $service.getAuthorized();
   $scope.auth = $cookies.get($scope.user.id);
-  console.log($scope.auth);
+
   if($scope.auth != undefined) {
     $rootScope.isAuth = true;
   } else {
@@ -266,6 +265,12 @@ app.controller('homeCtrl', function($scope, $cookies, $state, $ionicPopup, $serv
       $state.go('login');
     }, 0);
   }
+
+  var test = $pouchDB.getJudge($scope.user.id).then(function(doc) {
+    $scope.surveys = doc.surveys;
+    console.log(doc.surveys);
+  });
+
 
 });
 
@@ -305,6 +310,8 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
 
+  $scope.previousSurveyed = false;
+  $scope.previousAnswers = [];
   $scope.user = $service.getAuthorized();
   $scope.auth = $cookies.get($scope.user.id);
   
@@ -340,6 +347,18 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
       $pouchDB.submitSurvey($scope.user.id, resultSurvey);
       $state.go('tabs.home');
   }
+
+  $scope.checkPreviousSurveyed = function() {
+    $pouchDB.getJudge($scope.user.id).then(function(doc) {
+      console.log(doc.surveys);
+      var surveys = doc.surveys;
+      if(doc.surveys[0].groupId != '') {
+        $scope.previousSurveyed = true;
+      }
+    });
+  }
+
+  $scope.checkPreviousSurveyed();
   
 });
 
@@ -352,15 +371,25 @@ app.factory('$pouchDB', function($rootScope, $q, $http, pouchService) {
     get: function(id) {
           return $http.get('./posters.json');
     },
+    getJudge: function(id) {
+      var deferred = $q.defer();
+      console.log(id);
+      localPouch.get(id).then(function(doc) {
+        deferred.resolve(doc);
+      }).catch(function(err) {
+        console.log(err);
+      });
+      return deferred.promise;
+    },
     submitSurvey: function(id, returnObject) {
       localPouch.get(id).then(function(doc) {
-        console.log(doc.surveys);
-        console.log(doc);
+
         doc.surveys.forEach(function(survey) {
           if(survey.groupId != '') {
             resultSurvey.push(survey);
           }
         });
+
         resultSurvey.push(returnObject);
         return localPouch.put({
           _id: doc._id,
@@ -372,6 +401,7 @@ app.factory('$pouchDB', function($rootScope, $q, $http, pouchService) {
         });
       }).then(function(res) {
         return res;
+        $rootScope.$apply();
       }).catch(function(err) {
         console.log(err);
       });
