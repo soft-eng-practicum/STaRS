@@ -119,6 +119,7 @@ app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchServ
         include_docs: true,
         attachments: true
       }).then(function(res) {
+        console.log(res);
         res.rows.forEach(function(row) {
           if(angular.equals(row.doc.username,username) && angular.equals(row.doc.password,password)) {
             id = row.doc._id;
@@ -180,16 +181,7 @@ app.controller('mainTabsCtrl', function($scope, $cookies, $state, $service, $tim
 
   $scope.user = $service.getAuthorized();
   $scope.auth = $cookies.get($scope.user.id);
-  console.log($scope.auth);
 
-  if($scope.auth != undefined) {
-    $rootScope.isAuth = true;
-  } else {
-    $rootScope.isAuth = false;
-    $timeout(function() {
-      $state.go('login');
-    }, 0);
-  }
   $scope.logout = function() {
     $scope.user = $service.getAuthorized();
     $scope.auth = $cookies.get($scope.user.id);
@@ -199,8 +191,9 @@ app.controller('mainTabsCtrl', function($scope, $cookies, $state, $service, $tim
     $service.logout(id).then(function() {
         $rootScope.isAuth = false;
         $ionicHistory.clearCache().then(function() {
-            $ionicHistory.clearHistory();
-            $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
+          $ionicHistory.clearHistory();
+          $ionicHistory.clearCache();
+          $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });            
         });
         $state.go('login');
     });
@@ -208,19 +201,46 @@ app.controller('mainTabsCtrl', function($scope, $cookies, $state, $service, $tim
 
 });
 
-app.controller('loginCtrl', function($scope, $timeout, $ionicPopup, $service, $state, $cookies, $rootScope) {
-  $scope.user = $service.getAuthorized();
-  $scope.auth = $cookies.get($scope.user.id);
-  console.log($scope.auth);
-  if($scope.auth != undefined) {
-    $rootScope.isAuth = true;
-  } else {
-    $rootScope.isAuth = false;
+app.controller('loginCtrl', function($scope, $timeout, $pouchDB, $ionicPopup, $service, $state, $cookies, $rootScope, pouchService) {
+  $scope.pouchService = pouchService.retryReplication();
+  var localPouch = pouchService.localDB;
+  var remoteDB = pouchService.remoteDB;
+
+  $scope.items = [];
+  $scope.user = {};
+  $scope.search = {};
+
+
+  $scope.getItems = function() {
+    localPouch.allDocs({
+      include_docs: true,
+      attachments: true
+    }).then(function(result) {
+      var docs = result.rows;
+      docs.forEach(function(res) {
+        var item = {name: res.doc.username};
+        $scope.items.push(item);
+      });
+      console.log($scope.items);
+    }).catch(function(err) {
+      console.log(err);
+    });
   }
 
+  $scope.getItems();
+
+
+  $scope.updateSelection = function(name) {
+    console.log(name);
+    $scope.user.username = name;
+    console.log($scope.search.value);
+
+  }
+
+
   $scope.submitForm = function() {
-    console.log('login()');
     $service.login($scope.user.username, $scope.user.password).then(function(res) {
+      console.log(res);
       if(res.id === undefined) {
         $rootScope.isAuth = false;
         $ionicPopup.alert({
@@ -243,6 +263,9 @@ app.controller('loginCtrl', function($scope, $timeout, $ionicPopup, $service, $s
       }
       $timeout(function() {
         $state.go('tabs.home');
+        $scope.user.username = '';
+        $scope.user.password = '';
+        $scope.search.value = '';
       }, 0);
     });
   }
@@ -405,6 +428,22 @@ app.factory('$pouchDB', function($rootScope, $q, $http, pouchService) {
       }).catch(function(err) {
         console.log(err);
       });
+    },
+    getAll: function() {
+      var deferred = $q.defer();
+      localPouch.allDocs({
+        include_docs: true
+      }).then(function(result) {
+        var docs = result.rows;
+        var result = [];
+        docs.forEach(function(res) {
+          result.push(res.doc.username);
+        });
+        deferred.resolve(result);
+      }).catch(function(err) {
+        console.log(err);
+      });
+      return deferred.promise;
     }
   }
 });
