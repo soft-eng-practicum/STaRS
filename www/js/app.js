@@ -85,7 +85,7 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
     var opts = {
       live: true,
       retry: true,
-      continous: true
+      continuous: true
     };
 
     self.localDB = pouchDB('judges');
