@@ -34,3 +34,16 @@ ion-tabs.tabs-color-active-ggc .tab-item.tab-item-active, ion-tabs.tabs-color-ac
 	border-top:0px !important;
 	border-bottom:0px !important;
 }
+
+.bar.bar-custom {
+  border-color: #b2b2b2;
+  background-color: #00704a;
+  background-image: linear-gradient(0deg, #b2b2b2, #b2b2b2 50%, transparent 50%);
+  color: #444; 
+}
+.bar.bar-custom .title {
+  color: #a5acb0; 
+}
+.bar.bar-custom.bar-footer {
+  background-image: linear-gradient(180deg, #b2b2b2, #b2b2b2 50%, transparent 50%); 
+}

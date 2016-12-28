@@ -85,23 +85,26 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
     var opts = {
       live: true,
       retry: true,
-      continuous: true
+      continous: true
     };
-
-    function updateStatus(response) {
-      $log.info(response.$event, response);
-      status = JSON.stringify(response);
-    }
 
     self.localDB = pouchDB('judges');
     self.remoteDB = pouchDB('http://127.0.0.1:5984/judges');
-    self.localDB.sync('http://127.0.0.1:5984/judges', opts).$promise
-      .then(null, null, updateStatus)
-      .then(updateStatus)
-      .catch(updateStatus)
-      .finally(function() {
-        console.log('done');
+    self.localDB.sync('http://127.0.0.1:5984/judges', opts)
+    .on('change', function(change) {
+      console.log('yo something changed');
+      console.log(change);
+    }).on('paused', function(info) {
+      console.log(info);
+      console.log('PAUSED');
+    }).on('active', function(info) {
+      console.log(info);
+      console.log('ACTIVE');
+    }).on('error', function(err) {
+      console.log(err);
+      console.log('ERROR');
     });
+
   }
 });
 
@@ -221,7 +224,6 @@ app.controller('loginCtrl', function($scope, $timeout, $pouchDB, $ionicPopup, $s
         var item = {name: res.doc.username};
         $scope.items.push(item);
       });
-      console.log($scope.items);
     }).catch(function(err) {
       console.log(err);
     });
@@ -231,10 +233,7 @@ app.controller('loginCtrl', function($scope, $timeout, $pouchDB, $ionicPopup, $s
 
 
   $scope.updateSelection = function(name) {
-    console.log(name);
     $scope.user.username = name;
-    console.log($scope.search.value);
-
   }
 
 
@@ -291,7 +290,6 @@ app.controller('homeCtrl', function($scope, $cookies, $state, $ionicPopup, $serv
 
   var test = $pouchDB.getJudge($scope.user.id).then(function(doc) {
     $scope.surveys = doc.surveys;
-    console.log(doc.surveys);
   });
 
 
@@ -328,15 +326,15 @@ app.controller('posterListCtrl', function($scope, $ionicPopup, $service, pouchSe
 });
 
 app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service, $timeout, $ionicPopup, pouchService, $pouchDB, $rootScope) {
-  console.log(poster);
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
-
+  $scope.countJudges = 0;
   $scope.previousSurveyed = false;
   $scope.previousAnswers = [];
   $scope.user = $service.getAuthorized();
   $scope.auth = $cookies.get($scope.user.id);
+  $scope.judgesSurveyed = [];
   
   if($scope.auth != undefined) {
     $rootScope.isAuth = true;
@@ -356,6 +354,7 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
     $scope.questions = data.questions;
   });
 
+
   $scope.submitQuestions = function(isValid) {
       angular.forEach($scope.questions, function(question) {
         $scope.answers.push(question.value);
@@ -373,15 +372,61 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
 
   $scope.checkPreviousSurveyed = function() {
     $pouchDB.getJudge($scope.user.id).then(function(doc) {
-      console.log(doc.surveys);
+      console.log(doc);
       var surveys = doc.surveys;
-      if(doc.surveys[0].groupId != '') {
-        $scope.previousSurveyed = true;
+      for(var i = 0; i < doc.surveys.length; i++) {
+        if(doc.surveys[i].groupId == $scope.poster.id) {
+          $scope.previousSurveyed = true;
+        }
       }
     });
   }
 
+  $scope.resubmitSurvey = function() {
+    $scope.letJudgeViewQuestions = true;
+
+    localPouch.get($scope.user.id).then(function(doc) {
+      var surveys = doc.surveys;
+      for(var i = 0; i < doc.surveys.length; i++) {
+        if(doc.surveys[i].groupId == $scope.poster.id) {
+          $scope.survey = doc.surveys[i];
+        }
+      }
+       
+
+    })
+  }
+
+  $scope.showJudges = function() {
+    $ionicPopup.alert({
+      title: 'Judges Who Have Surveyed:',
+      templateUrl: 'templates/popup.html',
+      scope: $scope
+    });
+  }
+
+  $scope.judgesWhoHaveSurveyed = function() {
+    localPouch.allDocs({
+      include_docs: true,
+      attachments: true
+    }).then(function(result) {
+      var docs = result.rows;
+      docs.forEach(function(res) {
+        for(var i = 0; i < res.doc.surveys.length; i++) {
+          if(res.doc.surveys[i].groupId == $scope.poster.id) {
+            $scope.judgesSurveyed.push(res.doc.username);
+          }
+        }
+      });
+      console.log($scope.judgesSurveyed);
+      $scope.countJudges = $scope.judgesSurveyed.length;
+    }).catch(function(err) {
+      console.log(err);
+    });
+  }
+
   $scope.checkPreviousSurveyed();
+  $scope.judgesWhoHaveSurveyed();
   
 });
 
