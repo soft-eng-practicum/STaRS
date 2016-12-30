@@ -95,7 +95,6 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
       console.log('yo something changed');
       console.log(change);
     }).on('paused', function(info) {
-      console.log(info);
       console.log('PAUSED');
     }).on('active', function(info) {
       console.log(info);
@@ -176,6 +175,20 @@ app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchServ
       authorized = {};
       deferred.resolve(authorized);
       return deferred.promise;
+    },
+    isOnline: function() {
+      var networkState = null;
+      if(navigator.connection) {
+        networkState = navigator.connection;
+      }
+      if(networkState && networkState === Connection.NONE) {
+        return false;
+      }
+      if(navigator.online) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 });
@@ -320,7 +333,6 @@ app.controller('posterListCtrl', function($scope, $ionicPopup, $service, pouchSe
   });
   localPouch.get($scope.user.id).then(function(doc) {
     console.log(doc);
-    console.log('test');
   });
 
 });
@@ -366,8 +378,14 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
         groupId: groupId
       };
       console.log(resultSurvey);
-      $pouchDB.submitSurvey($scope.user.id, resultSurvey);
-      $state.go('tabs.home');
+      $pouchDB.submitSurvey($scope.user.id, resultSurvey).then(function(res) {
+        console.log(res);
+        $scope.previousSurveyed = true;
+        $scope.judgesSurveyed.push(res.username);
+        $scope.countJudges++;
+              console.log($scope.judgesSurveyed);
+
+      });
   }
 
   $scope.checkPreviousSurveyed = function() {
@@ -385,16 +403,14 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
   $scope.resubmitSurvey = function() {
     $scope.letJudgeViewQuestions = true;
 
-    localPouch.get($scope.user.id).then(function(doc) {
-      var surveys = doc.surveys;
-      for(var i = 0; i < doc.surveys.length; i++) {
-        if(doc.surveys[i].groupId == $scope.poster.id) {
-          $scope.survey = doc.surveys[i];
-        }
-      }
-       
+    $pouchDB.deleteSurvey($scope.user.id, $scope.poster.id).then(function(res) {
+      console.log(res);
+      $scope.previousSurveyed = false;
+      $scope.judgesSurveyed.splice($scope.judgesSurveyed.indexOf(res.username, 1));
+      $scope.countJudges--;
+      console.log($scope.judgesSurveyed);
+    });
 
-    })
   }
 
   $scope.showJudges = function() {
@@ -450,14 +466,13 @@ app.factory('$pouchDB', function($rootScope, $q, $http, pouchService) {
       return deferred.promise;
     },
     submitSurvey: function(id, returnObject) {
+      var deferred = $q.defer();
       localPouch.get(id).then(function(doc) {
-
         doc.surveys.forEach(function(survey) {
           if(survey.groupId != '') {
             resultSurvey.push(survey);
           }
         });
-
         resultSurvey.push(returnObject);
         return localPouch.put({
           _id: doc._id,
@@ -467,12 +482,14 @@ app.factory('$pouchDB', function($rootScope, $q, $http, pouchService) {
           password: doc.password,
           surveys: resultSurvey
         });
-      }).then(function(res) {
-        return res;
-        $rootScope.$apply();
+      }).then(function() {
+        var result = localPouch.get(id);
+        deferred.resolve(result);
       }).catch(function(err) {
         console.log(err);
+        deferred.reject(err);
       });
+      return deferred.promise;
     },
     getAll: function() {
       var deferred = $q.defer();
@@ -487,6 +504,34 @@ app.factory('$pouchDB', function($rootScope, $q, $http, pouchService) {
         deferred.resolve(result);
       }).catch(function(err) {
         console.log(err);
+      });
+      return deferred.promise;
+    },
+    deleteSurvey: function(id, groupId) {
+      var deferred = $q.defer();
+      localPouch.get(id).then(function(doc) {
+        doc.surveys.forEach(function(survey) {
+          console.log(groupId);
+          console.log(survey.groupId);
+          // Check to see if the groupId field is empty or is the deleted survey the user wants to delete to resubmit
+          if(survey.groupId != '' && survey.groupId != groupId) {
+            resultSurvey.push(survey);
+          }
+        })
+        return localPouch.put({
+          _id: doc._id,
+          _rev: doc._rev,
+          hash: doc.hash,
+          username: doc.username,
+          password: doc.password,
+          surveys: resultSurvey          
+        });
+      }).then(function() {
+        var result = localPouch.get(id);
+        deferred.resolve(result);
+      }).catch(function(err) {
+        console.log(err);
+        deferred.reject(err);
       });
       return deferred.promise;
     }

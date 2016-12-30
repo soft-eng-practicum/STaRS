@@ -1,4 +1,4 @@
-<div ng-repeat="judge in judgesSurveyed" class="list">
+<div ng-repeat="judge in judgesSurveyed track by $index" class="list">
 	<div class="item item-text-wrap">
 		<p class="text-center">{{judge}}</p>
 	</div>
