@@ -1,41 +1,38 @@
-<ion-view title="GGC STaRS: Login" ng-controller="loginCtrl">
+<ion-view title="GGC STaRS: Login" >
     <ion-content class="padding" has-header="true">
-        <div class="card card-clean">
-            <div class="list">
-                <label class="item item-input item-divider">
-                    <i class="icon ion-search placeholder-icon"></i>
-                    <input type="text" placeholder="Username Search" ng-model="search.value">
-                </label>
-                <div ng-if="search.value">
-                    <div class="item item-checkbox" ng-repeat="item in items | filter:search.value track by $index">
-                    <label class="checkbox">
-                        <input type="checkbox" ng-model="user.username" ng-true-value="'{{item.name}}'" ng-click="updateSelection(item.name)">
-                    </label> 
-                    {{item.name}}
-                    </div>
-                </div>
+      <div class="container">
+        <div class="card">
+          <div class="card-header ggc-green white-text">
+            Complete the form below to continue
+          </div>
+          <div class="card-block">
+            <div class="md-form">
+              <i class="ion-search prefix"></i>
+              <input type="text" id="search" class="form-control" ng-model="search.value">
+              <label for="search">Username Search</label>
             </div>
+            <div class="list-group" ng-if="search.value">
+              <div class="list-group-item active">Found Usernames:</div>
+              <div ng-repeat="item in items | filter: search.value">
+                <button type="button" class="list-group-item list-group-item-action" ng-click="updateSelection(item.name)">{{item.name}}</button>
+              </div>
+              <div class="list-group-item footer">If your username is not found, you may not be registered within the system</div>
+            </div>
+          </div>
+          <div class="card-block">
+            <div class="md-form">
+              <i class="ion-person prefix"></i>
+              <input type="text" id="username" class="form-control" ng-model="user.username">
+              <label id="active" for="username">Username</label>
+            </div>
+            <div class="md-form">
+              <i class="ion-lock-combination prefix"></i>
+              <input type="password" id="password" class="form-control" ng-model="user.password">
+              <label for="password">Password</label>
+            </div>
+            <button type="button" class="btn btn-green btn-lg btn-block" ng-click="submitForm(user)">Submit</button>
+          </div>
         </div>
-        <form name="login" ng-submit="submitForm()" novalidate>
-            <div class="card card-clean">
-                <div class="list">
-                    <label class="item item-input item-floating-label">
-                        <span class="input-label">Username</span>
-                        <input type="text" ng-model="user.username" placeholder="Username" required>
-                    </label>
-                    <label class="item item-input item-floating-label">
-                        <span class="input-label">Password</span>
-                        <input type="text" ng-show="showPasswordIsChecked" ng-model="user.password" ng-pattern="/[\w\d]{3,15}/i" placeholder="Password" required>
-                        <input type="password" ng-show="!showPasswordIsChecked" ng-model="user.password" placeholder="Password">
-                    </label>
-                    <ion-checkbox ng-model="showPasswordIsChecked">Show password</ion-checkbox>
-                    <div class="item item-divider">
-                        <div class="col text-center">
-                            <button type="submit" class="button button-block button-positive" ng-disabled="login.$invalid" ng-click="submit(username)">Submit</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
+      </div>
     </ion-content>
 </ion-view>

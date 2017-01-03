@@ -1,12 +1,16 @@
 <ion-view title="GGC STaRS: Posters" ng-controller="posterListCtrl">
 	<ion-content class="padding" has-header="true">
-		<div class="card card-clean">
-			<div class="list" ng-repeat="poster in posters">
-				<!-- NEED TO ADD LOADER WHILE DATA IS BEING PULLED FROM COUCHDB -->
-				<div class="item">
-					<a ui-sref="tabs.poster({id: poster.id})" style="text-decoration: none;">
-						<p>{{poster.group}}</p>
-					</a>
+		<div class="container">
+			<div class="card">
+				<div class="card-header ggc-green white-text">
+					Select Any of the Following Posters
+				</div>
+				<div class="card-block">
+					<div class="list-group" ng-repeat="poster in posters track by $index">
+						<a class="list-group-item list-group-item-action" ui-sref="tabs.poster({id: poster.id})" style="text-decoration: none;">
+							{{poster.group}}
+						</a>
+					</div>
 				</div>
 			</div>
 		</div>

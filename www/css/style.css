@@ -1,17 +1,14 @@
 ion-tabs.tabs-color-active-ggc .tab-item {
 	border-color: #fff !important;
-  	color: #a5acb0;
+  color: #a5acb0;
 }
 ion-tabs.tabs-color-active-ggc .tab-item.tab-item-active, ion-tabs.tabs-color-active-ggc .tab-item.active, ion-tabs.tabs-color-active-ggc .tab-item.activated {
-    color: #fff; 
-}
-.tabs {
-	background-color: #00704a !important;
+  color: #fff;
 }
 .button.button-positive {
   border-color: transparent;
   background-color: #00704a;
-  color: #fff; 
+  color: #fff;
 }
 * {
 	font-family: 'Ubuntu Condensed', sans-serif !important;
@@ -23,27 +20,29 @@ ion-tabs.tabs-color-active-ggc .tab-item.tab-item-active, ion-tabs.tabs-color-ac
 .button-bar > .button{
   border: 1px solid #cfcfcf;
 }
-
 .button-bar > .button:last-child {
   border-radius: 0px 20px 20px 0px !important;
 }
 .button-bar > .button:first-child {
-    border-radius: 20px 0px 0px 20px !important;
+  border-radius: 20px 0px 0px 20px !important;
 }
 .item-radio {
 	border-top:0px !important;
 	border-bottom:0px !important;
 }
-
-.bar.bar-custom {
-  border-color: #b2b2b2;
-  background-color: #00704a;
-  background-image: linear-gradient(0deg, #b2b2b2, #b2b2b2 50%, transparent 50%);
-  color: #444; 
+.ggc-green, .bar-stable, .btn-green, .tabs {
+  background-color: #00704a !important;
 }
-.bar.bar-custom .title {
-  color: #a5acb0; 
+header {
+  padding-bottom: 10px;
 }
-.bar.bar-custom.bar-footer {
-  background-image: linear-gradient(180deg, #b2b2b2, #b2b2b2 50%, transparent 50%); 
+.footer {
+	 background-color: #ECEEEF !important;
+}
+.card-header {
+	font-size: 16px;
+	text-align: center;
+}
+.title, ion-header-bar > button  {
+	color: #ffffff !important;
 }

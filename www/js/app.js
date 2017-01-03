@@ -3,9 +3,9 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-var app = angular.module('app', ['ionic', 'ui.router', 'ngCookies', 'angular-md5', 'pouchdb']);
+var app = angular.module('app', ['ionic', 'ui.router', 'ngCookies', 'angular-md5', 'pouchdb', 'ngCordova']);
 
-app.run(function($ionicPlatform, pouchService) {
+app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork) {
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -26,13 +26,14 @@ app.run(function($ionicPlatform, pouchService) {
 app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider.state('login', {
     url: '/login',
-    templateUrl: 'templates/login.html'
-  })
+    templateUrl: 'templates/login.html',
+    controller: 'loginCtrl'
+  });
   $stateProvider.state('tabs', {
     url: '/tab',
     abstract: true,
     templateUrl: 'templates/tabs.html'
-  })
+  });
   $stateProvider.state('tabs.home', {
     url: '/home',
     views: {
@@ -40,7 +41,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         templateUrl: 'templates/home.html'
       }
     }
-  })
+  });
   $stateProvider.state('tabs.posterList', {
     url: '/posterList',
     views: {
@@ -48,7 +49,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         templateUrl: 'templates/posterList.html'
       }
     }
-  })
+  });
   $stateProvider.state('tabs.poster', {
     url: '/posters/{id}',
     views: {
@@ -69,7 +70,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
               }
             });
             return deferred.promise;
-          })
+          });
         }
       ]
     }
@@ -104,7 +105,7 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
       console.log('ERROR');
     });
 
-  }
+  };
 });
 
 app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchService) {
@@ -125,7 +126,7 @@ app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchServ
         res.rows.forEach(function(row) {
           if(angular.equals(row.doc.username,username) && angular.equals(row.doc.password,password)) {
             id = row.doc._id;
-            if(row.doc.hash != '') {
+            if(row.doc.hash !== '') {
               deferred.resolve(row.doc.hash);
               hasHash = true;
             } else {
@@ -150,11 +151,10 @@ app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchServ
           promise: deferred.promise,
           value: hasHash,
           id: id
-        }
-        $rootScope.$apply();
+        };
       }).catch(function(err) {
         console.log(err);
-      })
+      });
     },
     getSurvey: function() {
       return $http.get('./survey.json');
@@ -190,7 +190,7 @@ app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchServ
         return false;
       }
     }
-  }
+  };
 });
 
 app.controller('mainTabsCtrl', function($scope, $cookies, $state, $service, $timeout, $rootScope, $ionicHistory) {
@@ -209,23 +209,52 @@ app.controller('mainTabsCtrl', function($scope, $cookies, $state, $service, $tim
         $ionicHistory.clearCache().then(function() {
           $ionicHistory.clearHistory();
           $ionicHistory.clearCache();
-          $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });            
+          $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
         });
         $state.go('login');
     });
-  }
+  };
 
 });
 
-app.controller('loginCtrl', function($scope, $timeout, $pouchDB, $ionicPopup, $service, $state, $cookies, $rootScope, pouchService) {
+app.controller('loginCtrl', function($scope, $timeout, $pouchDB, $cordovaNetwork, $ionicPopup, $service, $state, $cookies, $rootScope, pouchService) {
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
 
+  document.addEventListener("deviceready", function () {
+    console.log('deviceready');
+
+      $scope.network = $cordovaNetwork.getNetwork();
+      $scope.isOnline = $cordovaNetwork.isOnline();
+      $rootScope.headerVal = '';
+      $scope.$apply();
+
+      // listen for Online event
+      $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
+        console.log('got online');
+          $scope.isOnline = true;
+          $rootScope.headerVal = 'Online';
+          $scope.network = $cordovaNetwork.getNetwork();
+
+          $scope.$apply();
+      });
+
+      // listen for Offline event
+      $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
+          console.log("got offline");
+          $scope.isOnline = false;
+          $rootScope.headerVal = 'Offline';
+          $scope.network = $cordovaNetwork.getNetwork();
+
+          $scope.$apply();
+      });
+
+}, false);
+
   $scope.items = [];
   $scope.user = {};
   $scope.search = {};
-
 
   $scope.getItems = function() {
     localPouch.allDocs({
@@ -240,19 +269,21 @@ app.controller('loginCtrl', function($scope, $timeout, $pouchDB, $ionicPopup, $s
     }).catch(function(err) {
       console.log(err);
     });
-  }
+  };
 
   $scope.getItems();
 
 
   $scope.updateSelection = function(name) {
+    $('#active').focus();
     $scope.user.username = name;
-  }
+  };
 
 
   $scope.submitForm = function() {
     $service.login($scope.user.username, $scope.user.password).then(function(res) {
       console.log(res);
+      var id;
       if(res.id === undefined) {
         $rootScope.isAuth = false;
         $ionicPopup.alert({
@@ -261,14 +292,14 @@ app.controller('loginCtrl', function($scope, $timeout, $pouchDB, $ionicPopup, $s
         });
         return;
       } else if(res.value === false) {
-        var id = res.id;
+        id = res.id;
         $rootScope.isAuth = true;
         // set the user's auto generated id as the key within localstorage to maintain the login state
         window.localStorage.setItem(res.id, JSON.stringify(res.promise.$$state.value));
         $service.setAuthorized(res.id, res.promise.$$state.value);
         $cookies.put(res.id, res.promise.$$state.value);
       } else if(res.value === true) {
-        var id = res.id;
+        id = res.id;
         $rootScope.isAuth = true;
         $service.setAuthorized(res.id, res.promise.$$state.value);
         $cookies.put(res.id, res.promise.$$state.value);
@@ -280,9 +311,9 @@ app.controller('loginCtrl', function($scope, $timeout, $pouchDB, $ionicPopup, $s
         $scope.search.value = '';
       }, 0);
     });
-  }
+  };
 
-})
+});
 app.controller('homeCtrl', function($scope, $cookies, $state, $ionicPopup, $service, $pouchDB, pouchService, $rootScope, $timeout) {
   $scope.pouchService = pouchService.retryReplication();
   $scope.surveys = [];
@@ -292,7 +323,7 @@ app.controller('homeCtrl', function($scope, $cookies, $state, $ionicPopup, $serv
   $scope.user = $service.getAuthorized();
   $scope.auth = $cookies.get($scope.user.id);
 
-  if($scope.auth != undefined) {
+  if($scope.auth !== undefined) {
     $rootScope.isAuth = true;
   } else {
     $rootScope.isAuth = false;
@@ -315,8 +346,8 @@ app.controller('posterListCtrl', function($scope, $ionicPopup, $service, pouchSe
 
   $scope.user = $service.getAuthorized();
   $scope.auth = $cookies.get($scope.user.id);
-  
-  if($scope.auth != undefined) {
+
+  if($scope.auth !== undefined) {
     $rootScope.isAuth = true;
   } else {
     $rootScope.isAuth = false;
@@ -347,8 +378,8 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
   $scope.user = $service.getAuthorized();
   $scope.auth = $cookies.get($scope.user.id);
   $scope.judgesSurveyed = [];
-  
-  if($scope.auth != undefined) {
+
+  if($scope.auth !== undefined) {
     $rootScope.isAuth = true;
   } else {
     $rootScope.isAuth = false;
@@ -386,7 +417,7 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
               console.log($scope.judgesSurveyed);
 
       });
-  }
+  };
 
   $scope.checkPreviousSurveyed = function() {
     $pouchDB.getJudge($scope.user.id).then(function(doc) {
@@ -398,7 +429,7 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
         }
       }
     });
-  }
+  };
 
   $scope.resubmitSurvey = function() {
     $scope.letJudgeViewQuestions = true;
@@ -411,7 +442,7 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
       console.log($scope.judgesSurveyed);
     });
 
-  }
+  };
 
   $scope.showJudges = function() {
     $ionicPopup.alert({
@@ -419,7 +450,7 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
       templateUrl: 'templates/popup.html',
       scope: $scope
     });
-  }
+  };
 
   $scope.judgesWhoHaveSurveyed = function() {
     localPouch.allDocs({
@@ -439,11 +470,11 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
     }).catch(function(err) {
       console.log(err);
     });
-  }
+  };
 
   $scope.checkPreviousSurveyed();
   $scope.judgesWhoHaveSurveyed();
-  
+
 });
 
 app.factory('$pouchDB', function($rootScope, $q, $http, pouchService) {
@@ -469,7 +500,7 @@ app.factory('$pouchDB', function($rootScope, $q, $http, pouchService) {
       var deferred = $q.defer();
       localPouch.get(id).then(function(doc) {
         doc.surveys.forEach(function(survey) {
-          if(survey.groupId != '') {
+          if(survey.groupId !== '') {
             resultSurvey.push(survey);
           }
         });
@@ -493,11 +524,12 @@ app.factory('$pouchDB', function($rootScope, $q, $http, pouchService) {
     },
     getAll: function() {
       var deferred = $q.defer();
+      var result;
       localPouch.allDocs({
         include_docs: true
       }).then(function(result) {
         var docs = result.rows;
-        var result = [];
+        result = [];
         docs.forEach(function(res) {
           result.push(res.doc.username);
         });
@@ -514,17 +546,17 @@ app.factory('$pouchDB', function($rootScope, $q, $http, pouchService) {
           console.log(groupId);
           console.log(survey.groupId);
           // Check to see if the groupId field is empty or is the deleted survey the user wants to delete to resubmit
-          if(survey.groupId != '' && survey.groupId != groupId) {
+          if(survey.groupId !== '' && survey.groupId != groupId) {
             resultSurvey.push(survey);
           }
-        })
+        });
         return localPouch.put({
           _id: doc._id,
           _rev: doc._rev,
           hash: doc.hash,
           username: doc.username,
           password: doc.password,
-          surveys: resultSurvey          
+          surveys: resultSurvey
         });
       }).then(function() {
         var result = localPouch.get(id);
@@ -535,5 +567,5 @@ app.factory('$pouchDB', function($rootScope, $q, $http, pouchService) {
       });
       return deferred.promise;
     }
-  }
+  };
 });
