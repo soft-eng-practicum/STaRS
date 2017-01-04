@@ -1,6 +1,6 @@
 ion-tabs.tabs-color-active-ggc .tab-item {
 	border-color: #fff !important;
-  color: #a5acb0;
+  color: #a5acb0 !important;
 }
 ion-tabs.tabs-color-active-ggc .tab-item.tab-item-active, ion-tabs.tabs-color-active-ggc .tab-item.active, ion-tabs.tabs-color-active-ggc .tab-item.activated {
   color: #fff;
@@ -30,7 +30,7 @@ ion-tabs.tabs-color-active-ggc .tab-item.tab-item-active, ion-tabs.tabs-color-ac
 	border-top:0px !important;
 	border-bottom:0px !important;
 }
-.ggc-green, .bar-stable, .btn-green, .tabs {
+.ggc-green, .bar-stable, .btn-green, .tabs, .badge-positive {
   background-color: #00704a !important;
 }
 header {
@@ -45,4 +45,8 @@ header {
 }
 .title, ion-header-bar > button  {
 	color: #ffffff !important;
+}
+.badge-positive, .inline {
+	display: inline-block !important;
+	vertical-align: middle !important;
 }

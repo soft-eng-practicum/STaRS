@@ -7,8 +7,9 @@
 				</div>
 				<div class="card-block">
 					<div class="list-group" ng-repeat="poster in posters track by $index">
-						<a class="list-group-item list-group-item-action" ui-sref="tabs.poster({id: poster.id})" style="text-decoration: none;">
-							{{poster.group}}
+						<a class="list-group-item list-group-item-action item" ui-sref="tabs.poster({id: poster.id})" style="text-decoration: none;">
+							<span class="inline">{{poster.group}}</span>
+							<span class="badge badge-positive">Surveyed: {{poster.countJudges}}</span>
 						</a>
 					</div>
 				</div>
