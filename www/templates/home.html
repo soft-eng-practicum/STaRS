@@ -1,15 +1,19 @@
 <ion-view title="GGC STaRS: Home" ng-controller="homeCtrl">
     <ion-content class="padding" has-header="true">
-        <div class="card card-clean">
-        	<div class="item item-divider">
-        		Your Recent Surveys
-        	</div>
-            <div class="list" ng-repeat="survey in surveys">
-            	<a class="item item-icon-right" ui-sref="tabs.poster({id: survey.groupId})">
-            		{{survey.groupName}}
-            		<i class="icon ion-arrow-right-c"></i>
-            	</a>
+      <div class="container">
+        <div class="card">
+          <div class="card-header ggc-green white-text">
+            Your Recently Completed Surveys
+          </div>
+          <div class="card-block">
+            <div class="list-group" ng-repeat="survey in surveys track by $index">
+              <a class="list-group-item list-group-item-action item item-icon-right" ui-sref="tabs.poster({id: survey.groupId})" style="text-decoration: none;">
+                <span class="inline">{{survey.groupName}}</span>
+                <i class="icon ion-arrow-right-c"></i>
+              </a>
             </div>
+          </div>
         </div>
+      </div>
     </ion-content>
 </ion-view>

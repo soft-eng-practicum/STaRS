@@ -3,12 +3,15 @@ ion-tabs.tabs-color-active-ggc .tab-item {
   color: #a5acb0 !important;
 }
 ion-tabs.tabs-color-active-ggc .tab-item.tab-item-active, ion-tabs.tabs-color-active-ggc .tab-item.active, ion-tabs.tabs-color-active-ggc .tab-item.activated {
-  color: #fff;
+  color: #fff !important;
 }
 .button.button-positive {
   border-color: transparent;
   background-color: #00704a;
   color: #fff;
+}
+.button-clear {
+	color: #fff !important;
 }
 * {
 	font-family: 'Ubuntu Condensed', sans-serif !important;
