@@ -203,7 +203,8 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
 
   this.deleteSurvey = function(id, groupId) {
     var deferred = $q.defer();
-    localPouch.get(id).then(function(doc) {
+    var resultSurvey = [];
+    database.get(id).then(function(doc) {
       doc.surveys.forEach(function(survey) {
         if(survey.groupId !== '' && survey.groupId != groupId) {
           resultSurvey.push(survey);
@@ -430,7 +431,7 @@ app.controller('posterListCtrl', function($scope, $ionicPopup, $service, pouchSe
   });
 });
 
-app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service, $timeout, $ionicPopup, pouchService, $rootScope) {
+app.controller('posterCtrl', function($scope, poster, $state, $window, $cookies, $service, $timeout, $ionicPopup, pouchService, $rootScope) {
   pouchService.startListening();
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
@@ -446,21 +447,24 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
   $scope.previousAnswers = [];
   $scope.judgesSurveyed = [];
   $scope.answers = [];
-  $scope.questionValues = [1,2,3,4,5];
+  $scope.disableEdit = false;
 
   var groupName = $scope.poster.group;
   var groupId = $scope.poster.id;
 
   $service.getSurvey().success(function(data) {
     $scope.questions = data.questions;
+    console.log(data.questions);
   });
 
 
   $scope.submitQuestions = function(isValid) {
+    var resultSurvey;
+    if($scope.previousSurveyed === false) {
       angular.forEach($scope.questions, function(question) {
         $scope.answers.push(question.value);
       });
-      var resultSurvey = {
+      resultSurvey = {
         answers: $scope.answers,
         groupName: groupName,
         groupId: groupId
@@ -481,39 +485,70 @@ app.controller('posterCtrl', function($scope, poster, $state, $cookies, $service
           return;
         }
       );
+    } else {
+      pouchService.deleteSurvey($scope.user, $scope.poster.id)
+      .then(
+        function(res) {
+          angular.forEach($scope.questions, function(question) {
+            $scope.answers.push(question.value);
+          });
+          resultSurvey = {
+            answers: $scope.answers,
+            groupName: groupName,
+            groupId: groupId
+          };
+          pouchService.submitSurvey($scope.user, resultSurvey)
+          .then(
+            function(res) {
+              $window.location.reload();
+            },
+            function(err) {
+              console.log(err);
+              $ionicPopup.alert({
+                title: 'Error',
+                template: '<p style=\'text-align:center\'>An error has occurred</p>'
+              });
+              return;
+            }
+          );
+        },
+        function(err) {
+          console.log(err);
+          $ionicPopup.alert({
+            title: 'Error',
+            template: '<p style=\'text-align:center\'>An error has occurred</p>'
+          });
+          return;
+        }
+      );
+
+    }
   };
+
+  $scope.edit = function() {
+    $scope.disableEdit = false;
+  };
+
+  $scope.cancelEdit = function() {
+    $scope.disableEdit = true;
+  }
 
   $scope.checkPreviousSurveyed = function() {
     pouchService.getJudge($scope.user)
     .then(
       function(doc) {
-        var surveys = doc.surveys;
         for(var i = 0; i < doc.surveys.length; i++) {
           if(doc.surveys[i].groupId == $scope.poster.id) {
             $scope.previousSurveyed = true;
+            $scope.disableEdit = true;
+            $scope.answers = doc.surveys[i].answers;
           }
         }
-      },
-      function(err) {
-        console.log(err);
-        $ionicPopup.alert({
-          title: 'Error',
-          template: '<p style=\'text-align:center\'>An error has occurred</p>'
-        });
-        return;
-      }
-    );
-  };
-
-  $scope.resubmitSurvey = function() {
-    $scope.letJudgeViewQuestions = true;
-
-    pouchService.deleteSurvey($scope.user, $scope.poster.id)
-    .then(
-      function(res) {
-        $scope.previousSurveyed = false;
-        $scope.judgesSurveyed.splice($scope.judgesSurveyed.indexOf(res.username, 1));
-        $scope.countJudges--;
+        if($scope.previousSurveyed === true) {
+          for(var i = 0; i < $scope.questions.length; i++) {
+            $scope.questions[i].value = $scope.answers[i];
+          }
+        }
       },
       function(err) {
         console.log(err);

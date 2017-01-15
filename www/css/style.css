@@ -56,7 +56,9 @@ header {
 	display: inline-block !important;
 	vertical-align: middle !important;
 }
-
+.card-primary {
+	border-left-color: #00704a !important;
+}
 .panel {
   -moz-border-bottom-colors: none;
   -moz-border-left-colors: none;
@@ -80,11 +82,15 @@ header {
 	border-bottom:1px solid #ccc;
 	padding-bottom: 10px;
 }
-
 .panel-primary {
   border-left-color: #00704a;
 }
-
 .panel-primary h4 {
   color: #00704a;
+}
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+.ng-hide.ng-hide-animate {
+	display: none !important;
 }

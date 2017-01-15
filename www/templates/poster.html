@@ -5,60 +5,78 @@
 	    </a>
 	</ion-nav-buttons>
 	<ion-content class="padding" has-header="true">
-	<div class="list card">
-		<div class="item item-text-wrap">
-			<div class="item item-icon-left">
-				<i class="icon ion-ios-people"></i>
-				Number of Submitted Surveys
-				<span class="badge badge-positive">{{countJudges}}</span>
+		<div class="panel panel-primary">
+			<div class="list card">
+				<div class="item item-icon-left item-text-wrap">
+					<i class="icon ion-ios-people"></i>
+					Number of Submitted Surveys
+					<span class="badge badge-positive">{{countJudges}}</span>
+				</div>
+				<a class="item item-icon-left item-icon-right item-text-wrap" href="javascript:void(0)" ng-click="showJudges()">
+					<i class="icon ion-document-text"></i>
+					Tap to view judges who have submitted surveys on this group.
+					<i class="icon ion-chevron-right"></i>
+				</a>
+				<div class="item item-icon-left item-icon-right item-text-wrap" ng-show="previousSurveyed">
+					<i class="icon ion-alert-circled"></i>
+					You have already submitted a survey for this group! Your submitted survey is shown below.
+					<i class="icon ion-alert-circled"></i>
+				</div>
+				<div class="item" ng-hide="!previousSurveyed">
+					<button type="button" class="btn btn-warning btn-lg btn-block" ng-hide="disableEdit" ng-click="cancelEdit()">Cancel</button>
+					<button type="button" class="btn btn-warning btn-lg btn-block" ng-hide="!disableEdit" ng-click="edit()">Edit Survey</button>
+				</div>
 			</div>
-			<a class="item item-icon-left item-icon-right item-text-wrap" href="javascript:void(0)" ng-click="showJudges()">
-				<i class="icon ion-document-text"></i>
-				Tap to view judges who have submitted surveys on this group.
-				<i class="icon ion-chevron-right"></i>
-			</a>
-			<a class="item item-icon-left item-icon-right item-text-wrap" ng-if="previousSurveyed" href="javascript:void(0)" ng-click="resubmitSurvey()">
-				<i class="icon ion-alert-circled"></i>
-				You have already submitted a survey for this group! Tap to re-submit your survey.
-				<i class="icon ion-chevron-right"></i>
-			</a>
 		</div>
-	</div>
-	<div ng-if="!previousSurveyed">
-		<form name="questionForm" id="questionForm" ng-submit="submitQuestions(questionForm.$valid)" novalidate>
-			<div class="card" ng-repeat="question in questions">
+		<!--<div ng-if="previousSurveyed">
+			<div class="card">
 				<div class="card-header ggc-green white-text">
-					<div ng-show="question.required">
-						#{{question.id}}:{{question.information}}<span class="item-note">*required</span>
-					</div>
-					<div ng-show="!question.required">
-						#{{question.id}}:{{question.information}}
-					</div>
+					Your Submitted Survey
 				</div>
 				<div class="card-block">
-					<div ng-show="{{$index}}<=9">
-						<div class="button-bar padding">
-							<a grouped-radio="'1'" ng-model="question.value" id="question.value" name="question{{question.id}}">1</a>
-							<a grouped-radio="'2'" ng-model="question.value" id="question.value" name="question{{question.id}}">2</a>
-							<a grouped-radio="'3'" ng-model="question.value" id="question.value" name="question{{question.id}}">3</a>
-							<a grouped-radio="'4'" ng-model="question.value" id="question.value" name="question{{question.id}}">4</a>
-							<a grouped-radio="'5'" ng-model="question.value" id="question.value" name="question{{question.id}}">5</a>
+					<div class="list-group">
+						<ion-list ng-repeat="question in questions">
+							<ion-item class="item-button-right">
+							Test
+							<button class="button button-positive"><i class="icon ion-checkmark"></i></button>
+						</ion-item>
+					</ion-list>
+				</div>
+			</div>
+		</div>-->
+			<form name="questionForm" id="questionForm" ng-submit="submitQuestions(questionForm.$valid)" novalidate>
+				<div class="card" ng-repeat="question in questions">
+					<div class="card-header ggc-green white-text">
+						<div ng-show="question.required">
+							#{{question.id}}: {{question.information}}<span class="item-note">*required</span>
+						</div>
+						<div ng-show="!question.required">
+							#{{question.id}}: {{question.information}}
 						</div>
 					</div>
-					<div ng-show="{{$index}}===10">
-						<label class="item item-input item-stacked-label">
-							<span class="input-label">Comments</span>
-							<textarea rows="5" ng-model="question.value" placeholder="Insert any additional comments here..."></textarea>
-						</label>
+					<div class="card-block">
+						<div ng-show="{{$index}}<=9">
+							<div class="button-bar padding">
+								<a grouped-radio="'1'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit">1</a>
+								<a grouped-radio="'2'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit">2</a>
+								<a grouped-radio="'3'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit">3</a>
+								<a grouped-radio="'4'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit">4</a>
+								<a grouped-radio="'5'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit">5</a>
+							</div>
+						</div>
+						<div ng-show="{{$index}}===10">
+							<label class="item item-input item-stacked-label">
+								<span class="input-label">Comments</span>
+								<textarea rows="5" ng-model="question.value" placeholder="Insert any additional comments here..."></textarea>
+							</label>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="card">
-				<div class="card-block">
-					<button type="submit" class="btn btn-green btn-lg btn-block">Submit</button>
+				<div class="card">
+					<div class="card-block">
+						<button type="submit" class="btn btn-green btn-lg btn-block" ng-disabled="disableEdit">Submit</button>
+					</div>
 				</div>
-			</div>
-		</form>
-	</div>
+			</form>
 	</ion-content>
 </ion-view>
