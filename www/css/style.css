@@ -5,6 +5,9 @@ ion-tabs.tabs-color-active-ggc .tab-item {
 ion-tabs.tabs-color-active-ggc .tab-item.tab-item-active, ion-tabs.tabs-color-active-ggc .tab-item.active, ion-tabs.tabs-color-active-ggc .tab-item.activated {
   color: #fff !important;
 }
+.button.button-positive.activated {
+  background-color: #00704a !important;
+}
 .button.button-positive {
   border-color: transparent;
   background-color: #00704a;
@@ -52,4 +55,36 @@ header {
 .badge-positive, .inline {
 	display: inline-block !important;
 	vertical-align: middle !important;
+}
+
+.panel {
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  border-color: #eee;
+  border-image: none;
+  border-radius: 3px;
+  border-style: solid;
+  border-width: 1px 1px 1px 5px;
+  margin-bottom: 10px;
+  padding: 20px;
+	background-color: #fff;
+}
+.panel:last-child {
+  margin-bottom: 0px;
+}
+.panel h4 {
+  margin-bottom: 10px;
+  margin-top: 0;
+	border-bottom:1px solid #ccc;
+	padding-bottom: 10px;
+}
+
+.panel-primary {
+  border-left-color: #00704a;
+}
+
+.panel-primary h4 {
+  color: #00704a;
 }
