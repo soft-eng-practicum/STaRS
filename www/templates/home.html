@@ -6,11 +6,14 @@
             Your Recently Completed Surveys
           </div>
           <div class="card-block">
-            <div class="list-group" ng-repeat="survey in surveys track by $index">
+            <div class="list-group" ng-if="hasRecent" ng-repeat="survey in surveys track by $index">
               <a class="list-group-item list-group-item-action item item-icon-right" ui-sref="tabs.poster({id: survey.groupId})" style="text-decoration: none;">
                 <span class="inline">{{survey.groupName}}</span>
                 <i class="icon ion-arrow-right-c"></i>
               </a>
+            </div>
+            <div ng-if="!hasRecent" class="help-block text-center">
+              <strong>No recent surveys found.</strong>
             </div>
           </div>
         </div>

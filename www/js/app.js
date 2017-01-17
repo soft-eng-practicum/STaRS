@@ -100,6 +100,7 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
 
   this.setDatabase = function(dbName) {
     database = new PouchDB(dbName);
+    database.setMaxListeners(30);
   };
 
   this.startListening = function() {
@@ -178,7 +179,7 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
     var resultSurvey = [];
     database.get(id).then(function(doc) {
       doc.surveys.forEach(function(survey) {
-        if(survey.groupId !== '') {
+        if(survey.groupId !== '' && survey.groupId !== submittedSurvey.groupId) {
           resultSurvey.push(survey);
         }
       });
@@ -210,6 +211,7 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
           resultSurvey.push(survey);
         }
       });
+      console.log(resultSurvey);
       database.put({
         _id: doc._id,
         _rev: doc._rev,
@@ -219,6 +221,7 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
       });
     }).then(function() {
       var result = database.get(id);
+      console.log(result);
       deferred.resolve(result);
     }).catch(function(err) {
       deferred.reject(err);
@@ -343,7 +346,7 @@ app.controller('loginCtrl', function($scope, $timeout, $cordovaNetwork, $ionicPo
       },
       function(err) {
         $ionicPopup.alert({
-          title: 'Error',
+          title: '<h4>Error</h4>',
           template: '<p style=\'text-align:center\'>Invalid username or password</p>'
         });
         return;
@@ -359,6 +362,7 @@ app.controller('loginCtrl', function($scope, $timeout, $cordovaNetwork, $ionicPo
 app.controller('homeCtrl', function($scope, $cookies, $state, $ionicPopup, $service, pouchService, $rootScope, $timeout) {
   pouchService.startListening();
   $scope.surveys = [];
+  $scope.hasRecent = false;
 
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
@@ -371,13 +375,15 @@ app.controller('homeCtrl', function($scope, $cookies, $state, $ionicPopup, $serv
   pouchService.getJudge($scope.user)
   .then(
     function(doc) {
-      console.log(doc);
       $scope.surveys = doc.surveys;
+      if(doc.surveys[0].groupId !== '') {
+        $scope.hasRecent = true;
+      }
     },
     function(err) {
       console.log(err);
       $ionicPopup.alert({
-        title: 'Error',
+        title: '<h4>Error</h4>',
         template: '<p style=\'text-align:center\'>Could not retrieve your recent surveys</p>'
       });
       return;
@@ -417,7 +423,7 @@ app.controller('posterListCtrl', function($scope, $ionicPopup, $service, pouchSe
         function(err) {
           console.log(err);
           $ionicPopup.alert({
-            title: 'Error',
+            title: '<h4>Error</h4>',
             template: '<p style=\'text-align:center\'>An error has occurred</p>'
           });
           return;
@@ -454,75 +460,74 @@ app.controller('posterCtrl', function($scope, poster, $state, $window, $cookies,
 
   $service.getSurvey().success(function(data) {
     $scope.questions = data.questions;
-    console.log(data.questions);
   });
 
 
-  $scope.submitQuestions = function(isValid) {
-    var resultSurvey;
-    if($scope.previousSurveyed === false) {
-      angular.forEach($scope.questions, function(question) {
-        $scope.answers.push(question.value);
-      });
-      resultSurvey = {
-        answers: $scope.answers,
-        groupName: groupName,
-        groupId: groupId
-      };
-      pouchService.submitSurvey($scope.user, resultSurvey)
-      .then(
-        function(res) {
-          $scope.previousSurveyed = true;
-          $scope.judgesSurveyed.push(res.username);
-          $scope.countJudges++;
-        },
-        function(err) {
-          console.log(err);
-          $ionicPopup.alert({
-            title: 'Error',
-            template: '<p style=\'text-align:center\'>An error has occurred</p>'
-          });
-          return;
-        }
-      );
-    } else {
-      pouchService.deleteSurvey($scope.user, $scope.poster.id)
-      .then(
-        function(res) {
-          angular.forEach($scope.questions, function(question) {
-            $scope.answers.push(question.value);
-          });
-          resultSurvey = {
-            answers: $scope.answers,
-            groupName: groupName,
-            groupId: groupId
-          };
-          pouchService.submitSurvey($scope.user, resultSurvey)
-          .then(
-            function(res) {
-              $window.location.reload();
-            },
-            function(err) {
-              console.log(err);
-              $ionicPopup.alert({
-                title: 'Error',
-                template: '<p style=\'text-align:center\'>An error has occurred</p>'
-              });
-              return;
-            }
-          );
-        },
-        function(err) {
-          console.log(err);
-          $ionicPopup.alert({
-            title: 'Error',
-            template: '<p style=\'text-align:center\'>An error has occurred</p>'
-          });
-          return;
-        }
-      );
+  $scope.submitQuestions = function() {
 
-    }
+      var resultSurvey = {};
+      if($scope.previousSurveyed === false) {
+        angular.forEach($scope.questions, function(question) {
+          $scope.answers.push(question.value);
+        });
+        resultSurvey = {
+          answers: $scope.answers,
+          groupName: groupName,
+          groupId: groupId
+        };
+        pouchService.submitSurvey($scope.user, resultSurvey)
+        .then(
+          function(res) {
+            $scope.previousSurveyed = true;
+            $scope.judgesSurveyed.push(res.username);
+            $scope.countJudges++;
+            $window.location.reload();
+          },
+          function(err) {
+            console.log(err);
+            $ionicPopup.alert({
+              title: '<h4>Error</h4>',
+              template: '<p style=\'text-align:center\'>An error has occurred</p>'
+            });
+            return;
+          }
+        );
+      } else {
+        var confirmPopup = $ionicPopup.confirm({
+          title: '<h4>Confirm Survey Changes:</h4>',
+          template: '<p style=\'text-align:center\'>Are you sure you want to submit your changes to this survey?</p>'
+        });
+        confirmPopup.then(function(res) {
+          if(res) {
+            $scope.answers = [];
+            angular.forEach($scope.questions, function(question) {
+              $scope.answers.push(question.value);
+            });
+            resultSurvey = {
+              answers: $scope.answers,
+              groupName: groupName,
+              groupId: groupId
+            };
+            pouchService.submitSurvey($scope.user, resultSurvey)
+            .then(
+              function(res) {
+                $scope.previousSurveyed = true;
+                $scope.disableEdit = true;
+              },
+              function(err) {
+                console.log(err);
+                $ionicPopup.alert({
+                  title: '<h4>Error</h4>',
+                  template: '<p style=\'text-align:center\'>An error has occurred</p>'
+                });
+                return;
+              }
+            );
+          } else {
+            return;
+          }
+        });
+      }
   };
 
   $scope.edit = function() {
@@ -531,7 +536,7 @@ app.controller('posterCtrl', function($scope, poster, $state, $window, $cookies,
 
   $scope.cancelEdit = function() {
     $scope.disableEdit = true;
-  }
+  };
 
   $scope.checkPreviousSurveyed = function() {
     pouchService.getJudge($scope.user)
@@ -553,7 +558,7 @@ app.controller('posterCtrl', function($scope, poster, $state, $window, $cookies,
       function(err) {
         console.log(err);
         $ionicPopup.alert({
-          title: 'Error',
+          title: '<h4>Error</h4>',
           template: '<p style=\'text-align:center\'>An error has occurred</p>'
         });
         return;
@@ -563,7 +568,7 @@ app.controller('posterCtrl', function($scope, poster, $state, $window, $cookies,
 
   $scope.showJudges = function() {
     $ionicPopup.alert({
-      title: 'Judges Who Have Surveyed:',
+      title: '<h4>Judges Who Have Surveyed:</h4>',
       templateUrl: 'templates/popup.html',
       scope: $scope
     });
@@ -581,7 +586,7 @@ app.controller('posterCtrl', function($scope, poster, $state, $window, $cookies,
       function(err) {
         console.log(err);
         $ionicPopup.alert({
-          title: 'Error',
+          title: '<h4>Error</h4>',
           template: '<p style=\'text-align:center\'>An error has occurred</p>'
         });
         return;
