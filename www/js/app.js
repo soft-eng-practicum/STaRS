@@ -1,8 +1,3 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
 var app = angular.module('app', ['ionic', 'ui.router', 'ngCookies', 'pouchdb', 'ngCordova']);
 
 app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork) {
@@ -22,6 +17,7 @@ app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork) {
     }
     pouchService.setDatabase('judges');
     pouchService.sync('http://127.0.0.1:5984/judges');
+
   });
 });
 
@@ -29,7 +25,14 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider.state('login', {
     url: '/login',
     templateUrl: 'templates/login.html',
-    controller: 'loginCtrl'
+    controller: 'loginCtrl',
+    onEnter: function($cookies, $timeout, $state) {
+      if($cookies.get('user') !== undefined) {
+        $timeout(function() {
+          $state.go('tabs.home');
+        });
+      }
+    }
   });
   $stateProvider.state('tabs', {
     url: '/tab',
@@ -77,10 +80,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
       ]
     }
   });
+
   $urlRouterProvider.otherwise('/login');
 });
 
-app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorators, $q) {
+app.service('pouchService', function($rootScope, pouchDB, $q) {
   var database;
   var changeListener;
 
@@ -105,14 +109,15 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
 
   this.startListening = function() {
     changeListener = database.changes({
-        live: true,
-        include_docs: true
+      since: 'now',
+      live: true,
+      include_docs: true
     }).on("change", function(change) {
-        if(!change.deleted) {
-            $rootScope.$broadcast("$pouchDB:change", change);
-        } else {
-            $rootScope.$broadcast("$pouchDB:delete", change);
-        }
+      if(!change.deleted) {
+        $rootScope.$broadcast("pouchService: change", change);
+      } else {
+        $rootScope.$broadcast("$pouchDB:delete", change);
+      }
     });
   };
 
@@ -121,7 +126,22 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
   };
 
   this.sync = function(remoteDatabase) {
-    database.sync(remoteDatabase, {live: true, retry: true});
+    database.sync(remoteDatabase, {
+      live: true,
+      retry: true
+    }).on('change', function (change) {
+      console.log('change');
+      console.log(change);
+    }).on('paused', function (info) {
+      // replication was paused, usually because of a lost connection
+      console.log('paused');
+    }).on('active', function (info) {
+      console.log('active');
+      console.log(info);
+    }).on('error', function (err) {
+      console.log('error');
+      console.log(err);
+    });
   };
 
   this.login = function(username, password) {
@@ -273,8 +293,15 @@ app.controller('mainTabsCtrl', function($scope, $cookies, $state, $service, $tim
 
 app.controller('loginCtrl', function($scope, $timeout, $cordovaNetwork, $ionicPopup, $service, $state, $cookies, $rootScope, pouchService) {
   pouchService.startListening();
-  $rootScope.isAuth = false;
 
+  $rootScope.isAuth = false;
+  $scope.$on('$ionicView.loaded', function() {
+    $timeout(function() {
+      ionic.Platform.ready(function() {
+        if(navigator && navigator.splashscreen) navigator.splashscreen.hide();
+      });
+    });
+  });
   document.addEventListener("deviceready", function () {
     console.log('deviceready');
 
@@ -363,6 +390,12 @@ app.controller('homeCtrl', function($scope, $cookies, $state, $ionicPopup, $serv
   pouchService.startListening();
   $scope.surveys = [];
   $scope.hasRecent = false;
+
+  $scope.$on('$ionicView.loaded', function() {
+    ionic.Platform.ready( function() {
+      if(navigator && navigator.splashscreen) navigator.splashscreen.hide();
+    });
+  });
 
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
@@ -464,7 +497,6 @@ app.controller('posterCtrl', function($scope, poster, $state, $window, $cookies,
 
 
   $scope.submitQuestions = function() {
-
       var resultSurvey = {};
       if($scope.previousSurveyed === false) {
         angular.forEach($scope.questions, function(question) {
@@ -599,6 +631,17 @@ app.controller('posterCtrl', function($scope, poster, $state, $window, $cookies,
 
   $scope.$on('$destroy', function() {
     pouchService.stopListening();
+  });
+
+  $scope.$on('pouchService: change', function(event, data) {
+    $scope.$apply(function() {
+      console.log(data);
+      if($scope.judgesSurveyed.indexOf(data.doc.username) === -1) {
+        console.log('in --- judge has created a new survey for the group');
+      } else {
+        console.log('in --- judge has edited a survey for the group');
+      }
+    });
   });
 });
 

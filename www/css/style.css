@@ -1,3 +1,7 @@
+.title {
+	font-weight: bold !important;
+	text-align: center !important;
+}
 ion-tabs.tabs-color-active-ggc .tab-item {
 	border-color: #fff !important;
   color: #a5acb0 !important;
