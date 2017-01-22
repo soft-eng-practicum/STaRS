@@ -5,29 +5,27 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title></title>
     <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css?family=Ubuntu+Condensed" rel="stylesheet">
+    <link href="css/fonts.css" rel="stylesheet">
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <link href="lib/MDBootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="lib/MDBootstrap/css/mdb.css" rel="stylesheet">
 
   </head>
-  <body ng-app="app">
+  <body ng-cloak ng-app="app">
     <ion-nav-bar class="bar-stable">
-      <ion-nav-back-button></ion-nav-back-button>
       <ion-nav-buttons side="right">
-        <button class="button" ng-disabled="true">
-          {{$root.headerVal}}
-        </button>
+        <img class="icon" ng-hide="root.isOnline" src="img/online.ico" width="32" height="32">
+        <img class="icon" ng-hide="!root.isOnline" src="img/offline.ico" width="32" height="32">
       </ion-nav-buttons>
     </ion-nav-bar>
+
     <ion-nav-view></ion-nav-view>
 
     <script src="lib/ionic/js/ionic.bundle.js"></script>
     <script src="cordova.js"></script>
     <script src="lib/ionic/js/angular-ui/angular-ui-router.min.js"></script>
     <script src="js/app.js"></script>
-    <script src="lib/angular-md5/angular-md5.min.js"></script>
     <script src="lib/angular-pouchdb/angular-pouchdb.min.js"></script>
     <script src="lib/pouchdb/dist/pouchdb.min.js"></script>
     <script src="lib/angular-cookies/angular-cookies.min.js"></script>
@@ -36,6 +34,6 @@
     <script src="lib/MDBootstrap/js/bootstrap.js"></script>
     <script src="lib/MDBootstrap/js/mdb.js"></script>
     <script src="lib/ngCordova/dist/ng-cordova.js"></script>
-
+    <script src="lib/ionic-native-transitions/dist/ionic-native-transitions.js"></script>
   </body>
 </html>

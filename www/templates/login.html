@@ -1,5 +1,17 @@
 <ion-view title="GGC STaRS: Login" cache-view="false">
-    <ion-content class="padding" has-header="true">
+  <ion-header-bar class="bar-default bar-subheader">
+    <button class="item-icon-left list-group-item list-group-item-action"
+      ng-click="refresh()" ng-hide="!changes">
+      <img class="icon" src="img/refresh.ico">
+      <p style="color: #000">
+        Changes found: tap to refresh
+      </p>
+    </button>
+    <div class="item-icon-left list-group-item list-group-item-action" ng-hide="changes">
+      <!-- NEED TO PUT LOGGED IN USER (CURRENT USER) HERE TO FILL THE SPACE -->
+    </div>
+  </ion-header-bar>
+    <ion-content class="padding" class="has-header has-subheader">
       <div class="container">
         <div class="card">
           <div class="card-header ggc-green white-text">
@@ -14,9 +26,12 @@
             <div class="list-group" ng-if="search.value">
               <div class="list-group-item active">Found Usernames:</div>
               <div ng-repeat="item in items | filter: search.value">
-                <button type="button" class="list-group-item list-group-item-action" ng-click="updateSelection(item.name)">{{item.name}}</button>
+                <button type="button" class="list-group-item list-group-item-action"
+                  ng-click="updateSelection(item.name)">{{item.name}}</button>
               </div>
-              <div class="list-group-item footer">If your username is not found, you may not be registered within the system</div>
+              <div class="list-group-item footer">
+                If your username is not found, you may not be registered within the system
+              </div>
             </div>
           </div>
           <div class="card-block">
@@ -27,10 +42,12 @@
             </div>
             <div class="md-form">
               <i class="ion-lock-combination prefix"></i>
-              <input type="password" id="password" class="form-control" ng-model="user.password">
+              <input type="password" id="password" class="form-control"
+                ng-model="user.password">
               <label for="password">Password</label>
             </div>
-            <button type="button" class="btn btn-green btn-lg btn-block" ng-click="submitForm(user)">Submit</button>
+            <button type="button" class="btn btn-green btn-lg btn-block"
+              ng-click="submitForm(user)">Submit</button>
           </div>
         </div>
       </div>
