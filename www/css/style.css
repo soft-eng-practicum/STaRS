@@ -2,24 +2,17 @@
 	font-weight: bold !important;
 	text-align: center !important;
 }
-<<<<<<< HEAD
 .bar-subheader {
 	font-weight: bold !important;
 	text-align: center !important;
 }
-=======
->>>>>>> a454002228c8424eeca394e284ff4e9b305e15dd
 ion-tabs.tabs-color-active-ggc .tab-item {
 	border-color: #fff !important;
   color: #a5acb0 !important;
 }
-<<<<<<< HEAD
 ion-tabs.tabs-color-active-ggc .tab-item.tab-item-active,
 ion-tabs.tabs-color-active-ggc .tab-item.active,
 ion-tabs.tabs-color-active-ggc .tab-item.activated {
-=======
-ion-tabs.tabs-color-active-ggc .tab-item.tab-item-active, ion-tabs.tabs-color-active-ggc .tab-item.active, ion-tabs.tabs-color-active-ggc .tab-item.activated {
->>>>>>> a454002228c8424eeca394e284ff4e9b305e15dd
   color: #fff !important;
 }
 .button.button-positive.activated {
@@ -32,9 +25,6 @@ ion-tabs.tabs-color-active-ggc .tab-item.tab-item-active, ion-tabs.tabs-color-ac
 }
 .button-clear {
 	color: #fff !important;
-}
-* {
-	font-family: 'Ubuntu Condensed', sans-serif !important;
 }
 .row-bar {
 	border-bottom: 0px !important;
@@ -111,17 +101,7 @@ header {
 .card-header {
 	font-weight: bold;
 }
-<<<<<<< HEAD
-.load-container {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-}
 .spinner svg {
 	width: 50px;
 	height: 50px;
 }
-=======
->>>>>>> a454002228c8424eeca394e284ff4e9b305e15dd

@@ -1,11 +1,10 @@
 <ion-view title="GGC STaRS: Poster">
 	<ion-nav-buttons side="left">
-	    <a class="button back-button buttons button-clear header-item" ui-sref="tabs.posterList">
-	      <i class="icon ion-chevron-left"></i>Back
-	    </a>
+		<a class="button back-button buttons button-clear header-item" ui-sref="tabs.posterList">
+			<i class="icon ion-chevron-left"></i>Back
+		</a>
 	</ion-nav-buttons>
 	<ion-content class="padding" has-header="true">
-<<<<<<< HEAD
 		<div ng-hide="loading">
 			<div class="load-container">
 				<div>
@@ -13,48 +12,30 @@
 				</div>
 			</div>
 		</div>
-    <div ng-hide="!loading">
-=======
->>>>>>> a454002228c8424eeca394e284ff4e9b305e15dd
-		<div class="panel panel-primary">
-			<div class="list card">
-				<div class="item item-icon-left item-text-wrap">
-					<i class="icon ion-ios-people"></i>
-					Number of Submitted Surveys
-					<span class="badge badge-positive">{{countJudges}}</span>
-				</div>
-				<a class="item item-icon-left item-icon-right item-text-wrap" href="javascript:void(0)" ng-click="showJudges()">
-					<i class="icon ion-document-text"></i>
-					Tap to view judges who have submitted surveys on this group.
-					<i class="icon ion-chevron-right"></i>
-				</a>
-				<div class="item item-icon-left item-icon-right item-text-wrap" ng-show="previousSurveyed">
-					<i class="icon ion-alert-circled"></i>
-					You have already submitted a survey for this group! Your submitted survey is shown below.
-					<i class="icon ion-alert-circled"></i>
-				</div>
-				<div class="item" ng-hide="!previousSurveyed">
-					<button type="button" class="btn btn-warning btn-lg btn-block" ng-hide="disableEdit" ng-click="cancelEdit()">Cancel</button>
-					<button type="button" class="btn btn-warning btn-lg btn-block" ng-hide="!disableEdit" ng-click="edit()">Edit Survey</button>
-				</div>
-			</div>
-		</div>
-		<!--<div ng-if="previousSurveyed">
-			<div class="card">
-				<div class="card-header ggc-green white-text">
-					Your Submitted Survey
-				</div>
-				<div class="card-block">
-					<div class="list-group">
-						<ion-list ng-repeat="question in questions">
-							<ion-item class="item-button-right">
-							Test
-							<button class="button button-positive"><i class="icon ion-checkmark"></i></button>
-						</ion-item>
-					</ion-list>
+		<div ng-hide="!loading">
+			<div class="panel panel-primary">
+				<div class="list card">
+					<div class="item item-icon-left item-text-wrap">
+						<i class="icon ion-ios-people"></i>
+						Number of Submitted Surveys
+						<span class="badge badge-positive">{{countJudges}}</span>
+					</div>
+					<a class="item item-icon-left item-icon-right item-text-wrap" href="javascript:void(0)" ng-click="showJudges()">
+						<i class="icon ion-document-text"></i>
+						Tap to view judges who have submitted surveys on this group.
+						<i class="icon ion-chevron-right"></i>
+					</a>
+					<div class="item item-icon-left item-icon-right item-text-wrap" ng-show="previousSurveyed">
+						<i class="icon ion-alert-circled"></i>
+						You have already submitted a survey for this group! Your submitted survey is shown below.
+						<i class="icon ion-alert-circled"></i>
+					</div>
+					<div class="item" ng-hide="!previousSurveyed">
+						<button type="button" class="btn btn-warning btn-lg btn-block" ng-hide="disableEdit" ng-click="cancelEdit()">Cancel</button>
+						<button type="button" class="btn btn-warning btn-lg btn-block" ng-hide="!disableEdit" ng-click="edit()">Edit Survey</button>
+					</div>
 				</div>
 			</div>
-		</div>-->
 			<form name="questionForm" id="questionForm" ng-submit="submitQuestions(questionForm)">
 				<div class="card" ng-repeat="question in questions">
 					<div class="card-header ggc-green white-text">
@@ -86,10 +67,6 @@
 					</div>
 				</div>
 			</form>
-<<<<<<< HEAD
-            </div>
-
-=======
->>>>>>> a454002228c8424eeca394e284ff4e9b305e15dd
+		</div>
 	</ion-content>
 </ion-view>
