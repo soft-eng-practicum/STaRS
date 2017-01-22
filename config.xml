@@ -17,6 +17,11 @@
   <preference name="android-minSdkVersion" value="16"/>
   <preference name="BackupWebStorage" value="none"/>
   <preference name="SplashScreen" value="screen"/>
+<<<<<<< HEAD
+=======
+  <preference name="AutoHideSplashScreen" value="false" />
+  <preference name="SplashScreenDelay" value="10000" />
+>>>>>>> a454002228c8424eeca394e284ff4e9b305e15dd
   <preference name="CrosswalkAnimatable" value="true" />
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
