@@ -135,15 +135,21 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q) {
 
   login: function(username, password) {
     var deferred = $q.defer();
+    var result;
     localPouch.allDocs({
       include_docs: true,
       attachments: true
     }).then(function(res) {
-      res.rows.forEach(function(row) {
-        if(angular.equals(row.doc.username,username) && angular.equals(row.doc.password,password)) {
-          deferred.resolve(row.doc);
+      for(var i = 0; i < res.rows.length; i++) {
+        if(angular.equals(res.rows[i].doc.username,username) && angular.equals(res.rows[i].doc.password,password)) {
+          result = res.rows[i].doc;
         }
-      });
+      }
+      if(result !== undefined) {
+        deferred.resolve(result);
+      } else {
+        deferred.reject(result);
+      }
     }).catch(function(err) {
       deferred.reject(err);
     });
@@ -209,6 +215,16 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q) {
       console.log(err);
     });
     return deferred.promise;
+  },
+
+  getUser: function(id) {
+    var deferred = $q.defer();
+    localPouch.get(id).then(function(doc) {
+      deferred.resolve(doc);
+      console.log(doc);
+    }).catch(function(err) {
+      deferred.reject(err);
+    });
   },
 
   deleteSurvey: function(id, groupId) {
@@ -358,7 +374,8 @@ app.controller('loginCtrl', function($pouchdb, $scope, $timeout, $cordovaNetwork
     pouchService.login($scope.user.username, $scope.user.password)
     .then(
       function(res) {
-        window.localStorage.setItem('user', res._id);
+        console.log(res);
+        window.localStorage.setItem('user', res.username);
         $rootScope.isAuth = true;
         $timeout(function() {
           $state.go('tabs.home');
