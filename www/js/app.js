@@ -364,27 +364,6 @@ app.controller('loginCtrl', function($pouchdb, $scope, $timeout, $cordovaNetwork
   $scope.search = {};
   $rootScope.isAuth = false;
 
-  document.addEventListener("deviceready", function () {
-
-      $scope.network = $cordovaNetwork.getNetwork();
-      $scope.isOnline = $cordovaNetwork.isOnline();
-
-      // listen for Online event
-      $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
-        console.log('got online');
-          $rootScope.isOnline = true;
-          $scope.network = $cordovaNetwork.getNetwork();
-      });
-
-      // listen for Offline event
-      $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
-          console.log("got offline");
-          $rootScope.isOnline = false;
-          $scope.network = $cordovaNetwork.getNetwork();
-      });
-
-    }, false);
-
   $scope.getItems = function() {
     pouchService.getUsers()
     .then(
@@ -407,9 +386,12 @@ app.controller('loginCtrl', function($pouchdb, $scope, $timeout, $cordovaNetwork
     var element = document.getElementById('active-username');
     element.classList.add('active');
     var elementIcon = document.getElementById('active-username-icon');
-    console.log(elementIcon);
     element.classList.add('active');
+    $scope.search = {};
     $scope.user.username = name;
+    $timeout(function() {
+      $scope.$apply();
+    });
   };
 
   $scope.submitForm = function() {
