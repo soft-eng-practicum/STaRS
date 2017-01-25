@@ -18,6 +18,21 @@
         <img class="icon" ng-hide="!root.isOnline" src="img/offline.ico" width="32" height="32">
       </ion-nav-buttons>
     </ion-nav-bar>
+    <ion-header-bar align-title="center" class="bar-subheader bar-default" ng-controller="headerCtrl">
+      <div class="buttons">
+        <div class="button btn-outline-primary">
+          <i class="icon ion-information-circled"></i>
+          {{$root.couchConnection}}
+        </div>
+      </div>
+      <h1 class="title"></h1>
+      <div class="buttons">
+        <button class="button btn-outline-primary" ng-click="refresh()" ng-disabled="!changes">
+          <i class="icon ion-ios-refresh"></i>
+          {{$root.couchChanges}}
+        </button>
+      </div>
+    </ion-header-bar>
 
     <ion-nav-view></ion-nav-view>
 
