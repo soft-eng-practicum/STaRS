@@ -1,6 +1,24 @@
 * {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
 }
+.btn-outline-danger:active, .btn-outline-danger.activated {
+    border: 2px solid #ff4444 !important;
+    color: #CC0000 !important;
+    background-color: #fff !important;
+}
+.btn-outline-success:active, .btn-outline-success.activated {
+  border: 2px solid #00C851 !important;
+  color: #007E33 !important;
+  background-color: #fff !important;
+}
+.btn-outline-primary {
+  border: 2px solid #4285F4;
+  color: #0d47a1 !important;
+  background-color: #fff !important;
+}
+.btn-outline-danger, .btn-outline-primary, .btn-outline-success {
+  background-color: #fff !important;
+}
 .has-header {
   padding-top: 65px;
 }
@@ -110,6 +128,9 @@ header {
 .spinner svg {
 	width: 50px;
 	height: 50px;
+}
+.bar-default {
+  background-color: #a5acb0 !important;
 }
 .bar-subheader.subheader_custom {
     display: block;

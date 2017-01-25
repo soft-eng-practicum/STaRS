@@ -20,15 +20,16 @@ app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork, $tim
     checkDb = function() {
       pouchService.checkDatabaseConnection()
         .then(function(res) {
+          $rootScope.$broadcast('connected');
           $rootScope.connection = true;
           $rootScope.couchConnection = 'Connected';
         })
         .catch(function(err) {
+          $rootScope.$broadcast('disconnected');
           $rootScope.connection = false;
           $rootScope.couchConnection = 'Disconnected';
         });
         $timeout(function() {
-          console.log($rootScope.connection);
           $rootScope.$apply();
         });
         setTimeout(checkDb, 10000);
@@ -37,7 +38,9 @@ app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork, $tim
   });
 });
 
-app.config(function($stateProvider, $urlRouterProvider) {
+app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+  $ionicConfigProvider.tabs.position('bottom');
+
   $stateProvider.state('login', {
     url: '/login',
     templateUrl: 'templates/login.html',
@@ -317,6 +320,14 @@ app.controller('headerCtrl', function($scope, $state, $rootScope, $timeout) {
   $rootScope.couchConnection = 'Verifying...';
   $rootScope.couchChanges = "No changes found";
 
+  $scope.$on('connected', function() {
+    document.getElementById("dbconnection").className = "button btn-outline-success";
+  });
+
+  $scope.$on('disconnected', function() {
+    document.getElementById("dbconnection").className = "button btn-outline-danger";
+  });
+
   $scope.$on('changes', function() {
     console.log('changessss');
     $rootScope.changes = true;
@@ -399,7 +410,7 @@ app.controller('loginCtrl', function($pouchdb, $scope, $timeout, $cordovaNetwork
     .then(
       function(res) {
         console.log(res);
-        window.localStorage.setItem('user', res.username);
+        window.localStorage.setItem('user', res._id);
         $rootScope.isAuth = true;
         $timeout(function() {
           $state.go('tabs.home');
@@ -624,6 +635,7 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state, $window,
     pouchService.getJudge($scope.user)
     .then(
       function(doc) {
+        console.log(doc);
         for(var i = 0; i < doc.surveys.length; i++) {
           if(doc.surveys[i].groupId == $scope.poster.id) {
             $scope.previousSurveyed = true;
