@@ -16,19 +16,25 @@
 			<div class="panel panel-primary">
 				<div class="list card">
 					<div class="item item-icon-left item-text-wrap">
-						<i class="icon ion-ios-people"></i>
-						Number of Submitted Surveys
-						<span class="badge badge-positive">{{countJudges}}</span>
+						<i class="icon ion-information-circled"></i>
+						<h2>Group Name: {{poster.group}}</h2>
+						<p class="subdued">
+							Students: {{poster.students | clearText}}
+						</p>
 					</div>
+					<ion-item class="item item-icon-left item-icon-right item-text-wrap">
+						<i class="icon ion-ios-people"></i>
+						<h2>Number of Submitted Surveys</h2>
+						<span class="badge badge-positive">{{countJudges}}</span>
+					</ion-item>
 					<a class="item item-icon-left item-icon-right item-text-wrap" href="javascript:void(0)" ng-click="showJudges()">
 						<i class="icon ion-document-text"></i>
-						Tap to view judges who have submitted surveys on this group.
+						<h2>Tap to view judges who have submitted surveys on this group.</h2>
 						<i class="icon ion-chevron-right"></i>
 					</a>
-					<div class="item item-icon-left item-icon-right item-text-wrap" ng-show="previousSurveyed">
+					<div class="item item-icon-left item-text-wrap" ng-show="previousSurveyed">
 						<i class="icon ion-alert-circled"></i>
-						You have already submitted a survey for this group! Your submitted survey is shown below.
-						<i class="icon ion-alert-circled"></i>
+						<h2>You have already submitted a survey for this group! Your submitted survey is shown below.</h2>
 					</div>
 					<div class="item" ng-hide="!previousSurveyed">
 						<button type="button" class="btn btn-warning btn-lg btn-block" ng-hide="disableEdit" ng-click="cancelEdit()">Cancel</button>

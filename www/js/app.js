@@ -45,8 +45,8 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     url: '/login',
     templateUrl: 'templates/login.html',
     controller: 'loginCtrl',
-    onEnter: function($cookies, $timeout, $state) {
-      if($cookies.get('user') !== undefined) {
+    onEnter: function($timeout, $state) {
+      if(window.localStorage.getItem('user') !== null) {
         $timeout(function() {
           $state.go('tabs.home');
         });
@@ -98,6 +98,11 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         }
       ]
     }
+  });
+  $stateProvider.state('logout', {
+    url: '/logout',
+    controller: 'logoutCtrl',
+    templateUrl: null
   });
 
   $urlRouterProvider.otherwise('/login');
@@ -332,6 +337,7 @@ app.controller('headerCtrl', function($scope, $state, $rootScope, $timeout) {
     console.log('changessss');
     $rootScope.changes = true;
     $rootScope.couchChanges = 'Changes found tap to refresh';
+    document.getElementById('changeRefresh').className = "icon fa fa-refresher fa-spin fa-lg fa-fw";
     $timeout(function() {
       $scope.$apply();
     });
@@ -341,7 +347,7 @@ app.controller('headerCtrl', function($scope, $state, $rootScope, $timeout) {
       if($rootScope.changes === false) {
         return;
       } else {
-        console.log('test');
+        document.getElementById('changeRefresh').className = "icon fa fa-refresher fa-lg fa-fw";
         $rootScope.couchChanges = 'No changes found';
         $rootScope.changes = false;
         $state.reload();
@@ -454,6 +460,25 @@ app.controller('homeCtrl', function($pouchdb, $scope, $cookies, $state, $ionicPo
     $rootScope.isAuth = true;
     $scope.user = window.localStorage.getItem('user');
   }
+
+  pouchService.getJudge($scope.user)
+  .then(
+    function(doc) {
+      $scope.surveys = doc.surveys;
+      if(doc.surveys[0].groupId !== '') {
+        $scope.hasRecent = true;
+      }
+    },
+    function(err) {
+      console.log(err);
+      $ionicPopup.alert({
+        title: '<h4>Error</h4>',
+        template: '<p style=\'text-align:center\'>Could not retrieve your recent surveys</p>'
+      });
+      return;
+    }
+  );
+
 });
 
 app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $service, pouchService, $rootScope, $cookies, $state) {
@@ -530,6 +555,7 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state, $window,
   $scope.disableEdit = false;
   var groupName = $scope.poster.group;
   var groupId = $scope.poster.id;
+  console.log($scope.poster)
 
   $rootScope.$on('changes', function() {
     $scope.changes = true;
@@ -693,6 +719,16 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state, $window,
 
 });
 
+app.controller('logoutCtrl', function($rootScope, $cookies, $state, $timeout) {
+  console.log('logout');
+  window.localStorage.removeItem('user');
+  $rootScope.isAuth = false;
+  $timeout(function() {
+    $state.go('login');
+    $rootScope.$apply();
+  });
+});
+
 app.directive('groupedRadio', function() {
   return {
     restrict: 'A',
@@ -716,5 +752,13 @@ app.directive('groupedRadio', function() {
         }
       });
     }
+  };
+});
+
+app.filter('clearText', function() {
+  return function(text) {
+    var result = text ? String(text).replace(/"<[^>]+>/gm , '') : '';
+    result = result.replace(/,/g, ', ');
+    return result;
   };
 });

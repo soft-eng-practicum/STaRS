@@ -1,3 +1,21 @@
+@font-face {
+    font-family: 'fontawesome';
+    src:url('../lib/font-awesome/fonts/fontawesome-webfont.eot');
+    src:url('../lib/font-awesome/fonts/fontawesome-webfont.eot') format('embedded-opentype'),
+        url('../lib/font-awesome/fonts/fontawesome-webfont.woff') format('woff'),
+        url('../lib/font-awesome/fonts/fontawesome-webfont.ttf') format('truetype'),
+        url('../lib/font-awesome/fonts/fontawesome-webfont.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+.fa-spinner:before {
+    font-family: "fontawesome";
+    content: "\f110";
+}
+.fa-refresher:before {
+    font-family: "fontawesome";
+    content: "\f021";
+}
 * {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
 }
@@ -16,6 +34,7 @@
   color: #0d47a1 !important;
   background-color: #fff !important;
 }
+
 .btn-outline-danger, .btn-outline-primary, .btn-outline-success {
   background-color: #fff !important;
 }

@@ -5,6 +5,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title></title>
     <link rel="manifest" href="manifest.json">
+    <link href="lib/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <link href="lib/MDBootstrap/css/bootstrap.css" rel="stylesheet">
@@ -21,14 +22,14 @@
     <ion-header-bar align-title="center" class="bar-subheader bar-default" ng-controller="headerCtrl">
       <div class="buttons">
         <div class="button btn-outline-primary" id="dbconnection">
-          <i class="icon ion-information-circled"></i>
+          <i class="icon fa fa-spinner fa-spin fa-lg fa-fw"></i>
           {{$root.couchConnection}}
         </div>
       </div>
       <h1 class="title"></h1>
       <div class="buttons">
         <button class="button btn-outline-primary" ng-click="refresh()" ng-disabled="!changes">
-          <i class="icon ion-ios-refresh"></i>
+          <i class="icon fa fa-refresher fa-lg fa-fw" id="changeRefresh"></i>
           {{$root.couchChanges}}
         </button>
       </div>

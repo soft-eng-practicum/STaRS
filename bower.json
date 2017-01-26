@@ -9,7 +9,8 @@
     "angular-pouchdb": "^5.0.0",
     "pouchdb": "^6.1.0",
     "angular-md5": "^0.1.10",
-    "ngCordova": "^0.1.27-alpha"
+    "ngCordova": "^0.1.27-alpha",
+    "font-awesome": "fontawesome#^4.7.0"
   },
   "resolutions": {
     "angular": "1.5.3",
