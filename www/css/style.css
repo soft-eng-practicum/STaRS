@@ -1,28 +1,40 @@
 @font-face {
-    font-family: 'fontawesome';
-    src:url('../lib/font-awesome/fonts/fontawesome-webfont.eot');
-    src:url('../lib/font-awesome/fonts/fontawesome-webfont.eot') format('embedded-opentype'),
-        url('../lib/font-awesome/fonts/fontawesome-webfont.woff') format('woff'),
-        url('../lib/font-awesome/fonts/fontawesome-webfont.ttf') format('truetype'),
-        url('../lib/font-awesome/fonts/fontawesome-webfont.svg') format('svg');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'fontawesome';
+  src:url('../lib/font-awesome/fonts/fontawesome-webfont.eot');
+  src:url('../lib/font-awesome/fonts/fontawesome-webfont.eot') format('embedded-opentype'),
+  url('../lib/font-awesome/fonts/fontawesome-webfont.woff') format('woff'),
+  url('../lib/font-awesome/fonts/fontawesome-webfont.ttf') format('truetype'),
+  url('../lib/font-awesome/fonts/fontawesome-webfont.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 .fa-spinner:before {
-    font-family: "fontawesome";
-    content: "\f110";
+  font-family: "fontawesome";
+  content: "\f110";
 }
 .fa-refresher:before {
-    font-family: "fontawesome";
-    content: "\f021";
+  font-family: "fontawesome";
+  content: "\f021";
+}
+.fa-check-circle-o:before {
+  font-family: "fontawesome";
+  content: "\f05d"
+}
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-block p {
+  margin-bottom: 0px !important;
 }
 * {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
 }
 .btn-outline-danger:active, .btn-outline-danger.activated {
-    border: 2px solid #ff4444 !important;
-    color: #CC0000 !important;
-    background-color: #fff !important;
+  border: 2px solid #ff4444 !important;
+  color: #CC0000 !important;
+  background-color: #fff !important;
 }
 .btn-outline-success:active, .btn-outline-success.activated {
   border: 2px solid #00C851 !important;
@@ -42,11 +54,11 @@
   padding-top: 65px;
 }
 .title {
-	font-weight: bold !important;
-	text-align: center !important;
+  font-weight: bold !important;
+  text-align: center !important;
 }
 ion-tabs.tabs-color-active-ggc .tab-item {
-	border-color: #fff !important;
+  border-color: #fff !important;
   color: #a5acb0 !important;
 }
 ion-tabs.tabs-color-active-ggc .tab-item.tab-item-active,
@@ -63,11 +75,11 @@ ion-tabs.tabs-color-active-ggc .tab-item.activated {
   color: #fff;
 }
 .button-clear {
-	color: #fff !important;
+  color: #fff !important;
 }
 .row-bar {
-	border-bottom: 0px !important;
-	border-top: 0px !important;
+  border-bottom: 0px !important;
+  border-top: 0px !important;
 }
 .button-bar > .button{
   border: 1px solid #cfcfcf;
@@ -79,8 +91,8 @@ ion-tabs.tabs-color-active-ggc .tab-item.activated {
   border-radius: 20px 0px 0px 20px !important;
 }
 .item-radio {
-	border-top:0px !important;
-	border-bottom:0px !important;
+  border-top:0px !important;
+  border-bottom:0px !important;
 }
 .ggc-green, .bar-stable, .btn-green, .tabs, .badge-positive {
   background-color: #00704a !important;
@@ -89,21 +101,21 @@ header {
   padding-bottom: 10px;
 }
 .footer {
-	 background-color: #ECEEEF !important;
+  background-color: #ECEEEF !important;
 }
 .card-header {
-	font-size: 16px;
-	text-align: center;
+  font-size: 16px;
+  text-align: center;
 }
 .title, ion-header-bar > button  {
-	color: #ffffff !important;
+  color: #ffffff !important;
 }
 .badge-positive, .inline {
-	display: inline-block !important;
-	vertical-align: middle !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
 }
 .card-primary {
-	border-left-color: #00704a !important;
+  border-left-color: #00704a !important;
 }
 .panel {
   -moz-border-bottom-colors: none;
@@ -117,7 +129,7 @@ header {
   border-width: 1px 1px 1px 5px;
   margin-bottom: 10px;
   padding: 20px;
-	background-color: #fff;
+  background-color: #fff;
 }
 .panel:last-child {
   margin-bottom: 0px;
@@ -125,8 +137,8 @@ header {
 .panel h4 {
   margin-bottom: 10px;
   margin-top: 0;
-	border-bottom:1px solid #ccc;
-	padding-bottom: 10px;
+  border-bottom:1px solid #ccc;
+  padding-bottom: 10px;
 }
 .panel-primary {
   border-left-color: #00704a;
@@ -135,24 +147,26 @@ header {
   color: #00704a;
 }
 .ng-hide.ng-hide-animate {
-	display: none !important;
+  display: none !important;
 }
 .btn-info {
   color: #000;
   background-color: inherit;
 }
 .card-header {
-	font-weight: bold;
-}
-.spinner svg {
-	width: 50px;
-	height: 50px;
+  font-weight: bold;
 }
 .bar-default {
   background-color: #a5acb0 !important;
 }
 .bar-subheader.subheader_custom {
-    display: block;
-    height: 26px;
-    top: 44px;
+  display: block;
+  height: 26px;
+  top: 44px;
+}
+.spinner svg {
+  width: 28px;
+  height: 28px;
+  stroke: #fff;
+  fill: #fff;
 }

@@ -1,5 +1,5 @@
 <ion-view title="GGC STaRS: Posters" ng-controller="posterListCtrl">
-	<ion-content class="padding" has-header="true">
+	<ion-content class="padding has-header">
 		<div class="container">
 			<div class="card">
 				<div class="card-header ggc-green white-text">
@@ -7,9 +7,12 @@
 				</div>
 				<div class="card-block">
 					<div class="list-group" ng-repeat="poster in posters track by $index">
-						<a class="list-group-item list-group-item-action" ui-sref="tabs.poster({id: poster.id})" style="text-decoration: none;">
+						<a class="list-group-item list-group-item-action item-icon-right" ui-sref="tabs.poster({id: poster.id})" style="text-decoration: none;">
 							<h2>{{poster.group}}</h2>
-							<span class="badge badge-positive">Surveyed: {{poster.countJudges}}</span>
+							<p class="subdued">Surveyed: {{poster.countJudges}}</p>
+							<p class="subdued ellipsis">
+								Students: {{poster.students | clearText}}
+							</p>
 						</a>
 					</div>
 				</div>
