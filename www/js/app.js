@@ -40,13 +40,14 @@ app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork, $tim
 
 app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
   $ionicConfigProvider.tabs.position('bottom');
-
+  $ionicConfigProvider.navBar.alignTitle('left');
   $stateProvider.state('login', {
     url: '/login',
     templateUrl: 'templates/login.html',
     controller: 'loginCtrl',
-    onEnter: function($timeout, $state) {
+    onEnter: function($timeout, $state, $rootScope) {
       if(window.localStorage.getItem('user') !== null) {
+        $rootScope.$broadcast('loggedIn');
         $timeout(function() {
           $state.go('tabs.home');
         });
@@ -319,11 +320,12 @@ app.factory('$service', function($http, $q, $rootScope, pouchService) {
   };
 });
 
-app.controller('headerCtrl', function($scope, $state, $rootScope, $timeout) {
+app.controller('headerCtrl', function($scope, $state, $rootScope, $timeout, pouchService) {
   $rootScope.changes = false;
   $rootScope.connected = false;
   $rootScope.couchConnection = 'Verifying...';
   $rootScope.couchChanges = "No changes found";
+  $scope.active = false;
 
   $scope.$on('connected', function() {
     document.getElementById("dbconnection").className = "button btn-outline-success";
@@ -334,27 +336,42 @@ app.controller('headerCtrl', function($scope, $state, $rootScope, $timeout) {
   });
 
   $scope.$on('changes', function() {
-    console.log('changessss');
     $rootScope.changes = true;
     $rootScope.couchChanges = 'Changes found tap to refresh';
     document.getElementById('changeRefresh').className = "icon fa fa-refresher fa-spin fa-lg fa-fw";
     $timeout(function() {
       $scope.$apply();
     });
-
-    $scope.refresh = function() {
-      console.log($rootScope.changes);
-      if($rootScope.changes === false) {
-        return;
-      } else {
-        document.getElementById('changeRefresh').className = "icon fa fa-refresher fa-lg fa-fw";
-        $rootScope.couchChanges = 'No changes found';
-        $rootScope.changes = false;
-        $state.reload();
-        $scope.$broadcast('scroll.refreshComplete');
-      }
-    };
   });
+
+  $scope.$on('loggedIn', function() {
+    pouchService.getJudge(window.localStorage.getItem('user'))
+      .then(
+        function(res) {
+          $scope.active = true;
+          $scope.uname = res.username;
+          $timeout(function() {
+            $scope.$apply();
+          });
+        },
+        function(err) {
+          console.log(err)
+        }
+      );
+  });
+
+  $scope.refresh = function() {
+    if($rootScope.changes === false) {
+      return;
+    } else {
+      document.getElementById('changeRefresh').className = "icon fa fa-refresher fa-lg fa-fw";
+      $rootScope.couchChanges = 'No changes found';
+      $rootScope.changes = false;
+      $state.reload();
+      $scope.$broadcast('scroll.refreshComplete');
+    }
+  };
+
 });
 
 app.controller('mainTabsCtrl', function($scope, $cookies, $state, $service, $timeout, $rootScope, $ionicHistory) {

@@ -12,14 +12,13 @@
     <link href="lib/MDBootstrap/css/mdb.css" rel="stylesheet">
 
   </head>
-  <body ng-cloak ng-app="app">
+  <body ng-cloak ng-app="app" ng-controller="headerCtrl">
     <ion-nav-bar class="bar-stable">
-      <ion-nav-buttons side="right">
-        <img class="icon" ng-hide="root.isOnline" src="img/online.ico" width="32" height="32">
-        <img class="icon" ng-hide="!root.isOnline" src="img/offline.ico" width="32" height="32">
+      <ion-nav-buttons side="right" ng-hide="!active">
+        <button class="button button-clear button-positive"><i class="icon ion-person"></i>  {{uname}}</button>
       </ion-nav-buttons>
     </ion-nav-bar>
-    <ion-header-bar align-title="center" class="bar-subheader bar-default" ng-controller="headerCtrl">
+    <ion-header-bar align-title="center" class="bar-subheader bar-default">
       <div class="buttons">
         <div class="button btn-outline-primary" id="dbconnection">
           <i class="icon fa ion-load-a fa-spin fa-lg fa-fw"></i>
