@@ -25,11 +25,17 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.bar-header {
+  border-bottom: 2px solid #00704a;
+}
 .card-block p {
   margin-bottom: 0px !important;
 }
 * {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+}
+.subdued {
+  color: #00704a;
 }
 .btn-outline-danger:active, .btn-outline-danger.activated {
   border: 2px solid #ff4444 !important;
@@ -46,16 +52,15 @@
   color: #0d47a1 !important;
   background-color: #fff !important;
 }
-
 .btn-outline-danger, .btn-outline-primary, .btn-outline-success {
   background-color: #fff !important;
 }
 .has-header {
-  padding-top: 65px;
+  padding-top: 10px;
 }
 .title {
   font-weight: bold !important;
-  text-align: center !important;
+  text-align: left !important;
 }
 ion-tabs.tabs-color-active-ggc .tab-item {
   border-color: #fff !important;

@@ -39,6 +39,7 @@ app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork, $tim
 });
 
 app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+  $ionicConfigProvider.views.maxCache(0);
   $ionicConfigProvider.tabs.position('bottom');
   $ionicConfigProvider.navBar.alignTitle('left');
   $stateProvider.state('login', {
@@ -355,12 +356,23 @@ app.controller('headerCtrl', function($scope, $state, $rootScope, $timeout, pouc
           });
         },
         function(err) {
-          console.log(err)
+          $ionicPopup.alert({
+            title: '<h4>Error</h4>',
+            template: '<p style=\'text-align:center\'>$rootScope -> loggedIn -> getJudge()</p>'
+          });
         }
       );
   });
 
+  $scope.$on('loggedOut', function() {
+    $scope.active = false;
+    $timeout(function() {
+      $scope.$apply();
+    });
+  });
+
   $scope.refresh = function() {
+    console.log('refresh --> headerCtrl');
     if($rootScope.changes === false) {
       return;
     } else {
@@ -368,7 +380,6 @@ app.controller('headerCtrl', function($scope, $state, $rootScope, $timeout, pouc
       $rootScope.couchChanges = 'No changes found';
       $rootScope.changes = false;
       $state.reload();
-      $scope.$broadcast('scroll.refreshComplete');
     }
   };
 
@@ -408,7 +419,10 @@ app.controller('loginCtrl', function($pouchdb, $scope, $timeout, $cordovaNetwork
         });
       },
       function(err) {
-        console.log(err);
+        $ionicPopup.alert({
+          title: '<h4>Error</h4>',
+          template: '<p style=\'text-align:center\'>getItems()</p>'
+        });
       }
     );
   };
@@ -432,9 +446,9 @@ app.controller('loginCtrl', function($pouchdb, $scope, $timeout, $cordovaNetwork
     pouchService.login($scope.user.username, $scope.user.password)
     .then(
       function(res) {
-        console.log(res);
         window.localStorage.setItem('user', res._id);
         $rootScope.isAuth = true;
+        $rootScope.$broadcast('loggedIn');
         $timeout(function() {
           $state.go('tabs.home');
           $scope.user.username = '';
@@ -460,7 +474,16 @@ app.controller('homeCtrl', function($pouchdb, $scope, $ionicLoading, $state, $io
   var remoteDB = $pouchdb.remoteDB;
   $scope.surveys = [];
   $scope.hasRecent = false;
-  $ionicLoading.show();
+
+  var showLoading = function() {
+    $ionicLoading.show();
+  };
+
+  var hideLoading = function() {
+    $ionicLoading.hide();
+  };
+
+  showLoading();
 
   $scope.changes = false;
   $rootScope.$on('changes', function() {
@@ -468,7 +491,7 @@ app.controller('homeCtrl', function($pouchdb, $scope, $ionicLoading, $state, $io
   });
   $scope.refresh = function() {
     $scope.changes = false;
-    window.location.reload();
+    $state.reload();
   };
 
   if(window.localStorage.getItem('user') === undefined) {
@@ -486,10 +509,10 @@ app.controller('homeCtrl', function($pouchdb, $scope, $ionicLoading, $state, $io
       if(doc.surveys[0].groupId !== '') {
         $scope.hasRecent = true;
       }
-      $ionicLoading.hide();
+      hideLoading();
     },
     function(err) {
-      $ionicLoading.hide();
+      hideLoading();
       console.log(err);
       $ionicPopup.alert({
         title: '<h4>Error</h4>',
@@ -505,7 +528,17 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
   var localPouch = $pouchdb.localDB;
   var remoteDB = $pouchdb.remoteDB;
   $scope.posters = [];
-  $ionicLoading.show();
+  $scope.search = {};
+
+  var showLoading = function() {
+    $ionicLoading.show();
+  };
+
+  var hideLoading = function() {
+    $ionicLoading.hide();
+  };
+
+  showLoading();
 
   $scope.changes = false;
   $rootScope.$on('changes', function() {
@@ -513,7 +546,7 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
   });
   $scope.refresh = function() {
     $scope.changes = false;
-    window.location.reload();
+    $state.reload();
   };
 
   if(window.localStorage.getItem('user') === undefined) {
@@ -535,10 +568,10 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
             poster.judgesSurveyed = res;
             poster.countJudges = poster.judgesSurveyed.length;
           }
-          $ionicLoading.hide();
+          hideLoading();
         },
         function(err) {
-          $ionicLoading.hide();
+          hideLoading();
           console.log(err);
           $ionicPopup.alert({
             title: '<h4>Error</h4>',
@@ -566,14 +599,23 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state, $window,
   $scope.disableEdit = false;
   var groupName = $scope.poster.group;
   var groupId = $scope.poster.id;
-  $ionicLoading.show();
+
+  var showLoading = function() {
+    $ionicLoading.show();
+  };
+
+  var hideLoading = function() {
+    $ionicLoading.hide();
+  };
+
+  showLoading();
 
   $rootScope.$on('changes', function() {
     $scope.changes = true;
   });
   $scope.refresh = function() {
     $scope.changes = false;
-    window.location.reload();
+    $state.reload();
   };
 
   if(window.localStorage.getItem('user') === undefined) {
@@ -605,7 +647,10 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state, $window,
             $scope.previousSurveyed = true;
             $scope.judgesSurveyed.push(res.username);
             $scope.countJudges++;
-            $window.location.reload();
+            $state.reload();
+            $timeout(function() {
+              $scope.$apply();
+            });
           },
           function(err) {
             console.log(err);
@@ -637,6 +682,9 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state, $window,
               function(res) {
                 $scope.previousSurveyed = true;
                 $scope.disableEdit = true;
+                $timeout(function() {
+                  $scope.$apply();
+                });
               },
               function(err) {
                 console.log(err);
@@ -678,10 +726,10 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state, $window,
             $scope.questions[i].value = $scope.answers[i];
           }
         }
-        $ionicLoading.hide();
+        hideLoading();
       },
       function(err) {
-        $ionicLoading.hide();
+        hideLoading();
         console.log(err);
         $ionicPopup.alert({
           title: '<h4>Error</h4>',
@@ -720,15 +768,15 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state, $window,
     );
   };
 
-  $scope.checkPreviousSurveyed();
   $scope.judgesWhoHaveSurveyed();
-
+  $scope.checkPreviousSurveyed();
 });
 
 app.controller('logoutCtrl', function($rootScope, $cookies, $state, $timeout) {
   console.log('logout');
   window.localStorage.removeItem('user');
   $rootScope.isAuth = false;
+  $rootScope.$broadcast('loggedOut');
   $timeout(function() {
     $state.go('login');
     $rootScope.$apply();

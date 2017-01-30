@@ -14,11 +14,11 @@
   </head>
   <body ng-cloak ng-app="app" ng-controller="headerCtrl">
     <ion-nav-bar class="bar-stable">
-      <ion-nav-buttons side="right" ng-hide="!active">
-        <button class="button button-clear button-positive"><i class="icon ion-person"></i>  {{uname}}</button>
+      <ion-nav-buttons side="right">
+        <button class="button button-clear button-positive" ng-hide="!active"><i class="icon ion-person"></i>  {{uname}}</button>
       </ion-nav-buttons>
     </ion-nav-bar>
-    <ion-header-bar align-title="center" class="bar-subheader bar-default">
+    <ion-header-bar align-title="left" class="bar-subheader bar-default">
       <div class="buttons">
         <div class="button btn-outline-primary" id="dbconnection">
           <i class="icon fa ion-load-a fa-spin fa-lg fa-fw"></i>

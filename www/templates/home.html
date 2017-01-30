@@ -7,11 +7,9 @@
         </div>
         <div class="card-block">
           <div class="list-group" ng-if="hasRecent" ng-repeat="survey in surveys track by $index">
-            <a class="list-group-item-action item item-button-right" ui-sref="tabs.poster({id: survey.groupId})" style="text-decoration: none;">
+            <a class="list-group-item-action item item-icon-right" ui-sref="tabs.poster({id: survey.groupId})" style="text-decoration: none; margin-bottom: 20px;">
               <h2>{{survey.groupName}}</h2>
-              <button class="button button-positive">
-                <i class="icon ion-checkmark-circled"></i>
-              </button>
+              <i class="icon ion-checkmark"></i>
             </a>
           </div>
           <div ng-if="!hasRecent" class="help-block text-center">

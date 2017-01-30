@@ -2,9 +2,18 @@
 	"posters": [
 		{
 			"group": "BIO",
+			"groupNumber": "1",
 			"students": ["John Doe", "Jane Doe"],
 			"id": "1",
-			"judgedBy": [],
+			"judges": [],
+			"countJudges": 0
+		},
+		{
+			"group": "MATH",
+			"groupNumber": "2",
+			"students": ["Malcolm Function", "Jason Response"],
+			"id": "2",
+			"judges": [],
 			"countJudges": 0
 		}
 	]
