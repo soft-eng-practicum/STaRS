@@ -1,0 +1,19 @@
+{
+  "users": [
+    {
+      "username": "John Doe",
+      "password": "12345",
+      "_id": "258765b509b479354159970345000e53"
+    },
+    {
+      "username": "Jane Doe",
+      "password": "12345",
+      "_id": "04ce485754e7f62c7d7a454b750004a0"
+    },
+    {
+      "username": "Cody Cates",
+      "password": "12345",
+      "_id": "8cd7af2c9d89e0e43cf283592b003331"
+    }
+  ]
+}

@@ -25,6 +25,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.icon-green {
+  color: #00704a;
+}
 .bar-header {
   border-bottom: 2px solid #00704a;
 }

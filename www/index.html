@@ -21,14 +21,14 @@
     <ion-header-bar align-title="left" class="bar-subheader bar-default">
       <div class="buttons">
         <div class="button btn-outline-primary" id="dbconnection">
-          <i class="icon fa ion-load-a fa-spin fa-lg fa-fw"></i>
+          <i class="fa ion-load-a fa-spin fa-lg fa-fw"></i>
           {{$root.couchConnection}}
         </div>
       </div>
       <h1 class="title"></h1>
       <div class="buttons">
         <button class="button btn-outline-primary" ng-click="refresh()" ng-disabled="!changes">
-          <i class="icon fa fa-refresher fa-lg fa-fw" id="changeRefresh"></i>
+          <i class="fa fa-refresher fa-lg fa-fw" id="changeRefresh"></i>
           {{$root.couchChanges}}
         </button>
       </div>

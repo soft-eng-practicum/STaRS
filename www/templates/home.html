@@ -9,7 +9,7 @@
           <div class="list-group" ng-if="hasRecent" ng-repeat="survey in surveys track by $index">
             <a class="list-group-item-action item item-icon-right" ui-sref="tabs.poster({id: survey.groupId})" style="text-decoration: none; margin-bottom: 20px;">
               <h2>{{survey.groupName}}</h2>
-              <i class="icon ion-checkmark"></i>
+              <i class="icon icon-green ion-checkmark"></i>
             </a>
           </div>
           <div ng-if="!hasRecent" class="help-block text-center">

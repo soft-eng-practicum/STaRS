@@ -155,10 +155,12 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http) {
   return {
 
     checkDatabaseConnection: function() {
-      return $http.get('http://cody:cody@192.168.1.20:5984/judges');
+      //return $http.get('http://cody:cody@192.168.1.20:5984/judges');
+      return $http.get('http://cody:cody@0.0.0.0:5984/judges');
     },
 
-    getUsers: function() {
+    // Connection required
+    /*getUsers: function() {
       var deferred = $q.defer();
       localPouch.allDocs({
         include_docs: true,
@@ -170,9 +172,21 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http) {
         deferred.reject(err);
       });
       return deferred.promise;
+    },*/
+
+    // Connection not required
+    getUsers: function() {
+      var deferred = $q.defer();
+      return $http.get('./info.json')
+        .then(function(res) {
+          var result = res.data.users;
+          deferred.resolve(result);
+          return deferred.promise;
+        });
     },
 
-    login: function(username, password) {
+    // Connection required
+    /*login: function(username, password) {
       var deferred = $q.defer();
       var result;
       localPouch.allDocs({
@@ -193,6 +207,27 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http) {
         deferred.reject(err);
       });
       return deferred.promise;
+    },*/
+
+    // Connection not required
+    login: function(username, password) {
+      var deferred = $q.defer();
+      var result;
+      return $http.get('./info.json')
+        .then(function(res) {
+          var users = res.data.users;
+          for(var i = 0; i < users.length; i++) {
+            if(angular.equals(users[i].username, username) && angular.equals(users[i].password, password)) {
+              result = users[i];
+            }
+          }
+          if(result !== undefined) {
+            deferred.resolve(result);
+          } else {
+            deferred.reject(result);
+          }
+          return deferred.promise;
+        });
     },
 
     getJudge: function(id) {
@@ -409,7 +444,8 @@ app.controller('loginCtrl', function($pouchdb, $scope, $timeout, $cordovaNetwork
   $scope.search = {};
   $rootScope.isAuth = false;
 
-  $scope.getItems = function() {
+  // Connection required
+  /*$scope.getItems = function() {
     pouchService.getUsers()
     .then(
       function(res) {
@@ -425,6 +461,16 @@ app.controller('loginCtrl', function($pouchdb, $scope, $timeout, $cordovaNetwork
         });
       }
     );
+  };*/
+  // Connection not required
+  $scope.getItems = function() {
+    pouchService.getUsers()
+      .then(function(res) {
+        res.forEach(function(user) {
+          var item = {name: user.username};
+          $scope.items.push(item);
+        });
+      });
   };
 
   $scope.getItems();
