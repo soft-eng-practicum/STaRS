@@ -553,7 +553,7 @@ app.controller('homeCtrl', function($pouchdb, $scope, $ionicLoading, $state, $io
     $rootScope.isAuth = true;
     $scope.user = window.localStorage.getItem('user');
   }
-  console.log('test');
+
   var initializeHome = function() {
     pouchService.getJudge($scope.user)
     .then(
@@ -867,6 +867,15 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
       title: '<h4>Judges Who Have Surveyed:</h4>',
       templateUrl: 'templates/popup.html',
       scope: $scope
+    });
+  };
+
+  $scope.promptAdditional = function(index) {
+    var question = $scope.questions[index];
+    console.log(question);
+    $ionicPopup.alert({
+      title: '<h4>' + question.information + '</h4>',
+      template: '<p class="text-center">' + question.additional + '</p>'
     });
   };
 

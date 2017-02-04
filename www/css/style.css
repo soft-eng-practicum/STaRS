@@ -126,7 +126,6 @@ header {
 }
 .card-header {
   font-size: 14px;
-  text-align: center;
 }
 .title, ion-header-bar > button  {
   color: #ffffff !important;
@@ -265,4 +264,8 @@ header {
 .item-divider, .item-divider:active {
   background-color: #00704a !important;
   color: #fff !important;
+}
+.pull-right {
+position: absolute;
+right: 2px;
 }

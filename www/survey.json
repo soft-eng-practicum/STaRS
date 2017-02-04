@@ -1,66 +1,48 @@
 {"questions": [
   {
     "id": 1,
-    "information": "Information and Background",
+    "information": "Statement of Problem",
+    "additional": "Includes summary of pertinent details, clearly state problem or theory, including appropriate background and citations.",
     "value": "0",
     "required": true
   },
   {
     "id": 2,
-    "information": "Question, Problem, and Hypothesis",
+    "information": "Methodology",
+    "additional": "Methods/techniques are appropriate and properly applied.",
     "value": "0",
     "required": true
   },
   {
     "id": 3,
-    "information": "Experimental Approach and Design",
+    "information": "Results/Solution",
+    "additional": "Logical, clearly presented, and appropriately summarized.",
     "value": "0",
     "required": true
   },
   {
     "id": 4,
-    "information": "Data and Results",
+    "information": "Oral Presentation",
+    "additional": "Presenter has a good grasp of study and related areas and responds effectively and clearly to questions.",
     "value": "0",
     "required": true
   },
   {
     "id": 5,
-    "information": "Discussions and Conclusion",
+    "information": "Poster Layout",
+    "additional": "Laid out in a manner that is easy to follow and visually appealling.",
     "value": "0",
     "required": true
   },
   {
     "id": 6,
-    "information": "Research Originality/Novelty",
+    "information": "Impact",
+    "additional": "Work is creative, original, and may have an impact on the field (wow factor).",
     "value": "0",
     "required": true
   },
   {
     "id": 7,
-    "information": "Poster Organization, Style, Visual Appeal",
-    "value": "0",
-    "required": true
-  },
-  {
-    "id": 8,
-    "information": "Oral Presentation of Research",
-    "value": "0",
-    "required": false
-  },
-  {
-    "id": 9,
-    "information": "Ability to Answer Questions",
-    "value": "0",
-    "required": false
-  },
-  {
-    "id": 10,
-    "information": "Overall Presentation",
-    "value": "0",
-    "required": true
-  },
-  {
-    "id": 11,
     "information": "Additional Comments",
     "value": "",
     "required": false
