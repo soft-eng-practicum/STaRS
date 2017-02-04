@@ -1,15 +1,33 @@
-<ion-view title="GGC STaRS: Posters" ng-controller="posterListCtrl">
+<ion-view title="GGC STaRS: Posters">
 	<ion-content class="padding has-header">
 		<div class="container">
 			<div class="card">
 				<div class="card-header ggc-green white-text">
-					Search by Student or Poster Name
+					Filters
 				</div>
 				<div class="card-block">
-					<div class="md-form">
-						<i class="ion-search prefix"></i>
-						<input type="text" id="search" class="form-control" ng-model="search.value">
-						<label for="search">Search</label>
+					<div class="list">
+						<div class="md-form">
+							<i class="ion-search prefix"></i>
+							<input type="text" id="search" class="form-control" ng-model="search.value">
+							<label for="search">Search by Student, Poster, Advisor</label>
+						</div>
+						<ion-item class="item-divider item-icon-right" ng-click="toggleCategories()">
+							Sort by Academic Subject
+							<i id="category-icon" class="icon ion-chevron-down"></i>
+						</ion-item>
+						<div class="list list-accordion" ng-repeat="category in categoryFields" ng-show="showCategories">
+						<div class="item-accordion" >
+							<label class="item item-icon-left-accordion item-radio" style="border:none">
+								<input type="radio" name="group" ng-model="selectedCategory" ng-value="'{{category.subject}}'"
+									ng-click="setCategory('{{category.subject}}')">
+								<div class="item-content" style="margin-left:0px">
+									{{category.subject}} <span class="badge badge-accordian badge-positive">{{category.count}}</span>
+								</div>
+								<i class="radio-icon ion-checkmark"></i>
+							</label>
+						</div>
+					</div>
 					</div>
 				</div>
 			</div>
@@ -18,13 +36,24 @@
 					Select Any of the Following Posters
 				</div>
 				<div class="card-block">
-					<div class="list-group" ng-repeat="poster in posters | filter: search.value track by $index">
-						<a class="list-group-item list-group-item-action item-icon-right" ui-sref="tabs.poster({id: poster.id})" style="text-decoration: none; margin-bottom: 20px;">
+					<div class="list-group"
+						ng-repeat="poster in (posters | customFilter: selectedCategory) | filter: search.value track by $index">
+						<a class="list-group-item list-group-item-action item-icon-right" ui-sref="tabs.poster({id: poster.id})"
+							style="text-decoration: none; margin-bottom: 20px;">
 							<h2>{{poster.group}}</h2>
-							<p class="subdued">Surveyed: {{poster.countJudges}}</p>
-							<p class="subdued ellipsis">
-								Students: {{poster.students | clearText}}
-							</p>
+							<div class="list list-accordion one-edge-shadow">
+								<div class="item-accordion">
+									<div class="item item-icon-left-accordion item-custom-home">
+											<i class="fa fa-hashtag fa-fw"></i> <strong>Surveyed: {{poster.countJudges}}</strong>
+									</div>
+									<div class="item item-icon-left-accordion item-custom-home ellipsis">
+											<i class="fa fa-users fa-fw"></i> <strong>Students: {{poster.students | clearText}}</strong>
+									</div>
+									<div class="item item-icon-left-accordion item-custom-home">
+											<i class="fa fa-graduation-cap fa-fw"></i> <strong>Advisor: {{poster.advisor}}</strong>
+									</div>
+								</div>
+							</div>
 						</a>
 					</div>
 				</div>

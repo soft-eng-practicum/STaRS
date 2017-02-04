@@ -1,5 +1,10 @@
-<div ng-repeat="judge in judgesSurveyed track by $index" class="list-group">
-	<div class="list-group-item text-center">
+<div ng-repeat="judge in judgesSurveyed track by $index" class="list-group" ng-show="!isEmpty">
+	<div class="list-group-item text-center" ng-show="!isEmpty">
 		{{judge}}
+	</div>
+</div>
+<div class="list-group" ng-show="isEmpty">
+	<div class="list-group-item text-center">
+		Poster hasn't been surveyed yet.
 	</div>
 </div>
