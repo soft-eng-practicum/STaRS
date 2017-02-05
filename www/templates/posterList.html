@@ -12,9 +12,10 @@
 							<input type="text" id="search" class="form-control" ng-model="search.value">
 							<label for="search">Search by Student, Poster, Advisor</label>
 						</div>
-						<ion-item class="item-divider item-icon-right" ng-click="toggleCategories()">
-							Sort by Academic Subject
-							<i id="category-icon" class="icon ion-chevron-down"></i>
+						<ion-item class="item-divider item-icon-left item-icon-right" ng-click="toggleCategories()">
+							<i class="icon ion-funnel" style="font-size: 14px;"></i>
+							<p class="sort-header">Sort by Academic Subject</p>
+							<i id="category-icon" class="icon ion-chevron-down" style="font-size: 14px;"></i>
 						</ion-item>
 						<div class="list list-accordion" ng-repeat="category in categoryFields" ng-show="showCategories">
 						<div class="item-accordion" >
@@ -37,7 +38,7 @@
 				</div>
 				<div class="card-block">
 					<div class="list-group"
-						ng-repeat="poster in (posters | customFilter: selectedCategory) | filter: search.value track by $index">
+						ng-repeat="poster in (posters | customFilter: selectedCategory) | filter: search.value | orderBy: '-countJudges' track by $index">
 						<a class="list-group-item list-group-item-action item-icon-right" ui-sref="tabs.poster({id: poster.id})"
 							style="text-decoration: none; margin-bottom: 20px;">
 							<h2>{{poster.group}}</h2>

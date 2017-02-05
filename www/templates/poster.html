@@ -19,7 +19,7 @@
 					</div>
 					<div class="item item-icon-left item-icon-right item-text-wrap">
 						<i class="icon icon-green ion-ios-people"></i>
-						<h2>Number of Surveys:</h2>
+						<h2 class="strong">Number of Surveys:</h2>
 						<span class="badge badge-positive">{{countJudges}}</span>
 					</div>
 					<a class="item item-icon-left item-icon-right item-text-wrap" href="javascript:void(0)" ng-click="showJudges()">
@@ -36,7 +36,7 @@
 						<button type="button" class="btn btn-warning btn-lg btn-block" ng-hide="!disableEdit" ng-click="edit()">Edit Survey</button>
 					</div>
 				</div>
-				<form name="questionForm" id="questionForm" ng-submit="submitQuestions(questionForm)">
+				<form name="questionForm" id="questionForm" ng-submit="submitQuestions()">
 					<div class="card" ng-repeat="question in questions">
 						<a class="item item-icon-right card-header ggc-green white-text" href="javascript:void(0)" ng-click="promptAdditional($index)">
 								#{{question.id}}: {{question.information}}
@@ -45,17 +45,17 @@
 						<div class="card-block">
 							<div ng-show="{{$index}}<=5">
 								<div class="button-bar">
-									<a class="bar-btn" grouped-radio="'1'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit" >1<br />Below Average</a>
-									<a class="bar-btn" grouped-radio="'2'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit" >2<br />Average</a>
-									<a class="bar-btn" grouped-radio="'3'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit" >3<br />Good</a>
-									<a class="bar-btn" grouped-radio="'4'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit" >4<br />Excellent</a>
-									<a class="bar-btn" grouped-radio="'5'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit" >5<br />Outstanding</a>
+									<a class="bar-btn" grouped-radio="'1'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit" required>1<br />Below Average</a>
+									<a class="bar-btn" grouped-radio="'2'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit" required>2<br />Average</a>
+									<a class="bar-btn" grouped-radio="'3'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit" required>3<br />Good</a>
+									<a class="bar-btn" grouped-radio="'4'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit" required>4<br />Excellent</a>
+									<a class="bar-btn" grouped-radio="'5'" ng-model="question.value" id="question.value" name="question{{question.id}}" ng-disabled="disableEdit" required>5<br />Outstanding</a>
 								</div>
 							</div>
 							<div ng-show="{{$index}}===6">
 								<label class="item item-input item-stacked-label">
 									<span class="input-label">Comments</span>
-									<textarea rows="5" ng-model="question.value" placeholder="Insert any additional comments here..." ng-disabled="disableEdit" ></textarea>
+									<textarea rows="5" ng-model="question.value" placeholder="Insert any additional comments here..." ng-disabled="disableEdit"></textarea>
 								</label>
 							</div>
 						</div>
