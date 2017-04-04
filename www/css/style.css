@@ -37,6 +37,33 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.title-poster {
+  overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    -webkit-line-clamp: 2 !important;
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+}
+.t-poster {
+  font-size: 13px !important;
+  font-weight: 400 !important;
+}
+.bg-primary {
+  color: #ffffff !important;
+}
+.list-footer-text {
+  font-size: smaller;
+}
+.button-default, .button-default:active, .button-default:hover {
+  background-color: #dfdfdf;
+  color: #000000 !important;
+}
+.button-positive, .button-positive:active, .button-positive:hover {
+  background-color: #dfdfdf;
+  color: #fff !important;
+}
 .icon-green {
   color: #00704a;
 }
@@ -70,6 +97,9 @@
 .has-header {
   padding-top: 10px;
 }
+.modal {
+  background-color: #a5acb0;
+}
 .title {
   font-weight: bold !important;
   text-align: left !important;
@@ -94,6 +124,9 @@ ion-tabs.tabs-color-active-ggc .tab-item.activated {
 .button-clear {
   color: #fff !important;
 }
+.sub {
+  font-size: 0.8em;
+}
 .row-bar {
   border-bottom: 0px !important;
   border-top: 0px !important;
@@ -117,6 +150,7 @@ ion-tabs.tabs-color-active-ggc .tab-item.activated {
 }
 .ggc-green, .bar-stable, .btn-green, .tabs, .badge-positive {
   background-color: #00704a !important;
+  color: #fff;
 }
 header {
   padding-bottom: 10px;
@@ -258,7 +292,7 @@ header {
 .list-accordion:last-child {
   border-bottom: 3px solid #ccc;
 }
-.item-divider, .item-divider:active {
+#sort-divider, #sort-divider:active {
   background-color: #00704a !important;
   color: #fff !important;
 }
@@ -275,4 +309,16 @@ header {
 }
 .strong {
   font-weight: bold !important;
+}
+.modalTitle {
+  color: #000;
+}
+.transparent {
+background: transparent !important;
+}
+.imodal {
+width: 100% !important;
+height: 100%;
+top: 0 !important;
+left: 0 !important;
 }

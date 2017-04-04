@@ -3,39 +3,13 @@
       <div class="container">
         <div class="card">
           <div class="card-header ggc-green white-text">
-            Complete the form below to continue
+            GGC STaRS Judging App
           </div>
           <div class="card-block">
-            <div class="md-form">
-              <i class="ion-search prefix"></i>
-              <input type="text" id="search" class="form-control" ng-model="search.value">
-              <label for="search">Username Search</label>
-            </div>
-            <div class="list-group" ng-if="search.value">
-              <div class="list-group-item active">Found Usernames:</div>
-              <div ng-repeat="item in items | filter: search.value">
-                <button type="button" class="list-group-item list-group-item-action"
-                  ng-click="updateSelection(item.name)">{{item.name}}</button>
-              </div>
-              <div class="list-group-item footer">
-                If your username is not found, you may not be registered within the system
-              </div>
-            </div>
-          </div>
-          <div class="card-block">
-            <div class="md-form">
-              <i id="active-username-icon" class="ion-person prefix"></i>
-              <input type="text" id="username" class="form-control" ng-model="user.username">
-              <label id="active-username" for="username">Username</label>
-            </div>
-            <div class="md-form">
-              <i class="ion-lock-combination prefix"></i>
-              <input type="password" id="password" class="form-control"
-                ng-model="user.password">
-              <label for="password">Password</label>
-            </div>
-            <button type="button" class="btn btn-green btn-lg btn-block"
-              ng-click="submitForm(user)">Submit</button>
+            <button type="button" class="button button-block btn-green icon-right ion-chevron-right"
+              ng-click="launchLoginModal()">Registered Users </button>
+            <button type="button" class="button button-block btn-green icon-right ion-chevron-right"
+              ng-click="launchRegisterModal()">First-Time Users </button>
           </div>
         </div>
       </div>

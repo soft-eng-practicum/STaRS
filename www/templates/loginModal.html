@@ -1,0 +1,51 @@
+<ion-modal-view>
+  <div class="container">
+    <div class="card">
+      <div class="card-header ggc-green white-text">
+        Returning Users: Login Form
+      </div>
+      <div class="card-block">
+        <div class="md-form">
+          <i class="ion-search prefix"></i>
+          <input type="text" id="search" class="form-control" ng-model="search.value">
+          <label for="search">Username Search</label>
+        </div>
+        <div class="list-group" ng-if="search.value">
+          <div class="list-group-item active">Found Usernames:</div>
+          <div ng-repeat="item in filteredItems = (items | filter: search.value)">
+            <button type="button" class="list-group-item list-group-item-action"
+              ng-click="updateSelection(item.name)">{{item.name}}</button>
+          </div>
+          <div class="list-group-item footer text-center" ng-hide="filteredItems.length">
+            <p class="list-footer-text">
+              If your username is not found, you may not be registered within the system
+            </p>
+            <button type="button" class="button button-block bg-primary icon-right ion-chevron-right" ng-click="closeLoginModal(); launchRegisterModal()"
+             >First-Time Users Form</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-block">
+        <div class="md-form">
+          <i id="active-username-icon" class="ion-person prefix"></i>
+          <input type="text" id="username" class="form-control" ng-model="returningUser.username">
+          <label id="active-username" for="username">Username</label>
+        </div>
+        <div class="md-form">
+          <i class="ion-lock-combination prefix"></i>
+          <input type="password" id="password" class="form-control"
+            ng-model="returningUser.password">
+          <label for="password">Password</label>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="popup-buttons">
+          <button type="button" class="button button-default"
+            ng-click="closeLoginModal()">Cancel</button>
+          <button type="button" class="button button-positive"
+            ng-click="submitLoginForm(returningUser)">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-modal-view>

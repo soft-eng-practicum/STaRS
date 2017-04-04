@@ -1,8 +1,8 @@
-var app = angular.module('app', ['ionic', 'ui.router', 'pouchdb', 'ngCordova']);
+var app = angular.module('app', ['ionic', 'ui.router', 'pouchdb', 'ngCordova', 'angular-md5']);
 
 app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork, $timeout) {
   $ionicPlatform.ready(function() {
-    if(window.cordova && window.cordova.plugins.Keyboard) {
+    if (window.cordova && window.cordova.plugins.Keyboard) {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -12,11 +12,10 @@ app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork, $tim
       // a much nicer keyboard experience.
       cordova.plugins.Keyboard.disableScroll(true);
     }
-    if(window.StatusBar) {
+    if (window.StatusBar) {
       StatusBar.styleDefault();
     }
 
-    $rootScope.notify = false;
     $rootScope.unpushedChanges = [];
 
     // Check database for connection results
@@ -26,16 +25,29 @@ app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork, $tim
           $rootScope.$broadcast('connected');
           $rootScope.connection = true;
           $rootScope.couchConnection = 'Connected';
+          if ($rootScope.isAuth === true) {
+            var storageObj = JSON.parse(window.localStorage.getItem('user'));
+            if (storageObj !== null && storageObj.unpushedChanges.length > 0) {
+              storageObj.unpushedChanges = [];
+              window.localStorage.setItem('user', JSON.stringify(storageObj));
+              $rootScope.notifyOfChanges = false;
+            }
+            $timeout(function() {
+              $rootScope.$apply();
+            });
+
+          }
         })
         .catch(function(err) {
+          console.log(err);
           $rootScope.$broadcast('disconnected');
           $rootScope.connection = false;
           $rootScope.couchConnection = 'Disconnected';
         });
-        $timeout(function() {
-          $rootScope.$apply();
-        });
-        setTimeout(checkDb, 10000);
+      $timeout(function() {
+        $rootScope.$apply();
+      });
+      setTimeout(checkDb, 10000);
     };
     setTimeout(checkDb, 10000);
   });
@@ -48,15 +60,17 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
   $stateProvider.state('login', {
     url: '/login',
     templateUrl: 'templates/login.html',
-    controller: 'loginCtrl',
+    controller: 'loginCtrl'
+    /*
     onEnter: function($timeout, $state, $rootScope) {
-      if(window.localStorage.getItem('user') !== null) {
+      if (window.localStorage.getItem('user') !== null) {
         $rootScope.$broadcast('loggedIn');
         $timeout(function() {
           $state.go('tabs.home');
         });
       }
     }
+    */
   });
   $stateProvider.state('tabs', {
     url: '/tab',
@@ -86,18 +100,18 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     url: '/posters/{id}',
     views: {
       'posterList-tab': {
-        templateUrl:'templates/poster.html',
+        templateUrl: 'templates/poster.html',
         controller: 'posterCtrl'
       }
     },
     resolve: {
       poster: [
-      '$stateParams', '$http', '$q',
+        '$stateParams', '$http', '$q',
         function($stateParams, $http, $q) {
           return $http.get('./posters.json').then(function(res) {
             var deferred = $q.defer();
             res.data.posters.forEach(function(poster) {
-              if(poster.id == $stateParams.id) {
+              if (poster.id == $stateParams.id) {
                 deferred.resolve(poster);
               }
             });
@@ -112,6 +126,15 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     controller: 'logoutCtrl',
     templateUrl: null
   });
+  $stateProvider.state('tabs.help', {
+    url: '/help',
+    views: {
+      'help-tab': {
+        templateUrl: 'templates/help.html',
+        controller: 'helpCtrl'
+      }
+    }
+  });
 
   $urlRouterProvider.otherwise('/login');
 });
@@ -125,48 +148,46 @@ app.service('$pouchdb', function($rootScope, pouchDB, $http) {
       live: true,
       retry: true,
       continuous: true,
-      back_off_function: function (delay) {
+      back_off_function: function(delay) {
         if (delay === 0) {
           return 1000;
         }
         return delay * 3;
-        }
-      };
+      }
+    };
 
     self.localDB = pouchDB('judges');
-    self.localDB.sync('http://cody:cody@192.168.1.20:5984/judges', opts)
-    .on('change', function(change) {
-      $rootScope.$broadcast('changes');
-      console.log('yo something changed');
-      console.log(change);
-    }).on('paused', function(info) {
-      $rootScope.$broadcast('paused');
-      console.log('PAUSED');
-    }).on('active', function(info) {
-      console.log(info);
-      console.log('ACTIVE');
-    }).on('error', function(err) {
-      console.log(err);
-      console.log('ERROR');
-    });
+    self.localDB.sync('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges', opts)
+      .on('change', function(change) {
+        $rootScope.$broadcast('changes');
+        console.log('yo something changed');
+        console.log(change);
+      }).on('paused', function(info) {
+        $rootScope.$broadcast('paused');
+        console.log('PAUSED');
+      }).on('active', function(info) {
+        console.log(info);
+        console.log('ACTIVE');
+      }).on('error', function(err) {
+        console.log(err);
+        console.log('ERROR');
+      });
 
   };
 });
 
-app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http) {
+app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, md5) {
   var pouch = $pouchdb.retryReplication();
   var localPouch = $pouchdb.localDB;
   var remoteDB = $pouchdb.remoteDB;
 
   return {
-
     checkDatabaseConnection: function() {
-      //return $http.get('http://cody:cody@192.168.1.20:5984/judges');
-      return $http.get('http://cody:cody@0.0.0.0:5984/judges');
+      return $http.get('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges');
     },
 
     // Connection required
-    /*getUsers: function() {
+    getUsers: function() {
       var deferred = $q.defer();
       localPouch.allDocs({
         include_docs: true,
@@ -178,33 +199,67 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http) {
         deferred.reject(err);
       });
       return deferred.promise;
-    },*/
+    },
+    //
 
+    /*
     // Connection not required
     getUsers: function() {
       var deferred = $q.defer();
+      var newUser = window.localStorage.getItem('user');
       return $http.get('./info.json')
-        .then(function(res) {
-          var result = res.data.users;
-          deferred.resolve(result);
-          return deferred.promise;
-        });
+      .then(function(res) {
+        var result = res.data.users;
+        if(newUser !== null) {
+          localPouch.get(newUser)
+          .then(function(res) {
+            console.log(res);
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+        }
+        deferred.resolve(result);
+        return deferred.promise;
+      });
     },
 
+    // Connection not required
+    login: function(username, password) {
+      var deferred = $q.defer();
+      var result;
+      return $http.get('./info.json')
+      .then(function(res) {
+        var users = res.data.users;
+        for(var i = 0; i < users.length; i++) {
+          if(angular.equals(users[i].username, username) && angular.equals(users[i].password, password)) {
+            result = users[i];
+          }
+        }
+        if(result !== undefined) {
+          deferred.resolve(result);
+        } else {
+          deferred.reject();
+        }
+        return deferred.promise;
+      });
+    },
+    */
+
     // Connection required
-    /*login: function(username, password) {
+    login: function(username, password) {
       var deferred = $q.defer();
       var result;
       localPouch.allDocs({
         include_docs: true,
         attachments: true
       }).then(function(res) {
-        for(var i = 0; i < res.rows.length; i++) {
-          if(angular.equals(res.rows[i].doc.username,username) && angular.equals(res.rows[i].doc.password,password)) {
+        for (var i = 0; i < res.rows.length; i++) {
+          if (angular.equals(res.rows[i].doc.username, username) && angular.equals(res.rows[i].doc.password, password)) {
             result = res.rows[i].doc;
           }
         }
-        if(result !== undefined) {
+        if (result !== undefined) {
           deferred.resolve(result);
         } else {
           deferred.reject(result);
@@ -213,27 +268,54 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http) {
         deferred.reject(err);
       });
       return deferred.promise;
-    },*/
+    },
 
-    // Connection not required
-    login: function(username, password) {
+    register: function(username, password) {
       var deferred = $q.defer();
       var result;
-      return $http.get('./info.json')
-        .then(function(res) {
-          var users = res.data.users;
-          for(var i = 0; i < users.length; i++) {
-            if(angular.equals(users[i].username, username) && angular.equals(users[i].password, password)) {
-              result = users[i];
+      var equals = false;
+      if (password === '12345') {
+        var hash = md5.createHash(username || '');
+        localPouch.allDocs({
+            include_docs: true,
+            attachments: true
+          })
+          .then(function(res) {
+            for (var i = 0; i < res.rows.length; i++) {
+              if (angular.equals(res.rows[i].doc.username, username)) {
+                equals = true;
+              }
             }
-          }
-          if(result !== undefined) {
-            deferred.resolve(result);
-          } else {
-            deferred.reject(result);
-          }
-          return deferred.promise;
-        });
+            if (equals === true) {
+              deferred.reject('exists')
+            } else {
+              localPouch.post({
+                  _id: hash,
+                  username: username,
+                  password: password
+                })
+                .then(function() {
+                  result = localPouch.get(hash);
+                  deferred.resolve(result);
+                  console.log(res);
+                })
+                .catch(function(err) {
+                  console.log(err);
+                  console.log('pouchService --> register()');
+                  deferred.reject();
+                });
+            }
+          })
+          .catch(
+            function(err) {
+              deferred.reject(err);
+              console.log(err);
+            });
+
+      } else {
+        deferred.reject('invalid password');
+      }
+      return deferred.promise;
     },
 
     getJudge: function(id) {
@@ -254,14 +336,18 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http) {
         include_docs: true,
         attachments: true
       }).then(function(res) {
+        if(res.rows.length) {
         res.rows.forEach(function(row) {
-          for(var i = 0; i < row.doc.surveys.length; i++) {
-            if(row.doc.surveys[i].groupId == id) {
-              result.push(row.doc.username);
+          if(row.doc.surveys) {
+            for (var i = 0; i < row.doc.surveys.length; i++) {
+              if (row.doc.surveys[i].groupId == id) {
+                result.push(row.doc.username);
+              }
             }
           }
         });
         deferred.resolve(result);
+      }
       }).catch(function(err) {
         deferred.reject(err);
         console.log(err);
@@ -273,11 +359,13 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http) {
       var deferred = $q.defer();
       var resultSurvey = [];
       localPouch.get(id).then(function(doc) {
-        doc.surveys.forEach(function(survey) {
-          if(survey.groupId !== '' && survey.groupId !== submittedSurvey.groupId) {
-            resultSurvey.push(survey);
-          }
-        });
+        if(doc.surveys) {
+          doc.surveys.forEach(function(survey) {
+            if (survey.groupId !== '' && survey.groupId !== submittedSurvey.groupId) {
+              resultSurvey.push(survey);
+            }
+          });
+        }
         resultSurvey.push(submittedSurvey);
         localPouch.put({
           _id: doc._id,
@@ -287,7 +375,6 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http) {
           surveys: resultSurvey
         });
       }).then(function() {
-        // need to $rootScope an added survey to the group within posterList here
         var result = localPouch.get(id);
         deferred.resolve(result);
       }).catch(function(err) {
@@ -312,7 +399,7 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http) {
       var resultSurvey = [];
       localPouch.get(id).then(function(doc) {
         doc.surveys.forEach(function(survey) {
-          if(survey.groupId !== '' && survey.groupId != groupId) {
+          if (survey.groupId !== '' && survey.groupId != groupId) {
             resultSurvey.push(survey);
           }
         });
@@ -338,26 +425,12 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http) {
 });
 
 app.factory('$service', function($http, $q, $rootScope, pouchService) {
- return {
+  return {
     getSurvey: function() {
       return $http.get('./survey.json');
     },
     getPosters: function(id) {
       return $http.get('./posters.json');
-    },
-    isOnline: function() {
-      var networkState = null;
-      if(navigator.connection) {
-        networkState = navigator.connection;
-      }
-      if(networkState && networkState === Connection.NONE) {
-        return false;
-      }
-      if(navigator.online) {
-        return true;
-      } else {
-        return false;
-      }
     }
   };
 });
@@ -416,7 +489,7 @@ app.controller('headerCtrl', function($scope, $state, $rootScope, $timeout,
 
   $scope.refresh = function() {
     console.log('refresh --> headerCtrl');
-    if($rootScope.changes === false) {
+    if ($rootScope.changes === false) {
       return;
     } else {
       document.getElementById('changeRefresh').className = "icon fa fa-refresher fa-lg fa-fw";
@@ -429,43 +502,43 @@ app.controller('headerCtrl', function($scope, $state, $rootScope, $timeout,
 });
 
 app.controller('mainTabsCtrl', function($scope, $state, $service, $timeout, $rootScope,
-  $ionicHistory) {
-  $rootScope.isAuth = false;
-
-  $scope.logout = function() {
-    window.localStorage.removeItem('user');
-    $rootScope.isAuth = false;
-    $state.go('login');
-    $ionicHistory.clearCache().then(function() {
-      $ionicHistory.clearHistory();
-      $ionicHistory.clearCache();
-      $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
-    });
-  };
-});
+  $ionicHistory) {});
 
 app.controller('loginCtrl', function($pouchdb, $scope, $timeout, $cordovaNetwork,
-  $ionicPopup, $service, $state, $rootScope, pouchService) {
+  $ionicPopup, $service, $state, $rootScope, pouchService, $ionicModal) {
   $scope.pouchService = $pouchdb.retryReplication();
   var localPouch = $pouchdb.localDB;
   var remoteDB = $pouchdb.remoteDB;
   $scope.items = [];
-  $scope.user = {};
+  $scope.returningUser = {
+    username: '',
+    password: ''
+  };
+  $scope.firstTimeUser = {
+    username: '',
+    password: ''
+  };
+  $scope.empty = false;
   $scope.search = {};
   $rootScope.isAuth = false;
 
   $scope.getItems = function() {
     pouchService.getUsers()
       .then(function(res) {
-        res.forEach(function(user) {
-          var item = {name: user.username};
+        res.forEach(function(row) {
+          var item = {
+            name: row.doc.username
+          };
           $scope.items.push(item);
         });
       });
+    if (!$scope.items.length) {
+      $scope.empty = true;
+    }
   };
-
   $scope.getItems();
 
+  // CSS Styling
   $scope.updateSelection = function(name) {
     $('#active-username').focus();
     var element = document.getElementById('active-username');
@@ -473,41 +546,123 @@ app.controller('loginCtrl', function($pouchdb, $scope, $timeout, $cordovaNetwork
     var elementIcon = document.getElementById('active-username-icon');
     element.classList.add('active');
     $scope.search = {};
-    $scope.user.username = name;
+    $scope.returningUser.username = name;
     $timeout(function() {
       $scope.$apply();
     });
   };
+  //
 
-  $scope.submitForm = function() {
-    pouchService.login($scope.user.username, $scope.user.password)
-    .then(
-      function(res) {
-        var storageObj = {
-          key: res._id,
-          unpushedChanges: []
-        };
+  $ionicModal.fromTemplateUrl('templates/loginModal.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function(modal) {
+    $scope.loginModal = modal;
+  });
 
-        window.localStorage.setItem('user', JSON.stringify(storageObj));
-        $rootScope.isAuth = true;
-        $rootScope.$broadcast('loggedIn');
-        $timeout(function() {
-          $state.go('tabs.home');
-          $scope.user.username = '';
-          $scope.user.password = '';
-          $scope.search.value = '';
-        }, 0);
-      },
-      function(err) {
-        console.log(err);
-        $ionicPopup.alert({
-          title: '<h4>Error</h4>',
-          template: '<p style=\'text-align:center\'>Invalid username or password</p>'
-        });
-        return;
-      }
-    );
+  $ionicModal.fromTemplateUrl('templates/registerModal.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function(modal) {
+    $scope.registerModal = modal;
+  });
+
+  $scope.launchLoginModal = function() {
+    $scope.loginModal.show();
   };
+
+  $scope.launchRegisterModal = function() {
+    $scope.registerModal.show();
+  };
+
+  $scope.closeLoginModal = function() {
+    $scope.loginModal.hide();
+  };
+
+  $scope.closeRegisterModal = function() {
+    $scope.registerModal.hide();
+  };
+
+  $scope.submitLoginForm = function() {
+    pouchService.login($scope.returningUser.username, $scope.returningUser.password)
+      .then(
+        function(res) {
+          var checkIfThere = window.localStorage.getItem('user');
+          if (angular.equals(checkIfThere, res._id)) {
+            $rootScope.isAuth = true;
+            $rootScope.$broadcast('loggedIn');
+            $timeout(function() {
+              $state.go('tabs.home');
+            }, 0);
+          } else {
+            var storageObj = {
+              key: res._id,
+              unpushedChanges: []
+            };
+
+            window.localStorage.setItem('user', JSON.stringify(storageObj));
+            $rootScope.isAuth = true;
+            $rootScope.$broadcast('loggedIn');
+            $timeout(function() {
+              $state.go('tabs.home');
+            }, 0);
+          }
+        })
+      .catch(
+        function(err) {
+          console.log(err);
+          $ionicPopup.alert({
+            title: '<h4>Error</h4>',
+            template: '<p style=\'text-align:center\'>Invalid username or password</p>'
+          });
+          return;
+        }
+      );
+  };
+
+  $scope.submitRegisterForm = function() {
+    pouchService.register($scope.firstTimeUser.username, $scope.firstTimeUser.password)
+      .then(
+        function(res) {
+          var storageObj = {
+            key: res._id,
+            unpushedChanges: []
+          };
+          window.localStorage.setItem('user', JSON.stringify(storageObj));
+          $rootScope.isAuth = true;
+          $rootScope.$broadcast('loggedIn');
+          $timeout(function() {
+            $state.go('tabs.home');
+          }, 0);
+        }
+      )
+      .catch(
+        function(err) {
+          console.log(err);
+          if(err === 'exists') {
+            $ionicPopup.alert({
+              title: '<h4>Error</h4>',
+              template: '<p style=\'text-align:center\'>Username Already Exists</p>'
+            });
+          } else if(err === 'invalid password') {
+            $ionicPopup.alert({
+              title: '<h4>Error</h4>',
+              template: '<p style=\'text-align:center\'>Invalid Password</p>'
+            });
+          } else {
+            $ionicPopup.alert({
+              title: '<h4>Error</h4>',
+              template: '<p style=\'text-align:center\'>Error in User Registration</p>'
+            });
+          }
+        }
+      );
+  };
+
+  $scope.$on('$destroy', function() {
+    $scope.loginModal.remove();
+    $scope.registerModal.remove();
+  });
 });
 
 app.controller('homeCtrl', function($pouchdb, $scope, $ionicLoading, $state, $ionicPopup,
@@ -538,7 +693,8 @@ app.controller('homeCtrl', function($pouchdb, $scope, $ionicLoading, $state, $io
   };
 
   var storageObj = JSON.parse(window.localStorage.getItem('user'));
-  if(storageObj.key === undefined) {
+
+  if (storageObj.key === undefined) {
     $rootScope.isAuth = false;
     $state.go('login');
   } else {
@@ -546,31 +702,31 @@ app.controller('homeCtrl', function($pouchdb, $scope, $ionicLoading, $state, $io
     $scope.user = storageObj;
   }
 
-  if($scope.user.unpushedChanges.length > 0) {
+  if ($scope.user.unpushedChanges.length > 0) {
     $scope.notifyOfChanges = true;
     $scope.changes = $scope.user.unpushedChanges;
   }
 
   var initializeHome = function() {
     pouchService.getJudge($scope.user.key)
-    .then(
-      function(doc) {
-        $scope.surveys = doc.surveys;
-        if($scope.surveys.length > 0) {
-          $scope.hasRecent = true;
+      .then(
+        function(doc) {
+          $scope.surveys = doc.surveys;
+          if ($scope.surveys) {
+            $scope.hasRecent = true;
+          }
+          hideLoading();
+        },
+        function(err) {
+          hideLoading();
+          console.log(err);
+          $ionicPopup.alert({
+            title: '<h4>Error</h4>',
+            template: '<p style=\'text-align:center\'>Could not retrieve your recent surveys</p>'
+          });
+          return;
         }
-        hideLoading();
-      },
-      function(err) {
-        hideLoading();
-        console.log(err);
-        $ionicPopup.alert({
-          title: '<h4>Error</h4>',
-          template: '<p style=\'text-align:center\'>Could not retrieve your recent surveys</p>'
-        });
-        return;
-      }
-    );
+      );
   };
   initializeHome();
 });
@@ -594,8 +750,7 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
   $scope.selectedCategory = "ALL";
   $scope.hasRecent = false;
   $scope.showCategories = false;
-  $scope.categoryFields = [
-    {
+  $scope.categoryFields = [{
       subject: 'ALL',
       count: 0
     },
@@ -604,15 +759,15 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
       count: 0
     },
     {
-      subject: 'BIOLOGY',
+      subject: 'BIOL',
       count: 0
     },
     {
-      subject: 'HISTORY',
+      subject: 'CHEM',
       count: 0
     },
     {
-      subject: 'IT',
+      subject: 'ITEC',
       count: 0
     }
   ];
@@ -623,22 +778,22 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
       $scope.categoryFields[0].count = $scope.posters.length;
       $scope.posters.forEach(function(poster) {
         pouchService.countCompletedSurveys(poster.id)
-        .then(
-          function(res) {
-            if(res.length > 0) {
-              poster.judgesSurveyed = res;
-              poster.countJudges = poster.judgesSurveyed.length;
+          .then(
+            function(res) {
+              if (res.length > 0) {
+                poster.judgesSurveyed = res;
+                poster.countJudges = poster.judgesSurveyed.length;
+              }
+            },
+            function(err) {
+              console.log(err);
+              $ionicPopup.alert({
+                title: '<h4>Error</h4>',
+                template: '<p style=\'text-align:center\'>getPosters()</p>'
+              });
+              return;
             }
-          },
-          function(err) {
-            console.log(err);
-            $ionicPopup.alert({
-              title: '<h4>Error</h4>',
-              template: '<p style=\'text-align:center\'>getPosters()</p>'
-            });
-            return;
-          }
-        );
+          );
       });
       countCategories();
     });
@@ -647,14 +802,14 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
   getPosters();
 
   var countCategories = function() {
-    for(var i = 0; i < $scope.posters.length; i++) {
-      if($scope.posters[i].subject === 'MATH') {
+    for (var i = 0; i < $scope.posters.length; i++) {
+      if ($scope.posters[i].subject === 'MATH') {
         $scope.categoryFields[1].count++;
-      } else if($scope.posters[i].subject === 'BIOLOGY') {
+      } else if ($scope.posters[i].subject === 'BIOL') {
         $scope.categoryFields[2].count++;
-      } else if($scope.posters[i].subject === 'HISTORY') {
+      } else if ($scope.posters[i].subject === 'CHEM') {
         $scope.categoryFields[3].count++;
-      } else if($scope.posters[i].subject === 'IT') {
+      } else if ($scope.posters[i].subject === 'ITEC') {
         $scope.categoryFields[4].count++;
       }
     }
@@ -671,7 +826,7 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
   };
 
   var storageObj = JSON.parse(window.localStorage.getItem('user'));
-  if(storageObj.key === undefined) {
+  if (storageObj.key === undefined) {
     $rootScope.isAuth = false;
     $state.go('login');
   } else {
@@ -680,19 +835,9 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
   }
 
   // ---fitler functions---
-  $scope.toggleCategories = function() {
-    var toggleAtribute = document.getElementById('category-icon').className;
-    if(toggleAtribute === 'icon ion-chevron-down') {
-      $scope.showCategories = true;
-      document.getElementById('category-icon').className = 'icon ion-chevron-up';
-    } else {
-      $scope.showCategories = false;
-      document.getElementById('category-icon').className = 'icon ion-chevron-down';
-    }
-  };
   $scope.setCategory = function(category, index) {
     $scope.selectedCategory = category;
-    if(index === 0) {
+    if (index === 0) {
       document.getElementById('0').className = 'list-group-item-action activated';
     }
   };
@@ -737,7 +882,7 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
   };
 
   var storageObj = JSON.parse(window.localStorage.getItem('user'));
-  if(storageObj.key === undefined) {
+  if (storageObj.key === undefined) {
     $rootScope.isAuth = false;
     $state.go('login');
   } else {
@@ -751,8 +896,8 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
 
   $scope.submitQuestions = function() {
     var length = $scope.questions.length - 1;
-    for(var i = 0; i < length; i++) {
-      if($scope.questions[i].value === '') {
+    for (var i = 0; i < length; i++) {
+      if ($scope.questions[i].value === '') {
         $ionicPopup.alert({
           title: '<h4>Error</h4>',
           template: '<p style=\'text-align:center\'>Must provide an answer to each question. The Additional Comments field is not required.</p>'
@@ -761,7 +906,7 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
       }
     }
     var resultSurvey = {};
-    if($scope.previousSurveyed === false) {
+    if ($scope.previousSurveyed === false) {
       angular.forEach($scope.questions, function(question) {
         $scope.answers.push(question.value);
       });
@@ -773,35 +918,35 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
         students: groupStudents
       };
       pouchService.submitSurvey($scope.user.key, resultSurvey)
-      .then(
-        function(res) {
-          if($rootScope.connection === false) {
-            // get the storage object and add the unpushed survey to the array
-            var storageObj = JSON.parse(window.localStorage.getItem('user'));
-            storageObj.unpushedChanges.push(resultSurvey);
-            window.localStorage.setItem('user', JSON.stringify(storageObj));
+        .then(
+          function(res) {
+            if ($rootScope.connection === false) {
+              // get the storage object and add the unpushed survey to the array
+              var storageObj = JSON.parse(window.localStorage.getItem('user'));
+              storageObj.unpushedChanges.push(resultSurvey);
+              window.localStorage.setItem('user', JSON.stringify(storageObj));
+            }
+            $scope.previousSurveyed = true;
+            $timeout(function() {
+              $state.go('tabs.home');
+            });
+          },
+          function(err) {
+            console.log(err);
+            $ionicPopup.alert({
+              title: '<h4>Error</h4>',
+              template: '<p style=\'text-align:center\'>submitQuestions() --> submitSurvey</p>'
+            });
+            return;
           }
-          $scope.previousSurveyed = true;
-          $timeout(function() {
-            $state.go('tabs.home');
-          });
-        },
-        function(err) {
-          console.log(err);
-          $ionicPopup.alert({
-            title: '<h4>Error</h4>',
-            template: '<p style=\'text-align:center\'>submitQuestions() --> submitSurvey</p>'
-          });
-          return;
-        }
-      );
+        );
     } else {
       var confirmPopup = $ionicPopup.confirm({
         title: '<h4>Confirm Survey Changes:</h4>',
         template: '<p style=\'text-align:center\'>Are you sure you want to submit your changes to this survey?</p>'
       });
       confirmPopup.then(function(res) {
-        if(res) {
+        if (res) {
           $scope.answers = [];
           angular.forEach($scope.questions, function(question) {
             $scope.answers.push(question.value);
@@ -812,30 +957,30 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
             groupId: groupId
           };
           pouchService.submitSurvey($scope.user, resultSurvey)
-          .then(
-            function(res) {
-              if($rootScope.connection === false) {
-                // get the storage object and add the unpushed survey to the array
-                var storageObj = JSON.parse(window.localStorage.getItem('user'));
-                storageObj.unpushedChanges.push(resultSurvey);
-                console.log(unpushedChanges);
-                window.localStorage.setItem('user', JSON.stringify(storageObj));
+            .then(
+              function(res) {
+                if ($rootScope.connection === false) {
+                  // get the storage object and add the unpushed survey to the array
+                  $rootScope.connectionLost = true;
+                  var storageObj = JSON.parse(window.localStorage.getItem('user'));
+                  storageObj.unpushedChanges.push(resultSurvey);
+                  window.localStorage.setItem('user', JSON.stringify(storageObj));
+                }
+                $scope.previousSurveyed = true;
+                $scope.disableEdit = true;
+                $timeout(function() {
+                  $state.go('tabs.home');
+                });
+              },
+              function(err) {
+                console.log(err);
+                $ionicPopup.alert({
+                  title: '<h4>Error</h4>',
+                  template: '<p style=\'text-align:center\'>submitQuestions() --> confirmPopup</p>'
+                });
+                return;
               }
-              $scope.previousSurveyed = true;
-              $scope.disableEdit = true;
-              $timeout(function() {
-                $state.go('tabs.home');
-              });
-            },
-            function(err) {
-              console.log(err);
-              $ionicPopup.alert({
-                title: '<h4>Error</h4>',
-                template: '<p style=\'text-align:center\'>submitQuestions() --> confirmPopup</p>'
-              });
-              return;
-            }
-          );
+            );
         } else {
           return;
         }
@@ -853,32 +998,34 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
 
   $scope.checkPreviousSurveyed = function() {
     pouchService.getJudge($scope.user.key)
-    .then(
-      function(doc) {
-        for(var i = 0; i < doc.surveys.length; i++) {
-          if(doc.surveys[i].groupId == $scope.poster.id) {
-            $scope.previousSurveyed = true;
-            $scope.disableEdit = true;
-            $scope.answers = doc.surveys[i].answers;
+      .then(
+        function(doc) {
+          if(doc.surveys) {
+            for (var i = 0; i < doc.surveys.length; i++) {
+              if (doc.surveys[i].groupId == $scope.poster.id) {
+                $scope.previousSurveyed = true;
+                $scope.disableEdit = true;
+                $scope.answers = doc.surveys[i].answers;
+              }
+            }
           }
-        }
-        if($scope.previousSurveyed === true) {
-          for(var i = 0; i < $scope.questions.length; i++) {
-            $scope.questions[i].value = $scope.answers[i];
+          if ($scope.previousSurveyed === true) {
+            for (var i = 0; i < $scope.questions.length; i++) {
+              $scope.questions[i].value = $scope.answers[i];
+            }
           }
+          hideLoading();
+        },
+        function(err) {
+          hideLoading();
+          console.log(err);
+          $ionicPopup.alert({
+            title: '<h4>Error</h4>',
+            template: '<p style=\'text-align:center\'>checkPreviousSurveyed()</p>'
+          });
+          return;
         }
-        hideLoading();
-      },
-      function(err) {
-        hideLoading();
-        console.log(err);
-        $ionicPopup.alert({
-          title: '<h4>Error</h4>',
-          template: '<p style=\'text-align:center\'>checkPreviousSurveyed()</p>'
-        });
-        return;
-      }
-    );
+      );
   };
 
   $scope.showJudges = function() {
@@ -899,23 +1046,23 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
 
   $scope.judgesWhoHaveSurveyed = function() {
     pouchService.countCompletedSurveys(groupId)
-    .then(
-      function(res) {
-        if(res.length > 0) {
-          $scope.isEmpty = false;
-          $scope.judgesSurveyed = res;
-          $scope.countJudges = $scope.judgesSurveyed.length;
+      .then(
+        function(res) {
+          if (res.length > 0) {
+            $scope.isEmpty = false;
+            $scope.judgesSurveyed = res;
+            $scope.countJudges = $scope.judgesSurveyed.length;
+          }
+        },
+        function(err) {
+          console.log(err);
+          $ionicPopup.alert({
+            title: '<h4>Error</h4>',
+            template: '<p style=\'text-align:center\'>judgesWhoHaveSurveyed()</p>'
+          });
+          return;
         }
-      },
-      function(err) {
-        console.log(err);
-        $ionicPopup.alert({
-          title: '<h4>Error</h4>',
-          template: '<p style=\'text-align:center\'>judgesWhoHaveSurveyed()</p>'
-        });
-        return;
-      }
-    );
+      );
   };
 
   $scope.judgesWhoHaveSurveyed();
@@ -923,13 +1070,16 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
 });
 
 app.controller('logoutCtrl', function($rootScope, $state, $timeout) {
-  window.localStorage.removeItem('user');
   $rootScope.isAuth = false;
   $rootScope.$broadcast('loggedOut');
   $timeout(function() {
     $state.go('login');
     $rootScope.$apply();
   });
+});
+
+app.controller('helpCtrl', function($rootScope, $state, $scope) {
+
 });
 
 app.directive('groupedRadio', function() {
@@ -960,7 +1110,7 @@ app.directive('groupedRadio', function() {
 
 app.filter('clearText', function() {
   return function(text) {
-    var result = text ? String(text).replace(/"<[^>]+>/gm , '') : '';
+    var result = text ? String(text).replace(/"<[^>]+>/gm, '') : '';
     result = result.replace(/,/g, ', ');
     return result;
   };

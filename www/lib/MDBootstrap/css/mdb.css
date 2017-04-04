@@ -1,6 +1,6 @@
 /*!
  * Material Design for Bootstrap 4
- * Version: MDB FREE 4.2.0 
+ * Version: MDB FREE 4.2.0
  *
  *
  * Copyright: Material Design for Bootstrap
@@ -2690,7 +2690,6 @@ ul li {
 .pagination-sm .page-item:first-child .page-link,
 .pagination-sm .page-item:last-child .page-link,
 .list-group .list-group-item,
-.modal-content,
 .tooltip-inner,
 .popover,
 .dropdown-menu,
@@ -2883,15 +2882,6 @@ img {
 .pager .disabled > a:focus,
 .pager .disabled > a:hover {
   background-color: inerhit !important;
-}
-
-.modal-footer .btn + .btn {
-  margin-bottom: 6px;
-}
-
-body.modal-open {
-  overflow: inherit;
-  padding-right: 0 !important;
 }
 
 body {
@@ -6379,11 +6369,11 @@ blockquote p {
 
 /*!
  * Waves v0.7.5
- * http://fian.my.id/Waves 
- * 
- * Copyright 2014-2016 Alfiana E. Sibuea and other contributors 
- * Released under the MIT license 
- * https://github.com/fians/Waves/blob/master/LICENSE 
+ * http://fian.my.id/Waves
+ *
+ * Copyright 2014-2016 Alfiana E. Sibuea and other contributors
+ * Released under the MIT license
+ * https://github.com/fians/Waves/blob/master/LICENSE
  */
 .waves-effect {
   position: relative;
