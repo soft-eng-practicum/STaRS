@@ -422,6 +422,24 @@
 			"countJudges": 0,
 			"subject": "MATH",
 			"advisor": "Andrei Olifer"
+		},
+		{
+			"group": "Parasite Community Structure of Redbreast Sunfish, Lepomis Auritus, in an Urban Watershed",
+			"students": ["Maggie Watkins"],
+			"id": "48",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Ricky"
+		},
+		{
+			"group": "Life History of a Facultative Precocious Trematode, Alloglossidium progeneticum, in the White Tubercle Crayfish, Procambarus spiculifer, in the Yellow River, GA",
+			"students": ["Daniel De La Hoz"],
+			"id": "49",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Ricky"
 		}
 	]
 }
