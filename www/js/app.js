@@ -769,6 +769,14 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
     {
       subject: 'ITEC',
       count: 0
+    },
+    {
+      subject: 'EXSC',
+      count: 0
+    },
+    {
+      subject: 'PSYC',
+      count: 0
     }
   ];
 
@@ -811,6 +819,10 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
         $scope.categoryFields[3].count++;
       } else if ($scope.posters[i].subject === 'ITEC') {
         $scope.categoryFields[4].count++;
+      } else if ($scope.posters[i].subject === 'EXSC') {
+        $scope.categoryFields[5].count++;
+      } else if ($scope.posters[i].subject == 'PSYC') {
+        $scope.categoryFields[6].count++;
       }
     }
     hideLoading();
