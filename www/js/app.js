@@ -156,7 +156,7 @@ app.service('$pouchdb', function($rootScope, pouchDB, $http) {
       }
     };
 
-    self.localDB = pouchDB('judges_sp18');
+    self.localDB = pouchDB('judges');
     self.localDB.sync('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18', opts)
       .on('change', function(change) {
         $rootScope.$broadcast('changes');
