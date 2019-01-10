@@ -1,6 +1,5 @@
 {
   "name": "stars",
-  "app_id": "",
   "integrations": {
     "cordova": {}
   },
