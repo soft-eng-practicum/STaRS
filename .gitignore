@@ -4,6 +4,7 @@
 node_modules/
 platforms/
 plugins/
+build/
 .DS_Store
 config.xml
 ionic.config.json
