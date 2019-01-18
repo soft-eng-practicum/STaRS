@@ -3,24 +3,24 @@
   "version": "1.1.1",
   "description": "stars: An Ionic project",
   "dependencies": {
-    "cordova-android": "7.0.0",
-    "cordova-ios": "4.5.4",
+    "cordova-android": "^7.1.4",
+    "cordova-ios": "^4.5.5",
     "cordova-plugin-console": "^1.1.0",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-ionic-keyboard": "^2.1.3",
-    "cordova-plugin-ionic-webview": "^1.2.1",
+    "cordova-plugin-ionic-webview": "^3.1.0",
     "cordova-plugin-splashscreen": "^5.0.2",
     "cordova-plugin-statusbar": "^2.4.2",
     "cordova-plugin-whitelist": "^1.3.3",
     "font-awesome": "^4.7.0",
-    "gulp": "^3.5.6",
+    "gulp": "^4.0.0",
     "gulp-concat": "^2.2.0",
     "gulp-minify-css": "^0.3.0",
     "gulp-rename": "^1.2.0",
     "gulp-sass": "^3.0.0",
     "ionic-native-transitions": "^1.0.3",
-    "pouchdb": "^6.0.7",
-    "pouchdb-seamless-auth": "^1.0.4",
+    "pouchdb": "^7.0.0",
+    "pouchdb-seamless-auth": "^4.1.0",
     "relational-pouch": "^1.4.5"
   },
   "devDependencies": {
@@ -28,7 +28,7 @@
     "bower": "^1.3.3",
     "gulp-util": "^2.2.14",
     "jasmine-core": "^2.5.2",
-    "karma": "^1.3.0",
+    "karma": "^3.1.4",
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.2",
     "shelljs": "^0.3.0"
@@ -59,7 +59,8 @@
     "cordova-plugin-ionic-keyboard@^2.1.3",
     "cordova-plugin-statusbar@2.4.2",
     "cordova-plugin-ionic-keyboard@2.1.3",
-    "cordova-plugin-device@2.0.2"
+    "cordova-plugin-device@2.0.2",
+    "cordova-plugin-ionic-webview@1.2.1"
   ],
   "cordova": {
     "plugins": {
