@@ -7,3 +7,4 @@ plugins/
 .DS_Store
 config.xml
 ionic.config.json
+auth.json
