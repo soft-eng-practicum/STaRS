@@ -1,4 +1,7 @@
 var app = angular.module('app', ['ionic', 'ui.router', 'pouchdb', 'ngCordova', 'angular-md5']);
+//const path = require('path');
+//const {loginToken} = require('./auth.json');
+
 
 app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork, $timeout) {
   $ionicPlatform.ready(function() {
@@ -149,7 +152,7 @@ app.service('$pouchdb', function($rootScope, pouchDB, $http) {
       retry: true,
       continuous: true,
       back_off_function: function(delay) {
-        if (delay === 0) {
+        if (delay ===  0) {
           return 1000;
         }
         return delay * 3;
@@ -157,7 +160,7 @@ app.service('$pouchdb', function($rootScope, pouchDB, $http) {
     };
 
     self.localDB = pouchDB('judges');
-    self.localDB.sync('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18', opts)
+    self.localDB.sync("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges-test", opts)
       .on('change', function(change) {
         $rootScope.$broadcast('changes');
         console.log('yo something changed');
@@ -183,7 +186,7 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, m
 
   return {
     checkDatabaseConnection: function() {
-      return $http.get('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18');
+      return $http.get("http://stars:StarsApril11,2017@itec-gunay.duckdns.org:5984/judges-test");
     },
 
     // Connection required
