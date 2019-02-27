@@ -2,7 +2,6 @@ var app = angular.module('app', ['ionic', 'ui.router', 'pouchdb', 'ngCordova', '
 //const path = require('path');
 //const {loginToken} = require('./auth.json');
 
-
 app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork, $timeout) {
   $ionicPlatform.ready(function() {
     if (window.cordova && window.cordova.plugins.Keyboard) {
@@ -186,7 +185,8 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, m
 
   return {
     checkDatabaseConnection: function() {
-      return $http.get("http://stars:StarsApril11,2017@itec-gunay.duckdns.org:5984/judges-test");
+      return $http.get("admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges-test"), 
+      $http.get("admin:starsGGCadmin@itec-gunay.duckdns.org:5984/configuration");
     },
 
     // Connection required
