@@ -1,6 +1,11 @@
 var app = angular.module('app', ['ionic', 'ui.router', 'pouchdb', 'ngCordova', 'angular-md5']);
 //const path = require('path');
 //const {loginToken} = require('./auth.json');
+//var parsedLogin = JSON.parse('./auth.json')
+
+//split by comma posters with csvparser
+//break by number of colums
+//convert to json so rest of program can read it
 
 app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork, $timeout) {
   $ionicPlatform.ready(function() {
@@ -159,8 +164,9 @@ app.service('$pouchdb', function($rootScope, pouchDB, $http) {
     };
 
     self.localDB = pouchDB('judges');
-    self.localDB.sync("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges-test", opts)
+    self.localDB.sync("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18", opts)
       .on('change', function(change) {
+        //console.log(parsedLogin);
         $rootScope.$broadcast('changes');
         console.log('yo something changed');
         console.log(change);
@@ -185,8 +191,7 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, m
 
   return {
     checkDatabaseConnection: function() {
-      return $http.get("admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges-test"), 
-      $http.get("admin:starsGGCadmin@itec-gunay.duckdns.org:5984/configuration");
+      return $http.get("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18");
     },
 
     // Connection required
@@ -433,7 +438,8 @@ app.factory('$service', function($http, $q, $rootScope, pouchService) {
       return $http.get('./survey.json');
     },
     getPosters: function(id) {
-      return $http.get('./posters.json');
+      //return $http.get('./posters.json');
+      return $http.get('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2019/configuration');
     }
   };
 });
@@ -753,6 +759,8 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
   $scope.selectedCategory = "ALL";
   $scope.hasRecent = false;
   $scope.showCategories = false;
+
+  //will have to change based on poster list
   $scope.categoryFields = [{
       subject: 'ALL',
       count: 0
@@ -785,6 +793,8 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
 
   var getPosters = function() {
     $service.getPosters().success(function(data) {
+      console.log("Loading posters...");
+      console.log(data.posters);
       $scope.posters = data.posters;
       $scope.categoryFields[0].count = $scope.posters.length;
       $scope.posters.forEach(function(poster) {
@@ -1133,7 +1143,7 @@ app.filter('clearText', function() {
 
 app.filter('customFilter', function() {
   return function(posters, selectedCategory) {
-    console.log(selectedCategory);
+    console.log("Category: " + selectedCategory);
     if (!posters) {
       return;
     }
