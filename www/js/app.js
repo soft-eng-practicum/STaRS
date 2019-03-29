@@ -27,6 +27,7 @@ app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork, $tim
 
     // Check database for connection results
     checkDb = function() {
+      console.log("Checking DB connection...");
       pouchService.checkDatabaseConnection()
         .then(function(res) {
           $rootScope.$broadcast('connected');
@@ -44,8 +45,7 @@ app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork, $tim
             });
 
           }
-        })
-        .catch(function(err) {
+        }, function(err) {
           console.log(err);
           $rootScope.$broadcast('disconnected');
           $rootScope.connection = false;
@@ -181,6 +181,23 @@ app.service('$pouchdb', function($rootScope, pouchDB, $http) {
         console.log('ERROR');
       });
 
+    self.confDB = pouchDB('conf');
+    self.confDB.sync("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2019", opts)
+      .on('change', function(change) {
+        //$rootScope.$broadcast('changes');
+        console.log('yo something changed in conf');
+        console.log(change);
+      }).on('paused', function(info) {
+        //$rootScope.$broadcast('paused');
+        console.log('PAUSED in conf');
+      }).on('active', function(info) {
+        console.log(info);
+        console.log('ACTIVE in conf');
+      }).on('error', function(err) {
+        console.log(err);
+        console.log('ERROR in conf');
+      });
+
   };
 });
 
@@ -188,12 +205,25 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, m
   var pouch = $pouchdb.retryReplication();
   var localPouch = $pouchdb.localDB;
   var remoteDB = $pouchdb.remoteDB;
+  var confPouch = $pouchdb.confDB;
 
   return {
     checkDatabaseConnection: function() {
-      return $http.get("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18");
+      //return $http.get("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18");
+      return $http({
+        method: 'GET',
+        responseType: 'json',
+        url: 'http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18'});
     },
 
+    // get configuration data
+    getConf: function() {
+      confPouch.get("configuration").then(function(res) {
+        console.log("Conf docs:");
+        console.log(res);
+      })
+    },
+    
     // Connection required
     getUsers: function() {
       var deferred = $q.defer();
@@ -717,6 +747,8 @@ app.controller('homeCtrl', function($pouchdb, $scope, $ionicLoading, $state, $io
   }
 
   var initializeHome = function() {
+    pouchService.getConf();
+    
     pouchService.getJudge($scope.user.key)
       .then(
         function(doc) {
