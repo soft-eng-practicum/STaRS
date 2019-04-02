@@ -548,7 +548,7 @@ app.controller('headerCtrl', function($scope, $state, $rootScope, $timeout,
     if ($rootScope.changes === false) {
       return;
     } else {
-      document.getElementById('changeRefresh').className = "icon fa fa-refresher fa-lg fa-fw";
+      //document.getElementById('changeRefresh').className = "icon fa fa-refresher fa-lg fa-fw";
       $rootScope.couchChanges = 'No changes found';
       $rootScope.changes = false;
       $state.reload();
@@ -1039,6 +1039,9 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
 
   $service.getSurvey().success(function(data) {
     $scope.questions = data.questions;
+  }, function(err) {
+    console.log("Failed getSurvey()");
+    console.log(err);
   });
 
   $scope.submitQuestions = function() {
@@ -1075,7 +1078,7 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
             }
             $scope.previousSurveyed = true;
             $timeout(function() {
-              $state.go('tabs.home');
+              $state.go('tabs.posterList');
             });
           },
           function(err) {
@@ -1116,7 +1119,7 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
                 $scope.previousSurveyed = true;
                 $scope.disableEdit = true;
                 $timeout(function() {
-                  $state.go('tabs.home');
+                  $state.go('tabs.posterList');
                 });
               },
               function(err) {
