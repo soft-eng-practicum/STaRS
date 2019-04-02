@@ -113,17 +113,25 @@ app.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     },
     resolve: {
       poster: [
-        '$stateParams', '$http', '$q',
-        function($stateParams, $http, $q) {
-          return $http.get('./posters.json').then(function(res) {
-            var deferred = $q.defer();
-            res.data.posters.forEach(function(poster) {
-              if (poster.id == $stateParams.id) {
-                deferred.resolve(poster);
-              }
-            });
-            return deferred.promise;
+        '$stateParams', '$http', '$q', '$pouchdb', 
+        function($stateParams, $http, $q, $pouchdb) {
+          var deferred = $q.defer();
+          console.log("resolving poster " + $stateParams.id);
+          $pouchdb.posters.forEach(function(poster) {
+            if (poster.id == $stateParams.id) {
+              deferred.resolve(poster);
+            }
           });
+          return deferred.promise;
+        //   return $http.get('./posters.json').then(function(res) {
+        //     var deferred = $q.defer();
+        //     $pouchdb.configuration.posters.forEach(function(poster) {
+        //       if (poster.id == $stateParams.id) {
+        //         deferred.resolve(poster);
+        //       }
+        //     });
+        //     return deferred.promise;
+        //   });
         }
       ]
     }
@@ -896,6 +904,9 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
       };
       posterIndex++;
     });
+
+    $pouchdb.posters = $scope.posters;
+    
     console.log($scope.posters);
 
     $scope.categoryFields[0].count = $scope.posters.length;
@@ -997,6 +1008,8 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
   var groupId = $scope.poster.id;
   var groupAdvisor = $scope.poster.advisor;
   var groupStudents = $scope.poster.students;
+
+  console.log("poster controller start");
 
   var showLoading = function() {
     $ionicLoading.show();
