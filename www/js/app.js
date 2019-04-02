@@ -836,27 +836,31 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
       count: 0
     },
     {
-      subject: 'MATH',
+      subject: 'Biology',
       count: 0
     },
     {
-      subject: 'BIOL',
+      subject: 'Chemistry',
       count: 0
     },
     {
-      subject: 'CHEM',
+      subject: 'Environmental Science',
       count: 0
     },
     {
-      subject: 'ITEC',
+      subject: 'Exercise Science',
       count: 0
     },
     {
-      subject: 'EXSC',
+      subject: 'IT',
       count: 0
     },
     {
-      subject: 'PSYC',
+      subject: 'Mathematics',
+      count: 0
+    },
+    {
+      subject: 'Statistics',
       count: 0
     }
   ];
@@ -894,18 +898,20 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
 
   var countCategories = function() {
     for (var i = 0; i < $scope.posters.length; i++) {
-      if ($scope.posters[i].subject === 'MATH') {
+      if ($scope.posters[i].subject.includes('Biology')) {
         $scope.categoryFields[1].count++;
-      } else if ($scope.posters[i].subject === 'BIOL') {
+      } else if ($scope.posters[i].subject.includes('Chemistry')) {
         $scope.categoryFields[2].count++;
-      } else if ($scope.posters[i].subject === 'CHEM') {
+      } else if ($scope.posters[i].subject.includes('Environmental Science')) {
         $scope.categoryFields[3].count++;
-      } else if ($scope.posters[i].subject === 'ITEC') {
+      } else if ($scope.posters[i].subject.includes('Exercise Science')) {
         $scope.categoryFields[4].count++;
-      } else if ($scope.posters[i].subject === 'EXSC') {
+      } else if ($scope.posters[i].subject.includes('IT')) {
         $scope.categoryFields[5].count++;
-      } else if ($scope.posters[i].subject == 'PSYC') {
+      } else if ($scope.posters[i].subject.includes('Mathematics')) {
         $scope.categoryFields[6].count++;
+      } else if ($scope.posters[i].subject.includes('Statistics')) {
+        $scope.categoryFields[7].count++;
       }
     }
     hideLoading();
