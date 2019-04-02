@@ -1,7 +1,7 @@
 {
   "name": "stars",
   "integrations": {
-    "cordova": {},
+    "cordova": {}
   },
   "type": "ionic1",
   "watchPatterns": [
