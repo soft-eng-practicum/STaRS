@@ -469,8 +469,8 @@ app.factory('$service', function($http, $q, $rootScope, pouchService) {
       return $http.get('./survey.json');
     },
     getPosters: function(id) {
-      //return $http.get('./posters.json');
-      return $http.get('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2019/configuration');
+      return $http.get('./posters.json');
+      //return $http.get('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2019/configuration');
     }
   };
 });
@@ -900,17 +900,23 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
     for (var i = 0; i < $scope.posters.length; i++) {
       if ($scope.posters[i].subject.includes('Biology')) {
         $scope.categoryFields[1].count++;
-      } else if ($scope.posters[i].subject.includes('Chemistry')) {
+      } 
+      if ($scope.posters[i].subject.includes('Chemistry')) {
         $scope.categoryFields[2].count++;
-      } else if ($scope.posters[i].subject.includes('Environmental Science')) {
+      } 
+      if ($scope.posters[i].subject.includes('Environmental Science')) {
         $scope.categoryFields[3].count++;
-      } else if ($scope.posters[i].subject.includes('Exercise Science')) {
+      } 
+      if ($scope.posters[i].subject.includes('Exercise Science')) {
         $scope.categoryFields[4].count++;
-      } else if ($scope.posters[i].subject.includes('IT')) {
+      } 
+      if ($scope.posters[i].subject.includes('IT')) {
         $scope.categoryFields[5].count++;
-      } else if ($scope.posters[i].subject.includes('Mathematics')) {
+      } 
+      if ($scope.posters[i].subject.includes('Mathematics')) {
         $scope.categoryFields[6].count++;
-      } else if ($scope.posters[i].subject.includes('Statistics')) {
+      } 
+      if ($scope.posters[i].subject.includes('Statistics')) {
         $scope.categoryFields[7].count++;
       }
     }
@@ -1231,7 +1237,7 @@ app.filter('customFilter', function() {
     for (var i = 0; i < posters.length; i++) {
       var poster = posters[i];
 
-      if (!selectedCategory || poster.subject === selectedCategory) {
+      if (!selectedCategory || poster.subject.includes(selectedCategory)) {
         filteredPosters.push(poster);
       }
     }
