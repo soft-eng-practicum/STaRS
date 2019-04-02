@@ -164,7 +164,7 @@ app.service('$pouchdb', function($rootScope, pouchDB, $http) {
     };
 
     self.localDB = pouchDB('judges');
-    self.localDB.sync("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18", opts)
+    self.localDB.sync("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges-test", opts)
       .on('change', function(change) {
         //console.log(parsedLogin);
         $rootScope.$broadcast('changes');
@@ -213,7 +213,7 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, m
       return $http({
         method: 'GET',
         responseType: 'json',
-        url: 'http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18'});
+        url: 'http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges-test'});
     },
 
     // get configuration data
@@ -312,7 +312,7 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, m
       var deferred = $q.defer();
       var result;
       var equals = false;
-      if (password === '12345') {
+      if (password === 'judge123') {
         var hash = md5.createHash(username || '');
         localPouch.allDocs({
             include_docs: true,
@@ -356,13 +356,6 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, m
       return deferred.promise;
     },
 
-    // loginRegister: function(username, password){
-    //   try {
-    //     login(username, password);
-    //   } catch (error) {
-    //     register(username, password);
-    //   }
-    // },
 
     getJudge: function(id) {
       var deferred = $q.defer();
