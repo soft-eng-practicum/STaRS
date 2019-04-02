@@ -356,6 +356,14 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, m
       return deferred.promise;
     },
 
+    // loginRegister: function(username, password){
+    //   try {
+    //     login(username, password);
+    //   } catch (error) {
+    //     register(username, password);
+    //   }
+    // },
+
     getJudge: function(id) {
       var deferred = $q.defer();
       localPouch.get(id).then(function(doc) {
@@ -650,17 +658,53 @@ app.controller('loginCtrl', function($pouchdb, $scope, $timeout, $cordovaNetwork
       .catch(
         function(err) {
           console.log(err);
-          $ionicPopup.alert({
-            title: '<h4>Error</h4>',
-            template: '<p style=\'text-align:center\'>Invalid username or password</p>'
-          });
+          // $ionicPopup.alert({
+          //   title: '<h4>Error</h4>',
+          //   template: '<p style=\'text-align:center\'>Invalid username or password</p>'
+          // });
           return;
         }
       );
   };
 
+  $scope.submitLoginFormNew = function(){
+    // $scope.submitLoginForm($scope.returningUser.username, $scope.returningUser.password);
+    // $scope.submitRegisterForm($scope.returningUser.username, $scope.returningUser.password);
+    pouchService.login($scope.returningUser.username, $scope.returningUser.password)
+      .then(
+        function(res) {
+          var checkIfThere = window.localStorage.getItem('user');
+          if (angular.equals(checkIfThere, res._id)) {
+            $rootScope.isAuth = true;
+            $rootScope.$broadcast('loggedIn');
+            $timeout(function() {
+              $state.go('tabs.home');
+            }, 0);
+          } else {
+            var storageObj = {
+              key: res._id,
+              unpushedChanges: []
+            };
+
+            window.localStorage.setItem('user', JSON.stringify(storageObj));
+            $rootScope.isAuth = true;
+            $rootScope.$broadcast('loggedIn');
+            $timeout(function() {
+              $state.go('tabs.home');
+            }, 0);
+          }
+        })
+      .catch(
+        function(err) {
+          console.log(err);
+            $scope.submitRegisterForm($scope.returningUser.username, $scope.returningUser.password)
+          return;
+        }
+      );  
+  };
+
   $scope.submitRegisterForm = function() {
-    pouchService.register($scope.firstTimeUser.username, $scope.firstTimeUser.password)
+    pouchService.register($scope.returningUser.username, $scope.returningUser.password)
       .then(
         function(res) {
           var storageObj = {
@@ -697,6 +741,7 @@ app.controller('loginCtrl', function($pouchdb, $scope, $timeout, $cordovaNetwork
         }
       );
   };
+
 
   $scope.$on('$destroy', function() {
     $scope.loginModal.remove();
