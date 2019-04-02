@@ -216,14 +216,22 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, m
         url: 'http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges-test'});
     },
 
-    // get configuration data
+    // get configuration data and save in scope
     getConf: function() {
       confPouch.get("configuration").then(function(res) {
         console.log("Conf docs:");
-        console.log(res);
+        $pouchdb.configuration = res;
+        //console.log(res);
       })
     },
-    
+
+    getPostersFromConf: function() {
+      confPouch.get("configuration").then(function(res) {
+        console.log("Posters docs:");
+        console.log(res.posters);
+      })
+    },
+
     // Connection required
     getUsers: function() {
       var deferred = $q.defer();
@@ -829,7 +837,7 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
   $scope.selectedCategory = "ALL";
   $scope.hasRecent = false;
   $scope.showCategories = false;
-
+  
   //will have to change based on poster list
   $scope.categoryFields = [{
       subject: 'ALL',
@@ -866,6 +874,22 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
   ];
 
   var getPosters = function() {
+    console.log("Populating posters");
+
+    // go through poster CSV data and populate a JSON structure
+    posterRows = $pouchdb.configuration.posters.split(/\n/);
+    titles = posterRows.shift().split(/,/);
+    console.log(titles);
+    posterIndex = 0;
+    posterRows.forEach(function (row) {
+      rowList = row.split(/,/);
+      $scope.posters[posterIndex] = {
+        "group": rowList[2]
+      };
+      posterIndex++;
+    });
+    console.log($scope.posters);
+    
     $service.getPosters().success(function(data) {
       console.log("Loading posters...");
       console.log(data.posters);
