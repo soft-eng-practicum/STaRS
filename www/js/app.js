@@ -477,8 +477,8 @@ app.factory('$service', function($http, $q, $rootScope, pouchService) {
       return $http.get('./survey.json');
     },
     getPosters: function(id) {
-      return $http.get('./posters.json');
-      //return $http.get('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2019/configuration');
+      // return $http.get('./posters.json');
+      return $http.get('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2019/configuration');
     }
   };
 });
@@ -884,7 +884,15 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
     posterRows.forEach(function (row) {
       rowList = row.split(/,/);
       $scope.posters[posterIndex] = {
-        "group": rowList[2]
+        "email": rowList[0],
+        "id": rowList[1],
+        "judges": [],
+        "countJudges": 0,
+        "group": rowList[2],
+        "subject": rowList[3],
+        "students": rowList[4],
+        "advisor": rowList[5],
+        "advisorEmail": rowList[6]
       };
       posterIndex++;
     });
