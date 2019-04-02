@@ -882,7 +882,7 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
     console.log(titles);
     posterIndex = 0;
     posterRows.forEach(function (row) {
-      rowList = row.split(/,/);
+      rowList = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
       $scope.posters[posterIndex] = {
         "email": rowList[0],
         "id": rowList[1],
@@ -897,36 +897,29 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
       posterIndex++;
     });
     console.log($scope.posters);
-    
-    $service.getPosters().success(function(data) {
-      console.log("Loading posters...");
-      console.log(data.posters);
-      $scope.posters = data.posters;
-      $scope.categoryFields[0].count = $scope.posters.length;
-      $scope.posters.forEach(function(poster) {
-        pouchService.countCompletedSurveys(poster.id)
-          .then(
-            function(res) {
-              if (res.length > 0) {
-                poster.judgesSurveyed = res;
-                poster.countJudges = poster.judgesSurveyed.length;
-              }
-            },
-            function(err) {
-              console.log(err);
-              $ionicPopup.alert({
-                title: '<h4>Error</h4>',
-                template: '<p style=\'text-align:center\'>getPosters()</p>'
-              });
-              return;
-            }
-          );
-      });
-      countCategories();
-    });
-  };
 
-  getPosters();
+    $scope.categoryFields[0].count = $scope.posters.length;
+    $scope.posters.forEach(function(poster) {
+      pouchService.countCompletedSurveys(poster.id)
+        .then(
+          function(res) {
+            if (res.length > 0) {
+              poster.judgesSurveyed = res;
+              poster.countJudges = poster.judgesSurveyed.length;
+            }
+          },
+          function(err) {
+            console.log(err);
+            $ionicPopup.alert({
+              title: '<h4>Error</h4>',
+              template: '<p style=\'text-align:center\'>getPosters()</p>'
+            });
+            return;
+          }
+        );
+    });
+    countCategories();
+  };
 
   var countCategories = function() {
     for (var i = 0; i < $scope.posters.length; i++) {
@@ -954,6 +947,8 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
     }
     hideLoading();
   };
+
+  getPosters();
 
   $scope.changes = false;
   $rootScope.$on('changes', function() {
