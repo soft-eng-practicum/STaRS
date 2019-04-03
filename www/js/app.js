@@ -1038,7 +1038,9 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
   }
 
   $service.getSurvey().success(function(data) {
+    console.log("scope questions success");
     $scope.questions = data.questions;
+    $scope.checkPreviousSurveyed();
   }, function(err) {
     console.log("Failed getSurvey()");
     console.log(err);
@@ -1216,7 +1218,7 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
   };
 
   $scope.judgesWhoHaveSurveyed();
-  $scope.checkPreviousSurveyed();
+ 
 });
 
 app.controller('logoutCtrl', function($rootScope, $state, $timeout) {
