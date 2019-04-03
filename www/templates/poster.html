@@ -31,10 +31,10 @@
 						<i class="icon icon-green ion-alert-circled"></i>
 						<h2 style="font-size: 14px">You have already submitted a survey for this group! Your submitted survey is shown below.</h2>
 					</div>
-					<div class="item" ng-hide="!previousSurveyed">
+					<!-- <div class="item" ng-hide="!previousSurveyed">
 						<button type="button" class="btn btn-warning btn-lg btn-block" ng-hide="disableEdit" ng-click="cancelEdit()">Cancel</button>
 						<button type="button" class="btn btn-warning btn-lg btn-block" ng-hide="!disableEdit" ng-click="edit()">Edit Survey</button>
-					</div>
+					</div> -->
 				</div>
 				<form name="questionForm" id="questionForm" ng-submit="submitQuestions()">
 					<div class="card" ng-repeat="question in questions">

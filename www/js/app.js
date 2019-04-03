@@ -1038,7 +1038,6 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
   }
 
   $service.getSurvey().success(function(data) {
-    console.log("scope questions success");
     $scope.questions = data.questions;
     $scope.checkPreviousSurveyed();
   }, function(err) {
