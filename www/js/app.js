@@ -171,8 +171,8 @@ app.service('$pouchdb', function($rootScope, pouchDB, $http) {
       }
     };
 
-    self.localDB = pouchDB('judges');
-    self.localDB.sync("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges-test", opts)
+    self.localDB = pouchDB('judges_sp19');
+    self.localDB.sync("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp19_3", opts)
       .on('change', function(change) {
         //console.log(parsedLogin);
         $rootScope.$broadcast('changes');
@@ -221,7 +221,7 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, m
       return $http({
         method: 'GET',
         responseType: 'json',
-        url: 'http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges-test'});
+        url: 'http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp19_3'});
     },
 
     // get configuration data and save in scope
