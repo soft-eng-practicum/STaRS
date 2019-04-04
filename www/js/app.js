@@ -309,7 +309,9 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, m
         attachments: true
       }).then(function(res) {
         for (var i = 0; i < res.rows.length; i++) {
-          if (angular.equals(res.rows[i].doc.username, username) && angular.equals(res.rows[i].doc.password, password)) {
+          // Case insensitive username check
+          if (angular.equals(res.rows[i].doc.username.toLowerCase(), username.toLowerCase()) &&
+              angular.equals(res.rows[i].doc.password, password)) {
             result = res.rows[i].doc;
           }
         }
