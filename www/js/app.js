@@ -889,7 +889,6 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
     // go through poster CSV data and populate a JSON structure
     posterRows = $pouchdb.configuration.posters.split(/\n/);
     titles = posterRows.shift().split(/,/);
-    console.log(titles);
     posterIndex = 0;
     posterRows.forEach(function (row) {
       rowList = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
@@ -909,8 +908,6 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
 
     $pouchdb.posters = $scope.posters;
     
-    console.log($scope.posters);
-
     $scope.categoryFields[0].count = $scope.posters.length;
     $scope.posters.forEach(function(poster) {
       pouchService.countCompletedSurveys(poster.id)
