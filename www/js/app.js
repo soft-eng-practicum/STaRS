@@ -512,7 +512,7 @@ app.controller('headerCtrl', function($scope, $state, $rootScope, $timeout,
   $scope.$on('changes', function() {
     $rootScope.changes = true;
     $rootScope.couchChanges = 'Changes found tap to refresh';
-    document.getElementById('changeRefresh').className = "icon fa fa-refresher fa-spin fa-lg fa-fw";
+    //document.getElementById('changeRefresh').className = "icon fa fa-refresher fa-spin fa-lg fa-fw";
     $timeout(function() {
       $scope.$apply();
     });
