@@ -10,7 +10,7 @@
 						<div class="md-form">
 							<i class="ion-search prefix"></i>
 							<input type="text" id="search" class="form-control" ng-model="search.value">
-							<label for="search">Search by Student, Poster, Advisor</label>
+							<label for="search">Search by Poster ID, Student, Title, Advisor</label>
 						</div>
 						<ion-item id="sort-divider" class="item-divider item-icon-left item-icon-right" >
 							<i class="icon ion-funnel" style="font-size: 14px;"></i>
@@ -40,7 +40,7 @@
 						ng-repeat="poster in (posters | customFilter: selectedCategory) | filter: search.value | orderBy: '+countJudges' track by $index">
 						<a class="list-group-item list-group-item-action item-icon-right" ui-sref="tabs.poster({id: poster.id})"
 							style="text-decoration: none; margin-bottom: 20px;">
-							<h2 class="title-poster">{{poster.group}}</h2>
+							<h2 class="title-poster"><b>#{{poster.id}}</b> {{poster.group}}</h2>
 							<div class="list list-accordion one-edge-shadow">
 								<div class="item-accordion">
 									<div class="item item-icon-left-accordion item-custom-home">
