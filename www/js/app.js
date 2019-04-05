@@ -936,27 +936,27 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
   var countCategories = function() {
     for (var i = 0; i < $scope.posters.length; i++) {
       try {
-      if ($scope.posters[i].subject.includes('Biology')) {
-        $scope.categoryFields[1].count++;
-      } 
-      if ($scope.posters[i].subject.includes('Chemistry')) {
-        $scope.categoryFields[2].count++;
-      } 
-      if ($scope.posters[i].subject.includes('Environmental Science')) {
-        $scope.categoryFields[3].count++;
-      } 
-      if ($scope.posters[i].subject.includes('Exercise Science')) {
-        $scope.categoryFields[4].count++;
-      } 
-      if ($scope.posters[i].subject.includes('IT')) {
-        $scope.categoryFields[5].count++;
-      } 
-      if ($scope.posters[i].subject.includes('Mathematics')) {
-        $scope.categoryFields[6].count++;
-      } 
-      if ($scope.posters[i].subject.includes('Statistics')) {
-        $scope.categoryFields[7].count++;
-      }
+        if ($scope.posters[i].subject.includes('Biology')) {
+          $scope.categoryFields[1].count++;
+        } 
+        if ($scope.posters[i].subject.includes('Chemistry')) {
+          $scope.categoryFields[2].count++;
+        } 
+        if ($scope.posters[i].subject.includes('Environmental Science')) {
+          $scope.categoryFields[3].count++;
+        } 
+        if ($scope.posters[i].subject.includes('Exercise Science')) {
+          $scope.categoryFields[4].count++;
+        } 
+        if ($scope.posters[i].subject.includes('IT')) {
+          $scope.categoryFields[5].count++;
+        } 
+        if ($scope.posters[i].subject.includes('Mathematics')) {
+          $scope.categoryFields[6].count++;
+        } 
+        if ($scope.posters[i].subject.includes('Statistics')) {
+          $scope.categoryFields[7].count++;
+        }
       } catch (err) {
         // if there is an error parsing JSON
         console.log("Error parsing poster subject on line " + i);
@@ -1015,6 +1015,7 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
   var groupId = $scope.poster.id;
   var groupAdvisor = $scope.poster.advisor;
   var groupStudents = $scope.poster.students;
+  var groupSubject = $scope.poster.subject;
 
   console.log("poster controller start");
 
@@ -1073,7 +1074,8 @@ app.controller('posterCtrl', function($pouchdb, $scope, poster, $state,
         groupName: groupName,
         groupId: groupId,
         advisor: groupAdvisor,
-        students: groupStudents
+        students: groupStudents,
+        subject: groupSubject
       };
       pouchService.submitSurvey($scope.user.key, resultSurvey)
         .then(

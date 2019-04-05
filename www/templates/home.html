@@ -28,7 +28,7 @@
           <div class="list-group" ng-show="hasRecent" ng-repeat="survey in surveys track by $index">
             <a class="list-group-item list-group-item-action item-icon-right home-list"
               ui-sref="tabs.poster({id: survey.groupId})" style="text-decoration: none; margin-bottom: 20px;">
-              <h2 class="title-poster">{{survey.groupName}}</h2>
+              <h2 class="title-poster"><strong>#{{survey.groupId}}: {{survey.groupName}}</strong></h2>
               <div class="list list-accordion one-edge-shadow">
                 <div class="item-accordion">
                   <div class="item item-icon-left-accordion item-custom-home ellipsis">
@@ -36,6 +36,9 @@
                   </div>
                   <div class="item item-icon-left-accordion item-custom-home ellipsis">
                       <i class="fa fa-graduation-cap"></i> <strong>Advisor: {{survey.advisor}}</strong>
+                  </div>
+                  <div class="item item-icon-left-accordion item-custom-home ellipsis">
+                      <i class="fa fa-graduation-cap"></i> <strong>Discipline(s): {{survey.subject}}</strong>
                   </div>
                 </div>
               </div>
