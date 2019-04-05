@@ -226,13 +226,37 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, m
         url: 'http://itec-gunay.duckdns.org:5984/judges_sp19_3'});
     }, 
 
-    // get configuration data and save in scope
+    // get configuration data, parse posters, and save in scope
     getConf: function() {
       confPouch.get("configuration").then(function(res) {
-        console.log("Conf docs:");
+        console.log("Conf docs read.");
         $pouchdb.configuration = res;
         //console.log(res);
-      })
+
+        console.log("Populating posters");
+
+        // go through poster CSV data and populate a JSON structure
+        posterRows = $pouchdb.configuration.posters.split(/\n/);
+        titles = posterRows.shift().split(/,/);
+        posterIndex = 0;
+        $pouchdb.posters = [];
+        posterRows.forEach(function (row) {
+          rowList = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+          $pouchdb.posters[posterIndex] = {
+            "email": rowList[0],
+            "id": rowList[1],
+            "judges": [],
+            "countJudges": 0,
+            "group": rowList[2],
+            "subject": rowList[3],
+            "students": rowList[4],
+            "advisor": rowList[5],
+            "advisorEmail": rowList[6]
+          };
+          posterIndex++;
+        });
+
+      });
     },
 
     getPostersFromConf: function() {
@@ -846,7 +870,6 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
   $scope.pouchService = $pouchdb.retryReplication();
   var localPouch = $pouchdb.localDB;
   var remoteDB = $pouchdb.remoteDB;
-  $scope.posters = [];
   $scope.search = {};
   $scope.selectedCategory = "ALL";
   $scope.hasRecent = false;
@@ -888,30 +911,7 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
   ];
 
   var getPosters = function() {
-    console.log("Populating posters");
-
-    // go through poster CSV data and populate a JSON structure
-    posterRows = $pouchdb.configuration.posters.split(/\n/);
-    titles = posterRows.shift().split(/,/);
-    posterIndex = 0;
-    posterRows.forEach(function (row) {
-      rowList = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-      $scope.posters[posterIndex] = {
-        "email": rowList[0],
-        "id": rowList[1],
-        "judges": [],
-        "countJudges": 0,
-        "group": rowList[2],
-        "subject": rowList[3],
-        "students": rowList[4],
-        "advisor": rowList[5],
-        "advisorEmail": rowList[6]
-      };
-      posterIndex++;
-    });
-
-    $pouchdb.posters = $scope.posters;
-    
+    $scope.posters = $pouchdb.posters;
     $scope.categoryFields[0].count = $scope.posters.length;
     $scope.posters.forEach(function(poster) {
       pouchService.countCompletedSurveys(poster.id)
