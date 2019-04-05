@@ -28,6 +28,7 @@ app.run(function($ionicPlatform, pouchService, $rootScope, $cordovaNetwork, $tim
     // Check database for connection results
     checkDb = function() {
       console.log("Checking DB connection...");
+      $rootScope.couchConnection = 'Verifying...';
       pouchService.checkDatabaseConnection()
         .then(function(res) {
           $rootScope.$broadcast('connected');
@@ -221,8 +222,9 @@ app.factory('pouchService', function($rootScope, pouchDB, $pouchdb, $q, $http, m
       return $http({
         method: 'GET',
         responseType: 'json',
-        url: 'http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp19_3'});
-    },
+        headers: { 'Authorization': 'Basic ' + btoa('admin:starsGGCadmin') },
+        url: 'http://itec-gunay.duckdns.org:5984/judges_sp19_3'});
+    }, 
 
     // get configuration data and save in scope
     getConf: function() {
