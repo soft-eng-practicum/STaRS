@@ -707,8 +707,10 @@ app.controller('loginCtrl', function($pouchdb, $scope, $timeout, $cordovaNetwork
         })
       .catch(
         function(err) {
+          console.log("User " + $scope.returningUser.username +
+                      " not found, calling register");
           console.log(err);
-            $scope.submitRegisterForm($scope.returningUser.username, $scope.returningUser.password)
+          $scope.submitRegisterForm($scope.returningUser.username, $scope.returningUser.password)
           return;
         }
       );  
@@ -933,6 +935,7 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
 
   var countCategories = function() {
     for (var i = 0; i < $scope.posters.length; i++) {
+      try {
       if ($scope.posters[i].subject.includes('Biology')) {
         $scope.categoryFields[1].count++;
       } 
@@ -953,6 +956,11 @@ app.controller('posterListCtrl', function($pouchdb, $scope, $ionicPopup, $servic
       } 
       if ($scope.posters[i].subject.includes('Statistics')) {
         $scope.categoryFields[7].count++;
+      }
+      } catch (err) {
+        // if there is an error parsing JSON
+        console.log("Error parsing poster subject on line " + i);
+        console.log(err);
       }
     }
     hideLoading();
