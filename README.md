@@ -37,3 +37,27 @@ Works offline with the use of PouchDB and CouchDB.
 
 ## Functionality
 
+* Changes will show in the upper right corner when user is logged in
+* User has to tap to sync database changes
+
+### Login
+
+![login](artwork/login-2019.PNG)
+
+### Home
+
+![home](artwork/home-2019.PNG)
+
+### Poster List
+
+![poster-list-1](artwork/poster-list-1-2019.PNG)
+
+![poster-list-2](artwork/poster-list-2-2019.PNG)
+
+### Poster Details
+
+![poster-details](artwork/poster-details-2019.PNG)
+
+### Poster Scoring
+
+![poster-scoring](artwork/poster-scoring-2019.PNG)
