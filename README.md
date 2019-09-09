@@ -21,7 +21,7 @@ Works offline with the use of PouchDB and CouchDB.
 ## Members
 
 1.
-2. **Juan Linares** : Lead Programmer & Testing Lead :ghost:
+2. **Juan Linares** : *Lead Programmer & Testing Lead* :ghost:
 3.
 4.
 
