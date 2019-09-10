@@ -22,7 +22,7 @@ Works offline with the use of PouchDB and CouchDB.
 
 1. **Nancy Sardar** : *Project Manager & Client Liason* :tada: 
 2. **Juan Linares** : *Lead Programmer & Testing Lead* :ghost:
-3.
+3. **Andrew Plourde** : *Documentation Lead & Data Modeler* :thought_balloon:
 4.
 
 ## Installation
