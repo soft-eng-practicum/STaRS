@@ -1,9 +1,65 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="ggc-green">
     <ion-title>
-       temp
+       GGC STARS: Poster
     </ion-title>
   </ion-toolbar>
 </ion-header>
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      Filter
+    </ion-card-header>
+    <ion-card-content>
+    <ion-searchbar></ion-searchbar>
+    <ion-card>
+      <ion-list>
+        <ion-radio-group>
+          <ion-list-header>
+      Sort by Academic Subject
+    </ion-list-header>
+    <ion-item>
+      <ion-label>All</ion-label>
+      <ion-radio color="ggc-green" slot="end" value="all" checked></ion-radio>
+    </ion-item>
 
-<ion-content></ion-content>
+    <ion-item>
+      <ion-label>Biology</ion-label>
+      <ion-radio color="ggc-green" slot="end" value="biology"></ion-radio>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Chemistry</ion-label>
+      <ion-radio color="ggc-green" slot="end" value="chemistry"></ion-radio>
+    </ion-item>
+
+    <ion-item>
+        <ion-label>Environmental Science</ion-label>
+        <ion-radio color="ggc-green" slot="end" value="environmental_science"></ion-radio>
+      </ion-item>
+
+      <ion-item>
+          <ion-label>Exercise Science</ion-label>
+          <ion-radio color="ggc-green" slot="end" value="excerise_science"></ion-radio>
+        </ion-item>
+
+        <ion-item>
+            <ion-label>IT</ion-label>
+            <ion-radio color="ggc-green" slot="end" value="IT"></ion-radio>
+          </ion-item>
+
+          <ion-item>
+              <ion-label>Mathematics</ion-label>
+              <ion-radio color="ggc-green" slot="end" value="mathematics"></ion-radio>
+            </ion-item>
+
+            <ion-item>
+                <ion-label>Statistics</ion-label>
+                <ion-radio color="ggc-green" slot="end" value="statistics"></ion-radio>
+              </ion-item>
+  </ion-radio-group>
+</ion-list>
+    </ion-card>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
