@@ -25,6 +25,8 @@ Works offline with the use of PouchDB and CouchDB.
 3. **Andrew Plourde** : *Documentation Lead & Data Modeler* :thought_balloon:
 4. **Jacob Weekley**: *UI/UX Designer & Lead Programmer* :ice_hockey:
 
+## License Information
+
 **Attribution-ShareAlike 4.0 International (CC BY 4.0):** [Legal implications](https://creativecommons.org/licenses/by/4.0/)
 
 ## Installation
