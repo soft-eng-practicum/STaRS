@@ -12,7 +12,7 @@ Works offline with the use of PouchDB and CouchDB.
 
 ## Progess tracking tool
 
-* TBA
+* [Jira] (https://jira.ggc.edu/secure/RapidBoard.jspa?projectKey=PSC&rapidView=37&view=planning)
 
 ## Communication tool
 
