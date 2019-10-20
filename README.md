@@ -8,11 +8,11 @@ Works offline with the use of PouchDB and CouchDB.
 
 ## Repo Location URL
 
-* https://github.com/soft-eng-practicum/STaRS
+* [Github](https://github.com/soft-eng-practicum/STaRS)
 
 ## Progess tracking tool
 
-* [Jira] (https://jira.ggc.edu/secure/RapidBoard.jspa?projectKey=PSC&rapidView=37&view=planning)
+* [Jira](https://jira.ggc.edu/secure/RapidBoard.jspa?projectKey=PSC&rapidView=37&view=planning)
 
 ## Communication tool
 
