@@ -1,13 +1,14 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar>
     <ion-title>STaRS Login</ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content>
   <div class="form sign-in">
-    <img class="ggclogo" data-ng-src="ggclogo.png">
+    
     <div class="form-container">
+        <img src="assets/icon.png" class="ggclogo" alt="image">
         <!-- <h3>STaRS Voting Application</h3> -->
       <label class="login-label">
         <span>Username</span>
@@ -18,7 +19,7 @@
         <input type="password"/>
       </label>
       <ion-button type="button" expand="block" color="ggc-green" class="submit"[routerLink]="['/home/tabs/tab1']">Sign In</ion-button>
-      <button type="button" class="register-button" ng-click="launchRegisterModal()">REGISTER</button>
+      <!-- <button type="button" class="register-button" ng-click="launchRegisterModal()">REGISTER</button> -->
      <!-- ion-button [routerLink]="['/home/tabs/tab1']">HOME ROUTE</ion-button> -->
     </div>
   </div>

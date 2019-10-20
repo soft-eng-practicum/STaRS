@@ -60,3 +60,13 @@
   --ion-color-shade: var(--ion-color-ggc-inverted-shade);
   --ion-color-tint: var(--ion-color-ggc-inverted-tint);
 }
+
+.ggclogo {
+  width: 250px;
+  height: 250px;
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  transform: translate(-50%, -50%);
+  padding-top: 30px;
+}
