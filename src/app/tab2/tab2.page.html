@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="ggc-green">
     <ion-title>
-       GGC STaRS: Poster
+      GGC STaRS: Poster
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -11,55 +11,107 @@
       Filter
     </ion-card-header>
     <ion-card-content>
-    <ion-searchbar></ion-searchbar>
-    <ion-card>
-      <ion-list>
-        <ion-radio-group>
-          <ion-list-header>
-      Sort by Academic Subject
-    </ion-list-header>
-    <ion-item>
-      <ion-label>All</ion-label>
-      <ion-radio color="ggc-green" slot="end" value="all" checked></ion-radio>
-    </ion-item>
-
-    <ion-item>
-      <ion-label>Biology</ion-label>
-      <ion-radio color="ggc-green" slot="end" value="biology"></ion-radio>
-    </ion-item>
-
-    <ion-item>
-      <ion-label>Chemistry</ion-label>
-      <ion-radio color="ggc-green" slot="end" value="chemistry"></ion-radio>
-    </ion-item>
-
-    <ion-item>
-        <ion-label>Environmental Science</ion-label>
-        <ion-radio color="ggc-green" slot="end" value="environmental_science"></ion-radio>
-      </ion-item>
-
-      <ion-item>
-          <ion-label>Exercise Science</ion-label>
-          <ion-radio color="ggc-green" slot="end" value="excerise_science"></ion-radio>
-        </ion-item>
-
-        <ion-item>
-            <ion-label>IT</ion-label>
-            <ion-radio color="ggc-green" slot="end" value="IT"></ion-radio>
-          </ion-item>
-
-          <ion-item>
-              <ion-label>Mathematics</ion-label>
-              <ion-radio color="ggc-green" slot="end" value="mathematics"></ion-radio>
+      <ion-searchbar
+        [(ngModel)]="searchTerm"
+        (ionChange)="setFilteredItems()"
+        placeholder="Search by poster"
+      ></ion-searchbar>
+      <ion-card>
+        <ion-list>
+          <ion-radio-group (ionChange)="onChangeHandler($event)">
+            <ion-list-header>
+              Sort by Academic Subject
+            </ion-list-header>
+            <ion-item>
+              <ion-label>All</ion-label>
+              <ion-radio
+                color="ggc-green"
+                slot="end"
+                value="all"
+                checked
+              ></ion-radio>
             </ion-item>
 
             <ion-item>
-                <ion-label>Statistics</ion-label>
-                <ion-radio color="ggc-green" slot="end" value="statistics"></ion-radio>
-              </ion-item>
-  </ion-radio-group>
-</ion-list>
-    </ion-card>
+              <ion-label>Biology</ion-label>
+              <ion-radio color="ggc-green" slot="end" value="bio"></ion-radio>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Chemistry</ion-label>
+              <ion-radio color="ggc-green" slot="end" value="chem"></ion-radio>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Environmental Science</ion-label>
+              <ion-radio
+                color="ggc-green"
+                slot="end"
+                value="psyc"
+              ></ion-radio>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Exercise Science</ion-label>
+              <ion-radio
+                color="ggc-green"
+                slot="end"
+                value="exsc"
+              ></ion-radio>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>IT</ion-label>
+              <ion-radio color="ggc-green" slot="end" value="itec"></ion-radio>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Mathematics</ion-label>
+              <ion-radio
+                color="ggc-green"
+                slot="end"
+                value="mathematics"
+              ></ion-radio>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Statistics</ion-label>
+              <ion-radio
+                color="ggc-green"
+                slot="end"
+                value="statistics"
+              ></ion-radio>
+            </ion-item>
+          </ion-radio-group>
+        </ion-list>
+      </ion-card>
+    </ion-card-content>
+  </ion-card>
+  <ion-card>
+    <ion-card-header color="ggc-green">
+      Select any of the following posters
+    </ion-card-header>
+    <ion-card-content *ngFor="let item of poster">
+      <ion-card>
+        <ion-card-content>
+          <ion-label>{{ item.group }}</ion-label>
+          <ion-list>
+            <!-- <ion-label>{{item.group}}</ion-label> -->
+            <ion-item>
+              <ion-icon name="list" color="ggc-green"></ion-icon>
+              <ion-label> Surveyed: {{ item.countJudges }}</ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-icon name="people" color="ggc-green"></ion-icon>
+              <ion-label> Students: {{ item.students }}</ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-icon name="school" color="ggc-green"></ion-icon>
+              <ion-label> Advisor: {{ item.advisor }}</ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
     </ion-card-content>
   </ion-card>
 </ion-content>
