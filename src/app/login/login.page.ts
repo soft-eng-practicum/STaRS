@@ -18,6 +18,7 @@ export class LoginPage implements OnInit {
     const alert = await this.alertController.create({
       // header: 'Alert',
       // subHeader: 'Subtitle',
+      cssClass: 'alert-box',
       message: 'Please enter valid login credentials.',
       buttons: [ {
         text: 'OK',

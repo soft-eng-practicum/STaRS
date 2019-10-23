@@ -27,9 +27,9 @@
 
 :root {
   --ion-color-ggc-green: #00704a;
-  --ion-color-ggc-green-rgb: 0,112,74;
+  --ion-color-ggc-green-rgb: 0, 112, 74;
   --ion-color-ggc-green-contrast: #ffffff;
-  --ion-color-ggc-green-contrast-rgb: 255,255,255;
+  --ion-color-ggc-green-contrast-rgb: 255, 255, 255;
   --ion-color-ggc-green-shade: #006341;
   --ion-color-ggc-green-tint: #1a7e5c;
 }
@@ -45,9 +45,9 @@
 
 :root {
   --ion-color-ggc-inverted: #ffffff;
-  --ion-color-ggc-inverted-rgb: 255,255,255;
+  --ion-color-ggc-inverted-rgb: 255, 255, 255;
   --ion-color-ggc-inverted-contrast: #00704a;
-  --ion-color-ggc-inverted-contrast-rgb: 0,0,0;
+  --ion-color-ggc-inverted-contrast-rgb: 0, 0, 0;
   --ion-color-ggc-inverted-shade: #e0e0e0;
   --ion-color-ggc-inverted-tint: #ffffff;
 }
@@ -71,7 +71,11 @@
   padding-top: 30px;
 }
 
-.icon-color{
+.icon-color {
   color: #00704a !important;
+  text-align: center;
+}
+
+.alert-box {
   text-align: center;
 }
