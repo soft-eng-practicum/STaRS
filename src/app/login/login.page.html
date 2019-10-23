@@ -6,21 +6,28 @@
 
 <ion-content>
   <div class="form sign-in">
-    
+
     <div class="form-container">
-        <img src="assets/icon.png" class="ggclogo" alt="image">
-        <!-- <h3>STaRS Voting Application</h3> -->
-      <label class="login-label">
-        <span>Username</span>
-        <input type="email" />
-      </label>
-      <label class="login-label">
-        <span>Password</span>
-        <input type="password"/>
-      </label>
-      <ion-button type="button" expand="block" color="ggc-green" class="submit"[routerLink]="['/home/tabs/tab1']">Sign In</ion-button>
+      <img src="assets/icon.png" class="ggclogo" alt="image">
+      <!-- <h3>STaRS Voting Application</h3> -->
+      <form (submit)="loginUser($event)">
+        <label class="login-label">
+          <span>Username</span>
+          <input id="username" type="email" [(ngModel)]="username" name="user"/>
+        </label>
+        <label class="login-label">
+          <span>Password</span>
+          <input id="password" type="password" [(ngModel)]="password" name="pass" />
+        </label>
+        <!-- <ion-button type="button" expand="block" color="ggc-green" class="submit" [routerLink]="['/home/tabs/tab1']">
+          Sign In</ion-button> -->
+        <ion-button type="button" expand="block" color="ggc-green" class="submit" (click)="loginUser($event)">
+          Login</ion-button>
+        <!-- <input type="submit">
+        <p>{{userInput}}</p> -->
+      </form>
       <!-- <button type="button" class="register-button" ng-click="launchRegisterModal()">REGISTER</button> -->
-     <!-- ion-button [routerLink]="['/home/tabs/tab1']">HOME ROUTE</ion-button> -->
+      <!-- ion-button [routerLink]="['/home/tabs/tab1']">HOME ROUTE</ion-button> -->
     </div>
   </div>
 </ion-content>
