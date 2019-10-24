@@ -19,8 +19,8 @@
       <ion-card>
         <ion-list>
           <ion-radio-group (ionChange)="onChangeHandler($event)">
-            <ion-list-header>
-              Sort by Academic Subject
+            <ion-list-header class="radio-group-head">
+              Sort by Academic Subject:
             </ion-list-header>
             <ion-item>
               <ion-label>All</ion-label>
@@ -88,15 +88,14 @@
     </ion-card-content>
   </ion-card>
   <ion-card>
-    <ion-card-header color="ggc-green">
-      Select any of the following posters
+    <ion-card-header class="poster-list-header" color="ggc-green">
+      Select From The Following Posters
     </ion-card-header>
     <ion-card-content *ngFor="let item of poster">
       <ion-card>
         <ion-card-content>
-          <ion-label>{{ item.group }}</ion-label>
+          <ion-label class="poster-card-header">{{ item.group }}</ion-label>
           <ion-list>
-            <!-- <ion-label>{{item.group}}</ion-label> -->
             <ion-item>
               <ion-icon name="list" color="ggc-green"></ion-icon>
               <ion-label class="poster-label"> Surveyed: {{ item.countJudges }}</ion-label>
