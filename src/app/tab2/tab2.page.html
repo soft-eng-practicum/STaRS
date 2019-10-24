@@ -7,9 +7,9 @@
 </ion-header>
 <ion-content>
   <ion-card>
-    <ion-card-header color="ggc-green">
+    <!-- <ion-card-header color="ggc-green">
       Filter
-    </ion-card-header>
+    </ion-card-header> -->
     <ion-card-content>
       <ion-searchbar
         [(ngModel)]="searchTerm"
@@ -99,15 +99,15 @@
             <!-- <ion-label>{{item.group}}</ion-label> -->
             <ion-item>
               <ion-icon name="list" color="ggc-green"></ion-icon>
-              <ion-label> Surveyed: {{ item.countJudges }}</ion-label>
+              <ion-label class="poster-label"> Surveyed: {{ item.countJudges }}</ion-label>
             </ion-item>
             <ion-item>
               <ion-icon name="people" color="ggc-green"></ion-icon>
-              <ion-label> Students: {{ item.students }}</ion-label>
+              <ion-label class="poster-label"> Students: {{ item.students }}</ion-label>
             </ion-item>
             <ion-item>
               <ion-icon name="school" color="ggc-green"></ion-icon>
-              <ion-label> Advisor: {{ item.advisor }}</ion-label>
+              <ion-label class="poster-label"> Advisor: {{ item.advisor }}</ion-label>
             </ion-item>
           </ion-list>
         </ion-card-content>
