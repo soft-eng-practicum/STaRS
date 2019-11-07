@@ -31,8 +31,5 @@ export class TabsPage {
     });
     await alert.present();
   }
-
-  logou2t() {
-    console.log('logout');
-  }
+  
 }

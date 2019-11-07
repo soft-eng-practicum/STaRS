@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="ggc-green">
+  <ion-toolbar color="main-one">
     <ion-title>
       GGC STaRS: Home
     </ion-title>
@@ -9,17 +9,20 @@
 <ion-content align="center">
   <ion-card>
     <ion-card-header class="header-one">
-      Start Judging
+      <div class="card-flex">
+        Start Judging
+        <ion-icon color="main-one" class="foward-arrow" name="list"></ion-icon>
+      </div>
     </ion-card-header>
     <ion-card-content>
-      <ion-button shape="round" color="ggc-green" class="green-button" [routerLink]="['/home/tabs/tab2']">
-        <ion-icon class="foward-arrow" name="md-arrow-forward"></ion-icon>
+      <ion-button shape="round" color="main-three" class="green-button" [routerLink]="['/home/tabs/tab2']">
+        <ion-icon color="ggc-inverted" class="foward-arrow" name="md-arrow-forward"></ion-icon>
       </ion-button>
     </ion-card-content>
   </ion-card>
 
   <ion-card>
-    <ion-card-header color="ggc-green">
+    <ion-card-header color="main-two">
       <ion-card-title>Changes To Be Synced</ion-card-title>
     </ion-card-header>
     <ion-card-content class="card-padding">
@@ -28,22 +31,27 @@
   </ion-card>
 
   <ion-card>
-    <ion-card-header color="ggc-green">
+    <ion-card-header color="main-two">
       <ion-card-title>Completed Surveys</ion-card-title>
     </ion-card-header>
     <ion-card-content class="card-padding">
       No Completed Surveys
     </ion-card-content>
   </ion-card>
-  
+
   <ion-card>
     <ion-card-header class="header-one">
-      Submit Feedback
+      <div class="card-flex">
+        Submit Feedback
+        <ion-icon color="main-one" class="foward-arrow" name="paper"></ion-icon>
+      </div>
     </ion-card-header>
     <ion-card-content>
-      <ion-button shape="round" color="ggc-green" class="green-button" onclick="window.open('https://goo.gl/forms/F23qNHpDLftFDoQ33', '_blank')">
-        <ion-icon class="foward-arrow" name="paper"></ion-icon>
+      <ion-button shape="round" color="main-three" class="green-button"
+        onclick="window.open('https://goo.gl/forms/F23qNHpDLftFDoQ33', '_blank')">
+        <ion-icon color="ggc-inverted" class="foward-arrow" name="md-arrow-forward"></ion-icon>
       </ion-button>
     </ion-card-content>
   </ion-card>
+  <!-- <ion-button (click)="testMethod()">TEST</ion-button> -->
 </ion-content>
