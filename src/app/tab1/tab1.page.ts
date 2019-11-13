@@ -9,7 +9,12 @@ import { PouchService } from 'src/app/pouch.service';
 export class Tab1Page {
 
   constructor(private pouchService: PouchService) {
-    this.pouchService.info();
+    this.pouchService.getDocs().then(result => {
+      for (const i of result.rows) {
+        console.log(i.doc.username);
+      }
+      console.log('TEST');
+    });
   }
 
   testMethod() {

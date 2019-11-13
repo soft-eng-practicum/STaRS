@@ -13,19 +13,23 @@ export class PouchService {
   constructor() {
   }
 
-  info() {
+  getDocs() {
     console.log("lol");
     this.db = new PouchDB('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18');
     // console.log(this.db.info().then(info => {
     //   console.log(info);
     // }));
-    console.log(this.db.allDocs({
+    // console.log(this.db.allDocs({
+    //   include_docs: true,
+    //   attachments: true
+    // }).then(result => {
+    //   console.log(result);
+    // }).catch(err => {
+    //   console.log(err);
+    // }));
+    return this.db.allDocs({
       include_docs: true,
       attachments: true
-    }).then(result => {
-      console.log(result);
-    }).catch(err => {
-      console.log(err);
-    }));
+    });
    }
 }
