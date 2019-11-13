@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { PouchService } from 'src/app/pouch.service';
 
 @Component({
   selector: 'app-login',
@@ -9,10 +10,10 @@ import { Router } from '@angular/router';
 })
 export class LoginPage implements OnInit {
 
-  username;
-  password;
+  username: any;
+  password: any;
 
-  constructor(public alertController: AlertController, private  router: Router) { }
+  constructor(public alertController: AlertController, private  router: Router, private pouchService: PouchService) { }
 
   async presentAlert() {
     const alert = await this.alertController.create({
@@ -38,11 +39,25 @@ export class LoginPage implements OnInit {
     // const username = target.querySelector('#username').value;
     // const password = target.querySelector('#password').value;
     // console.log(username, password);
-    if (this.username === 'polaris' && this.password === 'ggc') {
-      this.router.navigateByUrl('/home/tabs/tab1');
-    } else {
-      this.presentAlert();
-    }
+    // if (this.username === 'polaris' && this.password === 'ggc') {
+    //   this.router.navigateByUrl('/home/tabs/tab1');
+    // } else {
+    //   this.presentAlert();
+    // }
+    let check;
+    this.pouchService.getDocs().then(result => {
+      for (const i of result.rows) {
+        if (this.username === i.doc.username && this.password === i.doc.password) {
+            check = i.doc;
+          }
+      }
+      if (check === undefined){
+        this.presentAlert();
+      } else {
+        this.router.navigateByUrl('/home/tabs/tab1');
+        this.pouchService.globalUser = this.username;
+      }
+    });
   }
 
 }

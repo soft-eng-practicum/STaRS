@@ -9,7 +9,8 @@ import PouchDB from 'pouchdb';
   providedIn: 'root'
 })
 export class PouchService {
-  private db: any;
+  db: any;
+  globalUser: any;
   constructor() {
   }
 
