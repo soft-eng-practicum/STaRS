@@ -10,16 +10,27 @@ export class Tab2Page implements OnInit {
   poster: any = [];
   items: any = [];
   searchTerm: string;
-  constructor(private appService: AppService) { }
-
-  ngOnInit() {
+  constructor(private appService: AppService) {
     fetch('./assets/data/poster.json')
       .then(res => res.json())
       .then(json => {
         this.poster = json;
-        this.items = this.poster;
+        this.items = json;
       });
   }
+
+    filterItems(searchTerm) {
+    return this.items.filter(item => {
+      return (
+        item.group.toLowerCase().indexOf(searchTerm.toString().toLowerCase()) >
+        -1
+      );
+    });
+  }
+
+  ngOnInit() {
+  }
+
   onChangeHandler($event) {
     if ($event.target.value === 'all') {
       return fetch('./assets/data/poster.json')
@@ -32,15 +43,7 @@ export class Tab2Page implements OnInit {
       this.poster = this.appService.filterItems(this.poster.subject);
     }
   }
-  filterItems(searchTerm) {
-    return this.items.filter(item => {
-      return (
-        item.group.toLowerCase().indexOf(searchTerm.toString().toLowerCase()) >
-        -1
-      );
-    });
-  }
-  setFilteredItems() {
+    setFilteredItems() {
     return this.poster = this.filterItems(this.searchTerm);
   }
 }
