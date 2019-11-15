@@ -8,8 +8,16 @@ import { PouchService } from 'src/app/pouch.service';
 })
 export class Tab1Page {
 
+  test: any;
+
   constructor(private pouchService: PouchService) {
-    this.pouchService.info();
+    this.test = this.pouchService.globalUser;
+    this.pouchService.getDocs().then(result => {
+      for (const i of result.rows) {
+        console.log(i.doc.username);
+      }
+      console.log('TEST');
+    });
   }
 
   testMethod() {
