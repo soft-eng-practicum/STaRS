@@ -13,11 +13,20 @@ export class PouchService {
   pouchPosters: any;
   globalUser: any;
   posters: any = [];
-  constructor() {}
+  password: any = [];
+  constructor() {
+    fetch('./assets/data/couch_connection.json')
+    .then(res => res.json())
+    .then(json => {
+      // console.log(json);
+      this.password = json;
+      console.log(this.password.couchConnection);
+    });
+  }
 
   getAllJudges() {
     console.log("JUDGES LOADED");
-    this.pouchJudges = new PouchDB('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18');
+    this.pouchJudges = new PouchDB(this.password.couchConnection + '/judges_sp18');
     // console.log(this.db.info().then(info => {
     //   console.log(info);
     // }));
@@ -36,7 +45,7 @@ export class PouchService {
    }
    getAllPosters() {
     console.log("POSTERS LOADED");
-    this.pouchPosters = new PouchDB('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2019');
+    this.pouchPosters = new PouchDB(this.password.couchConnection + '/stars2019');
     return this.pouchPosters.allDocs({
       include_docs: true,
       attachments: true
@@ -60,7 +69,7 @@ export class PouchService {
           };
           posterIndex++;
       });
-        console.log(this.posters);
+        // console.log(this.posters);
       }
     });
   }
