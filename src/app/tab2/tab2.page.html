@@ -17,6 +17,7 @@
         placeholder="Search by poster"
       ></ion-searchbar>
       <ion-card>
+        <ion-card-content>
         <ion-list>
           <ion-radio-group (ionChange)="onChangeHandler($event)">
             <ion-list-header class="radio-group-head">
@@ -74,7 +75,7 @@
               ></ion-radio>
             </ion-item>
 
-            <ion-item>
+            <ion-item lines="none">
               <ion-label>Statistics</ion-label>
               <ion-radio
                 color="main-three"
@@ -84,6 +85,7 @@
             </ion-item>
           </ion-radio-group>
         </ion-list>
+        </ion-card-content>
       </ion-card>
     </ion-card-content>
   </ion-card>
@@ -91,8 +93,8 @@
     <ion-card-header class="poster-list-header" color="main-two">
       Select From The Following Posters
     </ion-card-header>
-    <ion-card-content *ngFor="let item of poster">
-      <ion-card>
+    <ion-card-content *ngFor="let item of poster" >
+      <ion-card [routerLink]= "['/poster-list']">
         <ion-card-content>
           <ion-label class="poster-card-header">{{ item.group }}</ion-label>
           <ion-list>
