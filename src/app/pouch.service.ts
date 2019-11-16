@@ -14,6 +14,7 @@ export class PouchService {
   globalUser: any;
   posters: any = [];
   password: any = [];
+  surveyQuestions: any = [];
   constructor() {
     fetch('./assets/data/couch_connection.json')
     .then(res => res.json())
@@ -21,6 +22,12 @@ export class PouchService {
       // console.log(json);
       this.password = json;
       console.log(this.password.couchConnection);
+    });
+
+    fetch('./assets/data/survey.json')
+    .then(res => res.json())
+    .then(json => {
+      this.surveyQuestions = json;
     });
   }
 

@@ -50,10 +50,11 @@
       </ion-list>
     </ion-card-content>
   </ion-card>
-  <ion-card>
-    <ion-card-header class="rating-card-header" color="main-two"
-      >#1 Introduction and Motivation</ion-card-header
-    >
+  <ion-card *ngFor="let survey of surveyQuestions">
+    <ion-card-header class="rating-card-header" color="main-two">
+      <ion-label>#{{survey.id}}: {{survey.information}}</ion-label>
+      <!-- <ion-icon name="information-circle" slot="end"></ion-icon> -->
+    </ion-card-header>
     <ion-card-content>
       <ion-segment mode="ios" class="segment" >
         <ion-segment-button mode="ios" value="question1" class="segment">
@@ -74,26 +75,5 @@
       </ion-segment>
     </ion-card-content>
   </ion-card>
-  <!-- <ion-card>
-    <ion-card-header class="rating-card-header" color="main-two"
-      >#2 Introduction</ion-card-header
-    >
-    <ion-card-content>
-      <ion-item>
-        <ion-range
-          min="1"
-          max="5"
-          color="main-three"
-          snaps="true"
-          ticks="true"
-          step="1"
-          pin
-          color="main-three"
-        >
-          <ion-label slot="start">1</ion-label>
-          <ion-label slot="end">5</ion-label>
-        </ion-range>
-      </ion-item>
-    </ion-card-content>
-  </ion-card> -->
+  <ion-button expand="block" type="submit" color="main-three">Submit</ion-button>
 </ion-content>

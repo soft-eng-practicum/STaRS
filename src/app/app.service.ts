@@ -5,24 +5,24 @@ import { PouchService } from 'src/app/pouch.service';
   providedIn: 'root'
 })
 export class AppService {
-  poster: any = [];
+  surveyQuestions: any = [];
   searchTerm: string;
   constructor() {
-    console.log('tempzzz');
-    fetch('./assets/data/poster.json')
-      .then(res => res.json())
-      .then(json => {
-        this.poster = json;
-      });
+    // console.log('tempzzz');
+    // fetch('./assets/data/survey.json')
+    //   .then(res => res.json())
+    //   .then(json => {
+    //     this.surveyQuestions = json;
+    //   });
   }
 
-  filterItems(searchTerm) {
-    return this.poster.filter(item => {
-      return (
-        item.subject
-          .toLowerCase()
-          .indexOf(searchTerm.toString().toLowerCase()) > -1
-      );
-    });
-  }
+  // filterItems(searchTerm) {
+  //   return this.poster.filter(item => {
+  //     return (
+  //       item.subject
+  //         .toLowerCase()
+  //         .indexOf(searchTerm.toString().toLowerCase()) > -1
+  //     );
+  //   });
+  // }
 }
