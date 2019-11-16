@@ -54,14 +54,23 @@ export class PouchService {
               countJudges: 0,
               group: rowList[2],
               subject: rowList[3],
-              students: rowList[4],
-              advisor: rowList[5],
+              students: rowList[4].replace(/\"/g, ''),
+              advisor: rowList[5].replace(/\"/g, ''),
               advisorEmail: rowList[6]
           };
           posterIndex++;
       });
         console.log(this.posters);
       }
+    });
+  }
+  filterItems(searchTerm) {
+    return this.posters.filter(item => {
+      return (
+        item.subject
+          .toLowerCase()
+          .indexOf(searchTerm.toString().toLowerCase()) > -1
+      );
     });
   }
 }

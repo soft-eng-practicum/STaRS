@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AppService } from 'src/app/app.service';
+import { PouchService } from 'src/app/pouch.service';
 
 @Component({
   selector: 'app-tab2',
@@ -10,13 +10,11 @@ export class Tab2Page implements OnInit {
   poster: any = [];
   items: any = [];
   searchTerm: string;
-  constructor(private appService: AppService) {
-    fetch('./assets/data/poster.json')
-      .then(res => res.json())
-      .then(json => {
-        this.poster = json;
-        this.items = json;
-      });
+  constructor(private pouchService: PouchService) {
+    this.pouchService.getAllPosters();
+    this.poster = this.pouchService.posters;
+    this.items = this.pouchService.posters;
+    console.log(this.poster);
   }
 
     filterItems(searchTerm) {
@@ -33,14 +31,10 @@ export class Tab2Page implements OnInit {
 
   onChangeHandler($event) {
     if ($event.target.value === 'all') {
-      return fetch('./assets/data/poster.json')
-        .then(res => res.json())
-        .then(json => {
-          this.poster = json;
-        });
+      return this.poster = this.pouchService.posters;
     } else {
       this.poster.subject = $event.target.value;
-      this.poster = this.appService.filterItems(this.poster.subject);
+      this.poster = this.pouchService.filterItems(this.poster.subject);
     }
   }
     setFilteredItems() {
