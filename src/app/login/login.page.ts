@@ -45,7 +45,7 @@ export class LoginPage implements OnInit {
     //   this.presentAlert();
     // }
     let check;
-    this.pouchService.getDocs().then(result => {
+    this.pouchService.getAllJudges().then(result => {
       for (const i of result.rows) {
         if (this.username === i.doc.username && this.password === i.doc.password) {
             check = i.doc;

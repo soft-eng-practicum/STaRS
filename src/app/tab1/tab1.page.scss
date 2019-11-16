@@ -3,7 +3,6 @@
   overflow: hidden;
 }
 
-
 .header-one {
   font-size: 25px;
 }
@@ -25,4 +24,10 @@
   align-content: right!important;
   align-items: right!important;
   justify-content: center!important;
+}
+
+.user-icon {
+  position: absolute;
+  right: 0;
+  bottom: -8px;
 }

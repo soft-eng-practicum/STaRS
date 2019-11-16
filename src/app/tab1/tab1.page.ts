@@ -12,7 +12,7 @@ export class Tab1Page {
 
   constructor(private pouchService: PouchService) {
     this.test = this.pouchService.globalUser;
-    this.pouchService.getDocs().then(result => {
+    this.pouchService.getAllJudges().then(result => {
       for (const i of result.rows) {
         console.log(i.doc.username);
       }

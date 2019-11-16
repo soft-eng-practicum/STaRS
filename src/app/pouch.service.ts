@@ -14,7 +14,7 @@ export class PouchService {
   constructor() {
   }
 
-  getDocs() {
+  getAllJudges() {
     console.log("lol");
     this.db = new PouchDB('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18');
     // console.log(this.db.info().then(info => {
