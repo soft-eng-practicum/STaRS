@@ -51,7 +51,7 @@ export class LoginPage implements OnInit {
             check = i.doc;
           }
       }
-      if (check === undefined){
+      if (check === undefined) {
         this.presentAlert();
       } else {
         this.router.navigateByUrl('/home/tabs/tab1');

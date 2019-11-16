@@ -9,14 +9,15 @@ import PouchDB from 'pouchdb';
   providedIn: 'root'
 })
 export class PouchService {
-  db: any;
+  pouchJudges: any;
+  pouchPosters: any;
   globalUser: any;
-  constructor() {
-  }
+  posters: any = [];
+  constructor() {}
 
   getAllJudges() {
-    console.log("lol");
-    this.db = new PouchDB('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18');
+    console.log("JUDGES LOADED");
+    this.pouchJudges = new PouchDB('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18');
     // console.log(this.db.info().then(info => {
     //   console.log(info);
     // }));
@@ -28,9 +29,39 @@ export class PouchService {
     // }).catch(err => {
     //   console.log(err);
     // }));
-    return this.db.allDocs({
+    return this.pouchJudges.allDocs({
       include_docs: true,
       attachments: true
     });
    }
+   getAllPosters() {
+    console.log("POSTERS LOADED");
+    this.pouchPosters = new PouchDB('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2019');
+    return this.pouchPosters.allDocs({
+      include_docs: true,
+      attachments: true
+    }).then(result => {
+      for (const i of result.rows) {
+        const posterRows = i.doc.posters.split(/\n/);
+        const posterTitles = posterRows.shift().split(/,/);
+        let posterIndex = 0;
+        posterRows.forEach(row => {
+          const rowList = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+          this.posters[posterIndex] = {
+              email: rowList[0],
+              id: rowList[1],
+              judges: [],
+              countJudges: 0,
+              group: rowList[2],
+              subject: rowList[3],
+              students: rowList[4],
+              advisor: rowList[5],
+              advisorEmail: rowList[6]
+          };
+          posterIndex++;
+      });
+        console.log(this.posters);
+      }
+    });
+  }
 }

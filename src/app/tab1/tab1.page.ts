@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ɵCompiler_compileModuleSync__POST_R3__ } from '@angular/core';
 import { PouchService } from 'src/app/pouch.service';
 
 @Component({
@@ -8,16 +8,14 @@ import { PouchService } from 'src/app/pouch.service';
 })
 export class Tab1Page {
 
-  test: any;
+  currentUser: any;
+  posters: any = [];
 
   constructor(private pouchService: PouchService) {
-    this.test = this.pouchService.globalUser;
-    this.pouchService.getAllJudges().then(result => {
-      for (const i of result.rows) {
-        console.log(i.doc.username);
-      }
-      console.log('TEST');
-    });
+    this.currentUser = this.pouchService.globalUser;
+    this.pouchService.getAllPosters();
+    this.posters = this.pouchService.posters;
+    console.log(this.posters);
   }
 
   testMethod() {
