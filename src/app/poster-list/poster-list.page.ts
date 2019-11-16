@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PouchService } from 'src/app/pouch.service';
 
 @Component({
   selector: 'app-poster-list',
@@ -7,7 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PosterListPage implements OnInit {
 
-  constructor() { 
+  currentUser: any;
+
+  constructor(private pouchService: PouchService) {
+    this.currentUser = this.pouchService.globalUser;
   }
 
   ngOnInit() {

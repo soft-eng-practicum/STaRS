@@ -7,10 +7,12 @@ import { PouchService } from 'src/app/pouch.service';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page implements OnInit {
+  currentUser: any;
   poster: any = [];
   items: any = [];
   searchTerm: string;
   constructor(private pouchService: PouchService) {
+    this.currentUser = this.pouchService.globalUser;
     this.pouchService.getAllPosters();
     this.poster = this.pouchService.posters;
     this.items = this.pouchService.posters;
