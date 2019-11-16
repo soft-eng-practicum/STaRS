@@ -1,4 +1,4 @@
-import { Component, ɵCompiler_compileModuleSync__POST_R3__ } from '@angular/core';
+import { Component } from '@angular/core';
 import { PouchService } from 'src/app/pouch.service';
 
 @Component({
