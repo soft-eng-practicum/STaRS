@@ -25,7 +25,7 @@ export class PouchService {
   }
 
   getAllJudges() {
-    console.log("JUDGES LOADED");
+    console.log('JUDGES LOADED');
     this.pouchJudges = new PouchDB(this.password.couchConnection + '/judges_sp18');
     // console.log(this.db.info().then(info => {
     //   console.log(info);
@@ -44,7 +44,7 @@ export class PouchService {
     });
    }
    getAllPosters() {
-    console.log("POSTERS LOADED");
+    console.log('POSTERS LOADED');
     this.pouchPosters = new PouchDB(this.password.couchConnection + '/stars2019');
     return this.pouchPosters.allDocs({
       include_docs: true,
