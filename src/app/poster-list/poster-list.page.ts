@@ -47,7 +47,7 @@ export class PosterListPage implements OnInit {
   ngOnInit() {
   }
 
-  async showAlert(index) {
+  async showInfo(index) {
     this.question = this.surveyQuestions[index - 1];
     const alert = await this.alertController.create({
       header: this.question.information,
@@ -55,6 +55,24 @@ export class PosterListPage implements OnInit {
       buttons: ['OK']
     });
     await alert.present();
+  }
+
+  async showJudges() {
+    if (this.loadedPoster.judges.length === 0) {
+      const alert = await this.alertController.create({
+        header: 'Judges who have surveyed:',
+        subHeader: 'This poster has not been surveyed yet.',
+        buttons: ['OK']
+      });
+      await alert.present();
+    } else {
+      const alert = await this.alertController.create({
+        header: 'Judges who have surveyed:',
+        subHeader: this.loadedPoster.judges,
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
 
   radioSelect(event, index) {
