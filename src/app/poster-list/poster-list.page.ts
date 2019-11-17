@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PouchService } from 'src/app/pouch.service';
 import { AlertController } from '@ionic/angular';
+import { deepEqual } from 'assert';
 
 
 @Component({
@@ -19,7 +20,7 @@ export class PosterListPage implements OnInit {
   surveyQuestions: any = [];
   controller: any;
   question: any = [];
-  test: 1;
+  test: any;
   selectRadioGroup: any;
   // segmentChanged(e) {
   //   console.info(e.value.);
@@ -37,8 +38,8 @@ export class PosterListPage implements OnInit {
     await alert.present();
   }
 
-  radioSelect(event){
-    this.selectRadioGroup = event.detail.value;
+  radioSelect(event, index) {
+    this.surveyQuestions[index - 1].value = event.detail.value;
     console.log(this.selectRadioGroup);
   }
 }

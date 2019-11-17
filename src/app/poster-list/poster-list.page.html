@@ -56,9 +56,9 @@
       <!-- <button ion-button clear icon-only (click)="showAlert(survey.id)"><ion-icon name="information-circle-outline" size="large" color="main-three" class="segment_icon"></ion-icon></button>  -->
       <a (click)="showAlert(survey.id)"><ion-icon name="information-circle" size="large" color="main-inverted" class="segment_icon"></ion-icon></a>
     </ion-card-header>
-    <ion-card-content (ionChange)="radioSelect($event)">
+    <ion-card-content (ionChange)="radioSelect($event, survey.id)">
       <ion-segment mode="ios" class="segment" *ngIf="survey.id < 7">
-        <ion-segment-button mode="ios" class="segment" value={{test}}>
+        <ion-segment-button mode="ios" class="segment" value="1">
           <ion-label>1</ion-label>
         </ion-segment-button>
         <ion-segment-button mode="ios" class="segment" value="2">
@@ -75,7 +75,7 @@
         </ion-segment-button>
       </ion-segment>
       <ion-item lines="none">
-        <ion-label>{{selectRadioGroup}}</ion-label>
+        <ion-label>{{survey.value}}</ion-label>
       </ion-item>
       <ion-item *ngIf="survey.id > 6">
         <ion-textarea></ion-textarea>
