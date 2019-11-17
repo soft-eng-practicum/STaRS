@@ -11,11 +11,14 @@
     padding-top: 16px;
 }
 
-
 .segment{
   --border-style: hidden;
   --background-checked: #f76c6c;
   --color: black;
   --background: #f2f2f2;
   box-shadow: 0 2px 6px rgba(100, 100, 100, 0.3);
+}
+
+.segment_icon{
+    float: right;
 }

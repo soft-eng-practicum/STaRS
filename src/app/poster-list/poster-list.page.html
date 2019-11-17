@@ -52,12 +52,12 @@
   </ion-card>
   <ion-card *ngFor="let survey of surveyQuestions">
     <ion-card-header class="rating-card-header" color="main-two">
-      <ion-label>#{{survey.id}}: {{survey.information}}</ion-label>
-      <!-- <ion-icon name="information-circle" slot="end"></ion-icon> -->
+      <ion-label>#{{survey.id}}: {{survey.information}} </ion-label>
+      <button ion-button icon-only (click)="showAlert(survey.id)"><ion-icon name="information-circle-outline" color="main-three" class="segment_icon"></ion-icon></button> 
     </ion-card-header>
-    <ion-card-content>
-      <ion-segment mode="ios" class="segment" >
-        <ion-segment-button mode="ios" value="question1" class="segment">
+    <ion-card-content (ionChange)="radioSelect($event)">
+      <ion-segment mode="ios" class="segment" *ngIf="survey.id < 7"  >
+        <ion-segment-button mode="ios" value="question1" class="segment" >
           <ion-label>1</ion-label>
         </ion-segment-button>
         <ion-segment-button mode="ios" class="segment" value="question2">
@@ -69,10 +69,17 @@
         <ion-segment-button mode="ios" class="segment" value="question4">
           <ion-label>4</ion-label>
         </ion-segment-button>
-        <ion-segment-button mode="ios" value="question5" class="segment">
+        <ion-segment-button mode="ios" class="segment" value="question5">
           <ion-label>5</ion-label>
         </ion-segment-button>
+        
       </ion-segment>
+      <ion-item lines="none">
+        <ion-label>{{selectRadioGroup}}</ion-label>
+      </ion-item>
+      <ion-item *ngIf="survey.id > 6">
+        <ion-textarea></ion-textarea>
+      </ion-item>
     </ion-card-content>
   </ion-card>
   <ion-button expand="block" type="submit" color="main-three">Submit</ion-button>
