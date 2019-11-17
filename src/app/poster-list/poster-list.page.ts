@@ -18,6 +18,7 @@ export class PosterListPage implements OnInit {
   test: any;
   selectRadioGroup: any;
   loadedPoster: any;
+  ratingToWord: any;
 
   constructor(private pouchService: PouchService, public alertController: AlertController, private activatedRoute: ActivatedRoute) {
     this.currentUser = this.pouchService.globalUser;
@@ -51,7 +52,29 @@ export class PosterListPage implements OnInit {
   }
 
   radioSelect(event, index) {
-    this.surveyQuestions[index - 1].value = event.detail.value;
+    // debugger;
+    const inputValue = event.detail.value;
+    this.surveyQuestions[index - 1].value = inputValue;
+    switch (inputValue) {
+      case '1':
+        this.surveyQuestions[index - 1].wordValue = 'Below Average';
+        break;
+      case '2':
+        this.surveyQuestions[index - 1].wordValue = 'Average';
+        break;
+      case '3':
+        this.surveyQuestions[index - 1].wordValue = 'Good';
+        break;
+      case '4':
+        this.surveyQuestions[index - 1].wordValue = 'Excellent';
+        break;
+      case '5':
+        this.surveyQuestions[index - 1].wordValue = 'Outstanding';
+        break;
+      default:
+        this.surveyQuestions[index - 1].wordValue = '';
+    }
     console.log(this.selectRadioGroup);
   }
+
 }
