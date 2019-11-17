@@ -33,6 +33,10 @@ export class PouchService {
     });
   }
 
+  getSurveys() {
+    return [...this.surveyQuestions];
+  }
+
   getAllJudges() {
     console.log('JUDGES LOADED');
     this.pouchJudges = new PouchDB(this.password.couchConnection + '/judges_sp18');

@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { PouchService } from 'src/app/pouch.service';
 import { AlertController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
-
+import { LoadingController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-poster-list',
@@ -20,9 +22,15 @@ export class PosterListPage implements OnInit {
   loadedPoster: any;
   ratingToWord: any;
 
-  constructor(private pouchService: PouchService, public alertController: AlertController, private activatedRoute: ActivatedRoute) {
+  constructor(private pouchService: PouchService,
+              public alertController: AlertController,
+              private activatedRoute: ActivatedRoute,
+              public loadingController: LoadingController,
+              private  router: Router,
+              public toastController: ToastController) {
     this.currentUser = this.pouchService.globalUser;
-    this.surveyQuestions = this.pouchService.surveyQuestions;
+    // this.surveyQuestions = this.pouchService.getSurveys();
+    this.surveyQuestions = JSON.parse(JSON.stringify(this.pouchService.surveyQuestions));
     this.activatedRoute.paramMap.subscribe(paramMap => {
       if (!paramMap.has('id')) {
         return;
@@ -30,9 +38,7 @@ export class PosterListPage implements OnInit {
       const posterId = paramMap.get('id');
       this.loadedPoster = this.pouchService.getPoster(posterId);
     });
-    // console.log(this.pouchService.getPoster('1'));
   }
-
 
   // segmentChanged(e) {
   //   console.info(e.value.);
@@ -75,6 +81,22 @@ export class PosterListPage implements OnInit {
         this.surveyQuestions[index - 1].wordValue = '';
     }
     console.log(this.selectRadioGroup);
+  }
+
+  async onSubmit() {
+    const loading = await this.loadingController.create({
+      message: 'Please wait while your survey is submitted.',
+      duration: 2000
+    });
+    await loading.present();
+    const { role, data } = await loading.onDidDismiss();
+    this.router.navigateByUrl('/home/tabs/tab2');
+
+    const toast = await this.toastController.create({
+      message: 'Your survey has been submitted!',
+      duration: 2000
+    });
+    toast.present();
   }
 
 }
