@@ -9,12 +9,14 @@ import PouchDB from 'pouchdb';
   providedIn: 'root'
 })
 export class PouchService {
+
   pouchJudges: any;
   pouchPosters: any;
   globalUser: any;
   posters: any = [];
   password: any = [];
   surveyQuestions: any = [];
+
   constructor() {
     fetch('./assets/data/couch_connection.json')
     .then(res => res.json())
@@ -34,22 +36,12 @@ export class PouchService {
   getAllJudges() {
     console.log('JUDGES LOADED');
     this.pouchJudges = new PouchDB(this.password.couchConnection + '/judges_sp18');
-    // console.log(this.db.info().then(info => {
-    //   console.log(info);
-    // }));
-    // console.log(this.db.allDocs({
-    //   include_docs: true,
-    //   attachments: true
-    // }).then(result => {
-    //   console.log(result);
-    // }).catch(err => {
-    //   console.log(err);
-    // }));
     return this.pouchJudges.allDocs({
       include_docs: true,
       attachments: true
     });
    }
+
    getAllPosters() {
     console.log('POSTERS LOADED');
     this.pouchPosters = new PouchDB(this.password.couchConnection + '/stars2019');
@@ -80,6 +72,15 @@ export class PouchService {
       }
     });
   }
+
+  getPoster(id: string) {
+    return {
+      ...this.posters.find(poster => {
+        return poster.id === id;
+      })
+    };
+  }
+
   filterItems(searchTerm) {
     return this.posters.filter(item => {
       return (

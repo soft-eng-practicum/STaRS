@@ -98,7 +98,7 @@
       Select From The Following Posters
     </ion-card-header>
     <ion-card-content *ngFor="let item of poster" >
-      <ion-card [routerLink]= "['/poster-list']">
+      <ion-card [routerLink]= "['/poster-list', item.id]">
         <ion-card-content>
           <ion-label class="poster-card-header">{{ item.group }}</ion-label>
           <ion-list>

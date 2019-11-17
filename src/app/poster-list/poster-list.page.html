@@ -18,9 +18,9 @@
             size="large"
           ></ion-icon>
           <ion-label>
-            Title: <br />
-            Advisor: <br />
-            Students:
+            Title: {{loadedPoster.group}}<br />
+            Advisor: {{loadedPoster.advisor}}<br />
+            Students: {{loadedPoster.students}}
           </ion-label>
         </ion-item>
         <ion-item>
@@ -82,7 +82,7 @@
       </ion-item>
     </ion-card-content>
   </ion-card>
-  <ion-button expand="block" type="submit" color="main-three"
+  <ion-button (click)="testtt()" expand="block" type="submit" color="main-three"
     >Submit</ion-button
   >
 </ion-content>
