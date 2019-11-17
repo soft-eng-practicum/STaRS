@@ -19,6 +19,7 @@ export class PosterListPage implements OnInit {
   surveyQuestions: any = [];
   controller: any;
   question: any = [];
+  test: 1;
   selectRadioGroup: any;
   // segmentChanged(e) {
   //   console.info(e.value.);

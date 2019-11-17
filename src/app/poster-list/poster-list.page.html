@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="main-one">
-    <ion-buttons slot="start"  >
+    <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-text>GGC STaRS: Poster</ion-text>
@@ -18,8 +18,8 @@
             size="large"
           ></ion-icon>
           <ion-label>
-            Title: <br/>
-            Advisor: <br/>
+            Title: <br />
+            Advisor: <br />
             Students:
           </ion-label>
         </ion-item>
@@ -53,26 +53,26 @@
   <ion-card *ngFor="let survey of surveyQuestions">
     <ion-card-header class="rating-card-header" color="main-two">
       <ion-label>#{{survey.id}}: {{survey.information}} </ion-label>
-      <button ion-button icon-only (click)="showAlert(survey.id)"><ion-icon name="information-circle-outline" color="main-three" class="segment_icon"></ion-icon></button> 
+      <!-- <button ion-button clear icon-only (click)="showAlert(survey.id)"><ion-icon name="information-circle-outline" size="large" color="main-three" class="segment_icon"></ion-icon></button>  -->
+      <a (click)="showAlert(survey.id)"><ion-icon name="information-circle" size="large" color="main-inverted" class="segment_icon"></ion-icon></a>
     </ion-card-header>
     <ion-card-content (ionChange)="radioSelect($event)">
-      <ion-segment mode="ios" class="segment" *ngIf="survey.id < 7"  >
-        <ion-segment-button mode="ios" value="question1" class="segment" >
+      <ion-segment mode="ios" class="segment" *ngIf="survey.id < 7">
+        <ion-segment-button mode="ios" class="segment" value={{test}}>
           <ion-label>1</ion-label>
         </ion-segment-button>
-        <ion-segment-button mode="ios" class="segment" value="question2">
+        <ion-segment-button mode="ios" class="segment" value="2">
           <ion-label>2</ion-label>
         </ion-segment-button>
-        <ion-segment-button mode="ios" class="segment" value="question3">
+        <ion-segment-button mode="ios" class="segment" value="3">
           <ion-label>3</ion-label>
         </ion-segment-button>
-        <ion-segment-button mode="ios" class="segment" value="question4">
+        <ion-segment-button mode="ios" class="segment" value="4">
           <ion-label>4</ion-label>
         </ion-segment-button>
-        <ion-segment-button mode="ios" class="segment" value="question5">
+        <ion-segment-button mode="ios" class="segment" value="5">
           <ion-label>5</ion-label>
         </ion-segment-button>
-        
       </ion-segment>
       <ion-item lines="none">
         <ion-label>{{selectRadioGroup}}</ion-label>
@@ -82,5 +82,7 @@
       </ion-item>
     </ion-card-content>
   </ion-card>
-  <ion-button expand="block" type="submit" color="main-three">Submit</ion-button>
+  <ion-button expand="block" type="submit" color="main-three"
+    >Submit</ion-button
+  >
 </ion-content>
