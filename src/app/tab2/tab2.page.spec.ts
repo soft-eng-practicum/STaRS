@@ -1,6 +1,8 @@
+
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
-
+import {RouterTestingModule} from '@angular/router/testing';
+import {FormsModule} from '@angular/forms';
 import { Tab2Page } from './tab2.page';
 
 describe('Tab2Page', () => {
@@ -10,7 +12,7 @@ describe('Tab2Page', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [Tab2Page],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot(),[RouterTestingModule],[FormsModule]]
     }).compileComponents();
 
     fixture = TestBed.createComponent(Tab2Page);
@@ -18,7 +20,7 @@ describe('Tab2Page', () => {
     fixture.detectChanges();
   }));
 
-  it('should create', () => {
+  it('should create component', () => {
     expect(component).toBeTruthy();
   });
 });
