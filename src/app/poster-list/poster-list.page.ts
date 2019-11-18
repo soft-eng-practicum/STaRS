@@ -52,7 +52,10 @@ export class PosterListPage implements OnInit {
     const alert = await this.alertController.create({
       header: this.question.information,
       subHeader: this.question.additional,
-      buttons: ['OK']
+      buttons: [{
+        text: 'OK',
+        cssClass: 'icon-color'
+      }]
     });
     await alert.present();
   }
@@ -62,14 +65,20 @@ export class PosterListPage implements OnInit {
       const alert = await this.alertController.create({
         header: 'Judges who have surveyed:',
         subHeader: 'This poster has not been surveyed yet.',
-        buttons: ['OK']
+        buttons: [{
+          text: 'OK',
+          cssClass: 'icon-color'
+        }]
       });
       await alert.present();
     } else {
       const alert = await this.alertController.create({
         header: 'Judges who have surveyed:',
         subHeader: this.loadedPoster.judges,
-        buttons: ['OK']
+        buttons: [{
+          text: 'OK',
+          cssClass: 'icon-color'
+        }]
       });
       await alert.present();
     }
