@@ -1,6 +1,7 @@
 .poster-label{
     padding-left:10px;
-    color: grey;
+    color: black;
+    font-size: 14px;
 }
 
 .poster-list-header{
@@ -13,4 +14,11 @@
 
 .poster-card-header{
     color: black;
+    font-weight: bold;
+    font-size: 14px;
 }
+
+.card-content-md {
+    padding-bottom: 0;
+}
+
