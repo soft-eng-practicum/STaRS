@@ -14,17 +14,22 @@ describe('LoginPage', () => {
       imports: [RouterTestingModule,
       FormsModule],
       declarations: [ LoginPage ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    });
-   
-    fixture = TestBed.createComponent(LoginPage);
-    component = fixture.componentInstance;
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
   }));
 
+beforeEach(() => {
+  fixture = TestBed.createComponent(LoginPage);
+  component = fixture.componentInstance;  
+ 
+  fixture.detectChanges();
+});
+
   it('should create component', () => {
+    //Assert that the component is created
     expect(component).toBeTruthy();
   });
-
-   
     
-});
+    
+
+  });
