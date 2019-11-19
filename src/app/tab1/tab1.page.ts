@@ -9,13 +9,16 @@ import { PouchService } from 'src/app/pouch.service';
 export class Tab1Page {
 
   currentUser: any;
+  currentUserSurveys: any;
   posters: any = [];
 
   constructor(private pouchService: PouchService) {
     this.currentUser = this.pouchService.globalUser;
+    this.currentUserSurveys = this.pouchService.globalUserDoc.surveys;
     this.pouchService.getAllPosters();
-    this.posters = this.pouchService.posters;
-    console.log(this.posters);
+    // this.posters = this.pouchService.posters;
+    // debugger;
+    // console.log(this.posters);
   }
 
   testMethod() {

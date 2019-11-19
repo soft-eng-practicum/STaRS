@@ -12,6 +12,7 @@ export class LoginPage implements OnInit {
 
   username: any;
   password: any;
+  userDoc: any;
 
   constructor(public alertController: AlertController, private  router: Router, private pouchService: PouchService) { }
 
@@ -44,18 +45,24 @@ export class LoginPage implements OnInit {
     // } else {
     //   this.presentAlert();
     // }
-    let check;
-    this.pouchService.getAllJudges().then(result => {
+
+    // let check;
+    // let posterIndex = 0;
+    this.pouchService.getAllJudgesPromise().then(result => {
       for (const i of result.rows) {
+        // this.judges[posterIndex] = i;
+        // posterIndex++;
         if (this.username === i.doc.username && this.password === i.doc.password) {
-            check = i.doc;
+            this.userDoc = i.doc;
+            console.log(i.doc);
           }
       }
-      if (check === undefined) {
+      if (this.userDoc === undefined) {
         this.presentAlert();
       } else {
         this.router.navigateByUrl('/home/tabs/tab1');
         this.pouchService.globalUser = this.username;
+        this.pouchService.globalUserDoc = this.userDoc;
       }
     });
   }

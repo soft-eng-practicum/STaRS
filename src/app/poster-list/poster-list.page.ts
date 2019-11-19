@@ -40,10 +40,6 @@ export class PosterListPage implements OnInit {
     });
   }
 
-  // segmentChanged(e) {
-  //   console.info(e.value.);
-  // }
-
   ngOnInit() {
   }
 
@@ -85,7 +81,6 @@ export class PosterListPage implements OnInit {
   }
 
   radioSelect(event, index) {
-    // debugger;
     const inputValue = event.detail.value;
     this.surveyQuestions[index - 1].value = inputValue;
     switch (inputValue) {

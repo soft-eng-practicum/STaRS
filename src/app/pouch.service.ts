@@ -13,6 +13,7 @@ export class PouchService {
   pouchJudges: any;
   pouchPosters: any;
   globalUser: any;
+  globalUserDoc: any;
   posters: any = [];
   password: any = [];
   surveyQuestions: any = [];
@@ -37,7 +38,7 @@ export class PouchService {
     return [...this.surveyQuestions];
   }
 
-  getAllJudges() {
+  getAllJudgesPromise() {
     console.log('JUDGES LOADED');
     this.pouchJudges = new PouchDB(this.password.couchConnection + '/judges_sp18');
     return this.pouchJudges.allDocs({
