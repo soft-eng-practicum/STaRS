@@ -1,16 +1,16 @@
-import { Component, OnInit } from "@angular/core";
-import { PouchService } from "src/app/pouch.service";
-import { AlertController } from "@ionic/angular";
-import { ActivatedRoute } from "@angular/router";
-import { LoadingController } from "@ionic/angular";
-import { Router } from "@angular/router";
-import { ToastController } from "@ionic/angular";
-import { discardPeriodicTasks } from "@angular/core/testing";
+import { Component, OnInit } from '@angular/core';
+import { PouchService } from 'src/app/pouch.service';
+import { AlertController } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
+import { LoadingController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
+import { discardPeriodicTasks } from '@angular/core/testing';
 
 @Component({
-  selector: "app-poster-list",
-  templateUrl: "./poster-list.page.html",
-  styleUrls: ["./poster-list.page.scss"]
+  selector: 'app-poster-list',
+  templateUrl: './poster-list.page.html',
+  styleUrls: ['./poster-list.page.scss']
 })
 export class PosterListPage implements OnInit {
   currentUser: any;
@@ -38,10 +38,10 @@ export class PosterListPage implements OnInit {
       JSON.stringify(this.pouchService.surveyQuestions)
     );
     this.activatedRoute.paramMap.subscribe(paramMap => {
-      if (!paramMap.has("id")) {
+      if (!paramMap.has('id')) {
         return;
       }
-      const posterId = paramMap.get("id");
+      const posterId = paramMap.get('id');
       this.loadedPoster = this.pouchService.getPoster(posterId);
     });
   }
@@ -55,8 +55,8 @@ export class PosterListPage implements OnInit {
       subHeader: this.question.additional,
       buttons: [
         {
-          text: "OK",
-          cssClass: "icon-color"
+          text: 'OK',
+          cssClass: 'icon-color'
         }
       ]
     });
@@ -66,24 +66,24 @@ export class PosterListPage implements OnInit {
   async showJudges() {
     if (this.loadedPoster.judges.length === 0) {
       const alert = await this.alertController.create({
-        header: "Judges who have surveyed:",
-        subHeader: "This poster has not been surveyed yet.",
+        header: 'Judges who have surveyed:',
+        subHeader: 'This poster has not been surveyed yet.',
         buttons: [
           {
-            text: "OK",
-            cssClass: "icon-color"
+            text: 'OK',
+            cssClass: 'icon-color'
           }
         ]
       });
       await alert.present();
     } else {
       const alert = await this.alertController.create({
-        header: "Judges who have surveyed:",
+        header: 'Judges who have surveyed:',
         subHeader: this.loadedPoster.judges,
         buttons: [
           {
-            text: "OK",
-            cssClass: "icon-color"
+            text: 'OK',
+            cssClass: 'icon-color'
           }
         ]
       });
@@ -96,23 +96,23 @@ export class PosterListPage implements OnInit {
     this.surveyQuestions[index - 1].value = inputValue;
     this.surveyAnswers[index - 1] = inputValue;
     switch (inputValue) {
-      case "1":
-        this.surveyQuestions[index - 1].wordValue = "Below Average";
+      case '1':
+        this.surveyQuestions[index - 1].wordValue = 'Below Average';
         break;
-      case "2":
-        this.surveyQuestions[index - 1].wordValue = "Average";
+      case '2':
+        this.surveyQuestions[index - 1].wordValue = 'Average';
         break;
-      case "3":
-        this.surveyQuestions[index - 1].wordValue = "Good";
+      case '3':
+        this.surveyQuestions[index - 1].wordValue = 'Good';
         break;
-      case "4":
-        this.surveyQuestions[index - 1].wordValue = "Excellent";
+      case '4':
+        this.surveyQuestions[index - 1].wordValue = 'Excellent';
         break;
-      case "5":
-        this.surveyQuestions[index - 1].wordValue = "Outstanding";
+      case '5':
+        this.surveyQuestions[index - 1].wordValue = 'Outstanding';
         break;
       default:
-        this.surveyQuestions[index - 1].wordValue = "";
+        this.surveyQuestions[index - 1].wordValue = '';
     }
     console.log(this.selectRadioGroup);
   }
@@ -122,34 +122,34 @@ export class PosterListPage implements OnInit {
       const alert = await this.alertController.create({
         // header: 'Alert',
         // subHeader: 'Subtitle',
-        cssClass: "alert-box",
-        message: "Please complete all of the survey questions.",
+        cssClass: 'alert-box',
+        message: 'Please complete all of the survey questions.',
         buttons: [
           {
-            text: "OK",
-            cssClass: "icon-color"
+            text: 'OK',
+            cssClass: 'icon-color'
           }
         ]
       });
       await alert.present();
     } else {
       const loading = await this.loadingController.create({
-        message: "Please wait while your survey is submitted.",
+        message: 'Please wait while your survey is submitted.',
         duration: 2000
       });
       await loading.present();
       const { role, data } = await loading.onDidDismiss();
-      this.router.navigateByUrl("/home/tabs/tab2");
+      this.router.navigateByUrl('/home/tabs/tab2');
 
       const toast = await this.toastController.create({
         message: 'Your survey has been submitted!',
         duration: 2000
       });
-      debugger;
+      // debugger;
       this.pouchService
         .updateJudgeSurveys(this.pouchService.globalUserDoc._id)
         .then(doc => {
-          console.log("THE DOC" + doc);
+          console.log('THE DOC' + doc);
           console.log(doc);
           // doc.username = 'CREATE';
           const push = {
@@ -161,13 +161,15 @@ export class PosterListPage implements OnInit {
           };
           console.log(doc.surveys);
           doc.surveys.push(push);
-          console.log(doc.surveys);
+          // console.log(doc.surveys);
+          // debugger;
+          // doc.surveys.splice(3, doc.surveys.length);
           this.pouchService.pouchJudges.put(doc);
           this.pouchService.globalUserDoc = doc;
           console.log(doc);
         })
         .catch(doc => {
-          console.log("ERROR");
+          console.log('ERROR');
         });
       toast.present();
     }
