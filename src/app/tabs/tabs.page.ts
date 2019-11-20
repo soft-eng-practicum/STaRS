@@ -8,8 +8,10 @@ import { Router } from '@angular/router';
   styleUrls: ['tabs.page.scss']
 })
 export class TabsPage {
-
-  constructor(public alertController: AlertController, private  router: Router) {}
+  constructor(
+    public alertController: AlertController,
+    private router: Router
+  ) {}
 
   async logout() {
     const alert = await this.alertController.create({
@@ -17,19 +19,20 @@ export class TabsPage {
       // subHeader: 'Subtitle',
       message: 'Are you sure you want to logout?',
       cssClass: 'alert-box',
-      buttons: [ {
-        text: 'LOGOUT',
-        cssClass: 'icon-color',
-        handler: () => {
-          this.router.navigateByUrl('');
+      buttons: [
+        {
+          text: 'LOGOUT',
+          cssClass: 'icon-color',
+          handler: () => {
+            this.router.navigateByUrl('');
+          }
+        },
+        {
+          text: 'CANCEL',
+          cssClass: 'icon-color'
         }
-      },
-      {
-        text: 'CANCEL',
-        cssClass: 'icon-color'
-      }]
+      ]
     });
     await alert.present();
   }
-  
 }
