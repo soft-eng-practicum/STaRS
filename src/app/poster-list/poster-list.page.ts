@@ -163,7 +163,7 @@ export class PosterListPage implements OnInit {
           doc.surveys.push(push);
           // console.log(doc.surveys);
           // debugger;
-          // doc.surveys.splice(3, doc.surveys.length);
+          // doc.surveys.splice(1, doc.surveys.length);
           this.pouchService.pouchJudges.put(doc);
           this.pouchService.globalUserDoc = doc;
           console.log(doc);

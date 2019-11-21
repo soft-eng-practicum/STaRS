@@ -1,5 +1,5 @@
-import { Injectable } from "@angular/core";
-import PouchDB from "pouchdb";
+import { Injectable } from '@angular/core';
+import PouchDB from 'pouchdb';
 import { error } from 'util';
 
 // fetch password for start2019
@@ -7,7 +7,7 @@ import { error } from 'util';
 // judges_sp18 has all the data for the judges and the poster they created
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class PouchService {
   pouchJudges: any;
@@ -19,7 +19,7 @@ export class PouchService {
   surveyQuestions: any = [];
 
   constructor() {
-    fetch("./assets/data/couch_connection.json")
+    fetch('./assets/data/couch_connection.json')
       .then(res => res.json())
       .then(json => {
         // console.log(json);
@@ -27,7 +27,7 @@ export class PouchService {
         console.log(this.password.couchConnection);
       });
 
-    fetch("./assets/data/survey.json")
+    fetch('./assets/data/survey.json')
       .then(res => res.json())
       .then(json => {
         this.surveyQuestions = json;
@@ -39,9 +39,9 @@ export class PouchService {
   }
 
   getAllJudgesPromise() {
-    console.log("JUDGES LOADED");
+    console.log('JUDGES LOADED');
     this.pouchJudges = new PouchDB(
-      this.password.couchConnection + "/judges_sp18"
+      this.password.couchConnection + '/judges_sp18'
     );
     return this.pouchJudges.allDocs({
       include_docs: true,
@@ -60,9 +60,9 @@ export class PouchService {
   }
 
   getAllPosters() {
-    console.log("POSTERS LOADED");
+    console.log('POSTERS LOADED');
     this.pouchPosters = new PouchDB(
-      this.password.couchConnection + "/stars2019"
+      this.password.couchConnection + '/stars2019'
     );
     return this.pouchPosters
       .allDocs({
@@ -83,8 +83,8 @@ export class PouchService {
               countJudges: 0,
               group: rowList[2],
               subject: rowList[3],
-              students: rowList[4].replace(/\"/g, ""),
-              advisor: rowList[5].replace(/\"/g, ""),
+              students: rowList[4].replace(/\"/g, ''),
+              advisor: rowList[5].replace(/\"/g, ''),
               advisorEmail: rowList[6]
             };
             posterIndex++;
