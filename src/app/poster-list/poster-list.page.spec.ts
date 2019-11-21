@@ -11,7 +11,7 @@ xdescribe('PosterListPage', () => {
     TestBed.configureTestingModule({
       declarations: [ PosterListPage ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [RouterTestingModule]    
+      imports: [RouterTestingModule]
     })
     .compileComponents();
   }));

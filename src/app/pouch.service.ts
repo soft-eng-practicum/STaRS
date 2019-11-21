@@ -24,7 +24,7 @@ export class PouchService {
       .then(json => {
         // console.log(json);
         this.password = json;
-        console.log(this.password.couchConnection);
+        // console.log(this.password.couchConnection);
       });
 
     fetch('./assets/data/survey.json')
@@ -48,7 +48,6 @@ export class PouchService {
       attachments: true
     });
   }
-
   updateJudgeSurveys(id: string) {
     return this.pouchJudges.get(id);
     // .then(doc => {
