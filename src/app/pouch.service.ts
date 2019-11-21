@@ -19,7 +19,8 @@ export class PouchService {
   surveyQuestions: any = [];
 
   constructor() {
-    fetch("./assets/data/couch_connection.json")
+
+    fetch('./assets/data/couch_connection.json')
       .then(res => res.json())
       .then(json => {
         // console.log(json);
@@ -27,7 +28,7 @@ export class PouchService {
         console.log(this.password.couchConnection);
       });
 
-    fetch("./assets/data/survey.json")
+    fetch('./assets/data/survey.json')
       .then(res => res.json())
       .then(json => {
         this.surveyQuestions = json;
@@ -39,16 +40,15 @@ export class PouchService {
   }
 
   getAllJudgesPromise() {
-    console.log("JUDGES LOADED");
+    console.log('JUDGES LOADED');
     this.pouchJudges = new PouchDB(
-      this.password.couchConnection + "/judges_sp18"
+      this.password.couchConnection + '/judges_sp18'
     );
     return this.pouchJudges.allDocs({
       include_docs: true,
       attachments: true
     });
   }
-
   updateJudgeSurveys(id: string) {
     return this.pouchJudges.get(id);
     // .then(doc => {

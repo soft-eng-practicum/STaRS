@@ -56,7 +56,9 @@ export class LoginPage implements OnInit {
             this.userDoc = i.doc;
             console.log(i.doc);
           }
+        console.log(result);
       }
+      console.log(this.userDoc);
       if (this.userDoc === undefined) {
         this.presentAlert();
       } else {
