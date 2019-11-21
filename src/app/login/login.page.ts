@@ -54,11 +54,9 @@ export class LoginPage implements OnInit {
         // posterIndex++;
         if (this.username === i.doc.username && this.password === i.doc.password) {
             this.userDoc = i.doc;
-            console.log(i.doc);
           }
-        console.log(result);
       }
-      console.log(this.userDoc);
+      // console.log(this.userDoc);
       if (this.userDoc === undefined) {
         this.presentAlert();
       } else {

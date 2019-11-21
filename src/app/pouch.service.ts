@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import PouchDB from "pouchdb";
-import { error } from 'util';
+
 
 // fetch password for start2019
 // stars2019 has all the data for the posters
@@ -25,7 +25,7 @@ export class PouchService {
       .then(json => {
         // console.log(json);
         this.password = json;
-        console.log(this.password.couchConnection);
+        // console.log(this.password.couchConnection);
       });
 
     fetch('./assets/data/survey.json')
