@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {FormsModule} from '@angular/forms';
@@ -29,7 +29,27 @@ beforeEach(() => {
     //Assert that the component is created
     expect(component).toBeTruthy();
   });
-    
-    
+  it('should attempt to login a user after login is clicked', () => {
+    //Arrange
+    var username = document.getElementById('username');
+    var submitButton = document.getElementById('submitButton');
+    //Act
+    username.textContent = '';
+    spyOn(component, 'loginUser');
+    submitButton.click();
+    //Assert
+    //loginUser is called
+    expect(component.loginUser).toHaveBeenCalled();
+  });
 
+  it('should not navigate to the next page with invalid credentials', () => {
+    //Arrange
+    var username = document.getElementById('username');
+    var submitButton = document.getElementById('submitButton');
+    //Act
+    username.textContent = '';
+    submitButton.click();
+    //Assert
+    expect(document.URL).not.toContain('/home/tabs/tab');
+  });
   });

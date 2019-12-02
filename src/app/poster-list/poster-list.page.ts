@@ -5,7 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-import { discardPeriodicTasks } from '@angular/core/testing';
 
 @Component({
   selector: 'app-poster-list',

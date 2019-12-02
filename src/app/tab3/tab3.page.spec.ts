@@ -21,4 +21,10 @@ describe('Tab3Page', () => {
   it('should create component', () => {
     expect(component).toBeTruthy();
   });
+
+  //TODO
+  //Need to remove this component. Currently keeping it in due to it 
+  //possibly affecting the routing of the application.
+  //This page has no purpose.
+  //To see it, launch the app in browser and naviagte to localhost:****/home/tabs/tab3
 });

@@ -4,7 +4,7 @@
       <ion-text>GGC STaRS: Poster</ion-text>
       <ion-chip color="main-inverted" class="user-icon">
             <ion-icon name="contact"></ion-icon>
-        <ion-label>{{currentUser}}</ion-label>
+        <ion-label id = "currentUser">{{currentUser}}</ion-label>
       </ion-chip>
     </ion-title>
   </ion-toolbar>
@@ -15,7 +15,7 @@
       Filter
     </ion-card-header> -->
     <ion-card-content>
-      <ion-searchbar
+      <ion-searchbar id="searcher"
         [(ngModel)]="searchTerm"
         (ionChange)="setFilteredItems()"
         placeholder="Search by poster"

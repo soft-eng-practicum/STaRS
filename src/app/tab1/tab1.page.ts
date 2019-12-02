@@ -16,6 +16,7 @@ export class Tab1Page {
   constructor(private pouchService: PouchService, public alertController: AlertController) {
     this.currentUser = this.pouchService.globalUser;
     this.currentUserSurveys = this.pouchService.globalUserDoc.surveys;
+    console.log(this.currentUserSurveys);
     this.pouchService.getAllPosters();
     // this.posters = this.pouchService.posters;
     // debugger;
@@ -25,6 +26,7 @@ export class Tab1Page {
   doRefresh(event) {
     console.log('Begin async operation');
     this.currentUserSurveys = this.pouchService.globalUserDoc.surveys;
+    console.log(this.currentUserSurveys);
     setTimeout(() => {
       console.log('Async operation has ended');
       event.target.complete();

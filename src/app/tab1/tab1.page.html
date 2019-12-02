@@ -4,14 +4,14 @@
       <ion-text>GGC STaRS: Home</ion-text>
       <ion-chip color="main-inverted" class="user-icon">
         <ion-icon name="contact"></ion-icon>
-        <ion-label>{{currentUser}}</ion-label>
+        <ion-label id="thisUser">{{CurrentUser}}</ion-label>
       </ion-chip>
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content align="center">
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+  <ion-refresher slot="fixed" id="refresher" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <ion-card>
@@ -44,7 +44,7 @@
         <ion-text class="text">Completed Surveys</ion-text>
         <!-- <ion-button class="icon" size="large" color="main-inverted" fill="clear" (click)="test()" shape=""> -->
             <a (click)="test()">
-          <ion-icon color="main-inverted" class="icon" name="information-circle"></ion-icon></a>
+          <ion-icon id="information-circle" color="main-inverted" class="icon" name="information-circle"></ion-icon></a>
         <!-- </ion-button> -->
       </ion-card-title>
     </ion-card-header>
