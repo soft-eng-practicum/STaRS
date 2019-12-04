@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import PouchDB from 'pouchdb';
-import { error } from 'util';
 
-// fetch password for start2019
+// need to fetch password for databases from the local json file
 // stars2019 has all the data for the posters
 // judges_sp18 has all the data for the judges and the poster they created
 
@@ -19,14 +18,14 @@ export class PouchService {
   surveyQuestions: any = [];
 
   constructor() {
+    // this fetches the database password from the local json file
     fetch('./assets/data/couch_connection.json')
       .then(res => res.json())
       .then(json => {
-        // console.log(json);
         this.password = json;
-        // console.log(this.password.couchConnection);
       });
 
+    // this fetches the survey question list from the local json file
     fetch('./assets/data/survey.json')
       .then(res => res.json())
       .then(json => {
@@ -34,10 +33,9 @@ export class PouchService {
       });
   }
 
-  getSurveys() {
-    return [...this.surveyQuestions];
-  }
-
+  /**
+   * This method returns a promise of all the judges from the database
+   */
   getAllJudgesPromise() {
     console.log('JUDGES LOADED');
     this.pouchJudges = new PouchDB(
@@ -48,16 +46,19 @@ export class PouchService {
       attachments: true
     });
   }
+
+  /**
+   * This method returns the judge based on the parameter
+   * @param id
+   */
   updateJudgeSurveys(id: string) {
     return this.pouchJudges.get(id);
-    // .then(doc => {
-    //   console.log('THE DOC' + doc);
-    //   console.log(doc);
-    // }).catch(doc => {
-    //   console.log(error);
-    // });
   }
 
+  /**
+   * This method returns all of the posters (CSV Format) into JSON
+   * and stores them in the posters array
+   */
   getAllPosters() {
     console.log('POSTERS LOADED');
     this.pouchPosters = new PouchDB(
@@ -88,11 +89,15 @@ export class PouchService {
             };
             posterIndex++;
           });
-          // console.log(this.posters);
         }
       });
   }
 
+  /**
+   * This method takes in the poster id and will return the poster object
+   * that will be used to bind the poster judging view
+   * @param id
+   */
   getPoster(id: string) {
     return {
       ...this.posters.find(poster => {
@@ -101,6 +106,10 @@ export class PouchService {
     };
   }
 
+  /**
+   * This method will filter the posters based on the subject
+   * @param searchTerm
+   */
   filterItems(searchTerm) {
     return this.posters.filter(item => {
       return (

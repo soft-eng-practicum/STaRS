@@ -16,13 +16,14 @@ export class Tab1Page {
   constructor(private pouchService: PouchService, public alertController: AlertController) {
     this.currentUser = this.pouchService.globalUser;
     this.currentUserSurveys = this.pouchService.globalUserDoc.surveys;
-    console.log(this.currentUserSurveys);
     this.pouchService.getAllPosters();
-    // this.posters = this.pouchService.posters;
-    // debugger;
-    // console.log(this.posters);
   }
 
+  /**
+   * This method will refresh the survyes when pulling down
+   * on the home page
+   * @param event
+   */
   doRefresh(event) {
     console.log('Begin async operation');
     this.currentUserSurveys = this.pouchService.globalUserDoc.surveys;
@@ -33,10 +34,12 @@ export class Tab1Page {
     }, 2000);
   }
 
-  async test() {
+  /**
+   * This method will trigger an alert to tell the user
+   * how to refresh the page to update their survyes
+   */
+  async helpRefresh() {
     const alert = await this.alertController.create({
-      // header: 'Alert',
-      // subHeader: 'Subtitle',
       cssClass: 'alert-box',
       message: 'Please pull the page down to refresh completed surveys.',
       buttons: [ {

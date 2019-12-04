@@ -6,20 +6,25 @@ import { PouchService } from 'src/app/pouch.service';
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss']
 })
-export class Tab2Page implements OnInit {
+export class Tab2Page {
   currentUser: any;
   poster: any = [];
   items: any = [];
   searchTerm: string;
+
   constructor(private pouchService: PouchService) {
     this.currentUser = this.pouchService.globalUser;
     this.pouchService.getAllPosters();
     this.poster = this.pouchService.posters;
     this.items = this.pouchService.posters;
-    console.log(this.poster);
   }
 
-    filterItems(searchTerm) {
+  /**
+   * This method will filter the posters based on the
+   * search bar value
+   * @param searchTerm
+   */
+  filterItems(searchTerm) {
     return this.items.filter(item => {
       return (
         item.group.toLowerCase().indexOf(searchTerm.toString().toLowerCase()) >
@@ -28,18 +33,23 @@ export class Tab2Page implements OnInit {
     });
   }
 
-  ngOnInit() {
-  }
-
+  /**
+   * This method handles the filter based on subject selection
+   * @param $event
+   */
   onChangeHandler($event) {
     if ($event.target.value === 'all') {
-      return this.poster = this.pouchService.posters;
+      return (this.poster = this.pouchService.posters);
     } else {
       this.poster.subject = $event.target.value;
       this.poster = this.pouchService.filterItems(this.poster.subject);
     }
   }
-    setFilteredItems() {
-    return this.poster = this.filterItems(this.searchTerm);
+
+  /**
+   * This method will set the filtered items
+   */
+  setFilteredItems() {
+    return (this.poster = this.filterItems(this.searchTerm));
   }
 }

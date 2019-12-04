@@ -13,6 +13,10 @@ export class TabsPage {
     private router: Router
   ) {}
 
+  /**
+   * This method will trigger an alert asking the user 
+   * if they want to log out
+   */
   async logout() {
     const alert = await this.alertController.create({
       // header: 'Alert',

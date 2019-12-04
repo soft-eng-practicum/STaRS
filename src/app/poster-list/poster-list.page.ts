@@ -11,7 +11,7 @@ import { ToastController } from '@ionic/angular';
   templateUrl: './poster-list.page.html',
   styleUrls: ['./poster-list.page.scss']
 })
-export class PosterListPage implements OnInit {
+export class PosterListPage {
   currentUser: any;
   surveyQuestions: any = [];
   controller: any;
@@ -32,10 +32,13 @@ export class PosterListPage implements OnInit {
     public toastController: ToastController
   ) {
     this.currentUser = this.pouchService.globalUser;
-    // this.surveyQuestions = this.pouchService.getSurveys();
+
+    // this will create a copy of the local JSON's survey questons
     this.surveyQuestions = JSON.parse(
       JSON.stringify(this.pouchService.surveyQuestions)
     );
+
+    // this will set the local model based on the object (poster) clicked
     this.activatedRoute.paramMap.subscribe(paramMap => {
       if (!paramMap.has('id')) {
         return;
@@ -45,8 +48,10 @@ export class PosterListPage implements OnInit {
     });
   }
 
-  ngOnInit() {}
-
+  /**
+   * This method will trigger an alert displaying information about the question
+   * @param index
+   */
   async showInfo(index) {
     this.question = this.surveyQuestions[index - 1];
     const alert = await this.alertController.create({
@@ -62,6 +67,10 @@ export class PosterListPage implements OnInit {
     await alert.present();
   }
 
+  /**
+   * This method will show the judges that have voted on the specific poster
+   * @TODO need to display judges that have voted on that specific poster
+   */
   async showJudges() {
     if (this.loadedPoster.judges.length === 0) {
       const alert = await this.alertController.create({
@@ -90,6 +99,15 @@ export class PosterListPage implements OnInit {
     }
   }
 
+  /**
+   * This method will store all of the survey answers in two arrays.
+   * The surveyAnswers array will hold the answers only which are used to
+   * be sent to the database. The surveyQuestions array is used just to display
+   * the wordValue to the user so everytime a number is clicked, it will change
+   * the value of wordValue in that array.
+   * @param event
+   * @param index
+   */
   radioSelect(event, index) {
     const inputValue = event.detail.value;
     this.surveyQuestions[index - 1].value = inputValue;
@@ -116,6 +134,11 @@ export class PosterListPage implements OnInit {
     console.log(this.selectRadioGroup);
   }
 
+  /**
+   * This method will submit the users survey if they have filled out
+   * all of the required fields
+   * @TODO Need to make the text field optional
+   */
   async onSubmit() {
     if (this.surveyAnswers.length < 7) {
       const alert = await this.alertController.create({
@@ -145,12 +168,18 @@ export class PosterListPage implements OnInit {
         duration: 2000
       });
       // debugger;
+
+      /**
+       * This will use the promise returned from the pouch.service.ts and will grab
+       * the doc returned from it. Once you have the doc, you will be able to push
+       * the survey answers to it. Once the doc has been pushed to, you will need
+       * to put (update) the doc to the database.
+       */
       this.pouchService
         .updateJudgeSurveys(this.pouchService.globalUserDoc._id)
         .then(doc => {
           console.log('THE DOC' + doc);
           console.log(doc);
-          // doc.username = 'CREATE';
           const push = {
             answers: this.surveyAnswers,
             groupName: this.loadedPoster.group,
@@ -160,8 +189,7 @@ export class PosterListPage implements OnInit {
           };
           console.log(doc.surveys);
           doc.surveys.push(push);
-          // console.log(doc.surveys);
-          // debugger;
+          // this splice method is used to remove all but one survey from the user (just for demo purpose)
           // doc.surveys.splice(1, doc.surveys.length);
           this.pouchService.pouchJudges.put(doc);
           this.pouchService.globalUserDoc = doc;
